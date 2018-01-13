@@ -1,0 +1,23 @@
+#N canvas 273 64 377 317 10;
+#X obj 118 158 vline~;
+#X obj 31 157 osc~ 300;
+#X obj 31 260 dac~;
+#X obj 31 196 *~;
+#X obj 118 96 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 31 128 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 31 227 *~ 0.3;
+#X msg 118 127 1 20 \, 0.5 20 20 \, 0 400 50;
+#X obj 31 27 receive \$0-freq;
+#X obj 118 62 receive \$0-trigger;
+#X connect 0 0 3 1;
+#X connect 1 0 3 0;
+#X connect 3 0 6 0;
+#X connect 4 0 7 0;
+#X connect 5 0 1 0;
+#X connect 6 0 2 0;
+#X connect 6 0 2 1;
+#X connect 7 0 0 0;
+#X connect 8 0 5 0;
+#X connect 9 0 4 0;

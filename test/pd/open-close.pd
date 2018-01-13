@@ -1,0 +1,14 @@
+#N canvas 911 146 361 206 10;
+#X obj 38 73 \$0;
+#X msg 38 103 PATCH OPENED: \$1;
+#X obj 38 42 loadbang;
+#X obj 179 73 \$0;
+#X msg 179 103 PATCH CLOSED: \$1;
+#X text 177 38 [closebang];
+#X obj 38 136 print PD;
+#X obj 179 136 print PD;
+#X connect 0 0 1 0;
+#X connect 1 0 6 0;
+#X connect 2 0 0 0;
+#X connect 3 0 4 0;
+#X connect 4 0 7 0;

@@ -1,0 +1,23 @@
+{
+  "name": "node-libpd",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": [
+    "Benjamin Matuszewski <benjamin.matuszewski@gmail.com>"
+  ],
+  "gypfile": true,
+  "scripts": {
+    "install": "node-gyp rebuild",
+    "test": "node ./test/index.js"
+  },
+  "devDependencies": {
+    "node-gyp": "^1.0.3",
+    "segfault-handler": "^1.0.0",
+    "tape": "^4.8.0"
+  },
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "nan": "^2.0.5"
+  },
+  "license": "BSD-3-Clause"
+}

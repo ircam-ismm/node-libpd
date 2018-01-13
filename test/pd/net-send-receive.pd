@@ -1,0 +1,32 @@
+#N canvas 153 306 660 443 10;
+#X obj 90 155 osc~;
+#X obj 90 289 dac~ 1;
+#X floatatom 90 119 5 0 0 0 - - -, f 5;
+#X obj 146 257 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 209 96 osc~ 4;
+#X obj 208 153 *~ 0.5;
+#X obj 209 125 +~ 1;
+#X obj 90 214 *~;
+#X floatatom 209 66 5 0 0 0 - - -, f 5;
+#X text 180 255 mute;
+#X obj 90 255 *~ 0.2;
+#X obj 281 233 udpreceive 4000;
+#X obj 369 81 netsend 1;
+#X text 448 83 udp socket;
+#X text 229 15 http://write.flossmanuals.net/pure-data/send-and-receive/
+;
+#X obj 380 152 netreceive 5000 1;
+#X msg 371 55 connect 127.0.0.1 5001;
+#X obj 380 178 print TCP;
+#X connect 0 0 7 0;
+#X connect 2 0 0 0;
+#X connect 3 0 10 1;
+#X connect 4 0 6 0;
+#X connect 5 0 7 1;
+#X connect 6 0 5 0;
+#X connect 7 0 10 0;
+#X connect 8 0 4 0;
+#X connect 10 0 1 0;
+#X connect 15 0 17 0;
+#X connect 16 0 12 0;
