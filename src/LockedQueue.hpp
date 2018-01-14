@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <queue>
+#include <memory>
 
 namespace nodePd {
 

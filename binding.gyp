@@ -28,12 +28,12 @@
       #   '<(module_root_dir)/libs', # fix lib pd inconsistency
       # ],
 
-      # "cflags": [
-      #   "-std=c++11",
-      #   "-stdlib=libc++"
-      # ],
-      # 'cflags!': [ '-fno-exceptions' ],
-      # 'cflags_cc!': [ '-fno-exceptions' ],
+      "cflags": [
+        "-std=c++11",
+        "-stdlib=libc++"
+      ],
+      'cflags!': [ '-fno-exceptions' ],
+      'cflags_cc!': [ '-fno-exceptions' ],
 
       'conditions': [
         [
