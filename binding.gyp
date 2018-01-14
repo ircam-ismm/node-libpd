@@ -11,7 +11,7 @@
         "./src/PdWrapper.cpp",
       ],
       "include_dirs" : [
- 	 			"<!(node -e \"require('nan')\")",
+        "<!(node -e \"require('nan')\")",
 
         # include deps headers
         "./portaudio/include",
@@ -30,7 +30,7 @@
 
       "cflags": [
         "-std=c++11",
-        "-stdlib=libc++"
+        # "-stdlib=libc++"
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
