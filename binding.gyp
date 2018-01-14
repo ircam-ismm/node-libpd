@@ -70,8 +70,42 @@
               }
             ]
           }
+        ],
+
+        [
+          'OS=="linux"', {
+            "conditions": [
+              ['target_arch=="arm"', {
+                "link_settings": {
+                  "libraries": [
+                    "<@(module_root_dir)/build/Release/libportaudio.so.2",
+                    "<@(module_root_dir)/build/Release/libpd.so",
+                  ],
+                  "ldflags": [
+                    "-L<@(module_root_dir)/build/Release",
+                    "-Wl,-rpath,<@(module_root_dir)/build/Release"
+                  ]
+                },
+                "copies": [
+                  {
+                    "destination": "build/Release/",
+                    "files": [
+                      "<@(module_root_dir)/portaudio/lib-armhf/libportaudio.so.2"
+                    ]
+                  },
+                  {
+                    "destination": "build/Release/",
+                    "files": [
+                      "<@(module_root_dir)/libpd/lib-armhf/libpd.so"
+                    ]
+                  }
+                ]
+              }]
+            ]
+          }
         ]
-      ]
+
+      ] # end conditions
 
     },
   ],
