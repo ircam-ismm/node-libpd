@@ -160,27 +160,41 @@ console.log('');
 // pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
 
 /**
- * Poly
+ * Sine
  */
 console.log('');
-console.log('>>>>> poly like');
+console.log('>>>>> sine');
 console.log('');
 
-for (let i = 0; i < 3; i++) {
-  setTimeout(() => {
-    const patch = pd.openPatch('poly-like.pd', patchesPath);
-    console.log(patch);
-    const baseFreq = 200 * (i + 1);
-    let index = 0;
+const patch = pd.openPatch('sine.pd', patchesPath);
 
-    const intervalId = setInterval(() => {
-      pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-      pd.send(patch.$0 + '-trigger');
+setTimeout(() => {
+  pd.closePatch(patch);
+}, 5 * 1000);
 
-      index += 1;
-      if (index >= 16)
-        clearInterval(intervalId);
-    }, 300);
-  }, 200 * (i + 1));
-}
+
+/**
+ * Poly
+ */
+// console.log('');
+// console.log('>>>>> poly like');
+// console.log('');
+
+// for (let i = 0; i < 3; i++) {
+//   setTimeout(() => {
+//     const patch = pd.openPatch('poly-like.pd', patchesPath);
+//     console.log(patch);
+//     const baseFreq = 200 * (i + 1);
+//     let index = 0;
+
+//     const intervalId = setInterval(() => {
+//       pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
+//       pd.send(patch.$0 + '-trigger');
+
+//       index += 1;
+//       if (index >= 16)
+//         clearInterval(intervalId);
+//     }, 300);
+//   }, 200 * (i + 1));
+// }
 
