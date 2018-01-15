@@ -1,23 +1,27 @@
 # node-libpd
 
-> `nodejs` wrapper around `libpd` and `portaudio`, 
+> `nodejs` wrapper around `libpd` and `portaudio`
 
-## install
+Tested on MAC OSX 10.11 and Raspbian Stretch Lite version 9 (raspberry pi 3)
+
+_note: for other platforms, dynamic libraries for libpd and portaudio should probably be built._
+
+## Install
 
 ```
 npm install [--save] b-ma/node-libpd
 ```
 
-can be quite long...
 
-#### tested on
+### Run tests:
 
-- Mac OSX 10.11
-- next step: raspbian lite
+```
+$ npm test
+```
 
 ## Next Steps
 
-- test on raspberry pi
+- expose `ticks` as a parameter
 - clock (currentTime, etc...)
 - `pd.clear()` to stop background processes
 
@@ -29,6 +33,7 @@ can be quite long...
 
 #### audio
 
+- expose `ticks` as an `pd.init` parameter - default hardcoded `2` (block size: 128) seems too low for a raspberry pi
 - allow to discover available devices and configuration for input and output 
   => (maybe this should be done in a separate module)
 - more generally expose more audio configuration options
@@ -55,47 +60,24 @@ can be quite long...
   + would be fancy to have an `index.mjs` and an `index.js`
 - add a `verbose` options to `init`
 - properly handle errors using : `Nan::ThrowError("...");`
-- deployement
-  + find what we can do with `libs` folder for `libpd`
-  + how to deploy binaries ?
 
-### Caveats
+## Caveats
 
-`receive` - These are asynchronous by nature, should not be used for precise scheduling.
-
-`unsubscribe` - As messages can already be in the queue when unsubscribing, some messages can be triggered after the call of this method.
-
-## Building
-
-```
-$ npm i
-$ node-gyp configure
-$ node-gyp build
-# if something chaned in bindings.gyp
-$ node-gyp rebuild
-```
-
-You can confirm everything built correctly by [running the test suite](#to-run-tests).
-
-### Run tests:
-
-```
-$ npm test
-```
+`receive` - This method is asynchronous by nature, should not be used for precise scheduling.
 
 ## Resources
 
 `libpd` usage example (patch + test): 
-https://github.com/libpd/libpd/tree/master/samples/cpp/pdtest
+- https://github.com/libpd/libpd/tree/master/samples/cpp/pdtest  
 
 Node/Nan tutorial
-https://nodejs.org/api/addons.html#addons_wrapping_c_objects
-https://nodeaddons.com/book/ 
-https://medium.com/netscape/tutorial-building-native-c-modules-for-node-js-using-nan-part-1-755b07389c7c
+- https://nodejs.org/api/addons.html#addons_wrapping_c_objects  
+- https://nodeaddons.com/book/  
+- https://medium.com/netscape/tutorial-building-native-c-modules-for-node-js-using-nan-part-1-755b07389c7c  
 
 libuv book: 
-https://nikhilm.github.io/uvbook/threads.html
+- https://nikhilm.github.io/uvbook/threads.html
 
 Debug with lldb: 
-https://medium.com/@ccnokes/how-to-debug-native-node-addons-in-mac-osx-66f69f81afcb
+- https://medium.com/@ccnokes/how-to-debug-native-node-addons-in-mac-osx-66f69f81afcb
 
