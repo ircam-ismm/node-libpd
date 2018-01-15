@@ -12,7 +12,6 @@ _note: for other platforms, dynamic libraries for libpd and portaudio should pro
 npm install [--save] b-ma/node-libpd
 ```
 
-
 ### Run tests:
 
 ```

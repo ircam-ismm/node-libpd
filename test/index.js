@@ -28,9 +28,10 @@ const pd = require('../');
  * @todo - fix the race condition between the js and the worker thread
  */
 const initialized = pd.init({
-  numInputChannels: 1,
+  numInputChannels: 0,
   numOutputChannels: 1,
   sampleRate: 44100,
+  ticks: 4,
 });
 
 console.log('');

@@ -40,6 +40,7 @@ NodePd::NodePd()
   audioConfig_->numInputChannels = DEFAULT_NUM_INPUT_CHANNELS;
   audioConfig_->numOutputChannels = DEFAULT_NUM_OUTPUT_CHANNELS;
   audioConfig_->sampleRate = DEFAULT_SAMPLE_RATE;
+  audioConfig_->ticks = DEFAULT_NUM_TICKS;
 
   // queue for sharing messages between PdReceiver and BackgroundProcess
   msgQueue_ = new LockedQueue<pd_msg_t>();
@@ -102,6 +103,7 @@ NAN_METHOD(NodePd::init)
     int numInputChannels = nodePd->audioConfig_->numInputChannels;
     int numOutputChannels = nodePd->audioConfig_->numOutputChannels;
     int sampleRate = nodePd->audioConfig_->sampleRate;
+    int ticks = nodePd->audioConfig_->ticks;
 
     // handle arguments if definde
     if (!info[0]->IsUndefined() && info[0]->IsObject()) {
@@ -116,10 +118,13 @@ NAN_METHOD(NodePd::init)
       v8::Local<v8::String> numSampleRateProp =
         Nan::New<v8::String>("sampleRate").ToLocalChecked();
 
+      v8::Local<v8::String> ticksProp =
+        Nan::New<v8::String>("ticks").ToLocalChecked();
 
       v8::Local<v8::Value> localNumInputChannels = obj->Get(numInputChannelsProp);
       v8::Local<v8::Value> localNumOutputChannels = obj->Get(numOutputChannelsProp);
       v8::Local<v8::Value> localSampleRate = obj->Get(numSampleRateProp);
+      v8::Local<v8::Value> localTicks = obj->Get(ticksProp);
 
       if (!localNumInputChannels->IsUndefined() && localNumInputChannels->IsNumber())
         numInputChannels = Nan::To<int>(localNumInputChannels).FromJust();
@@ -129,10 +134,12 @@ NAN_METHOD(NodePd::init)
 
       if (!localSampleRate->IsUndefined() && localSampleRate->IsNumber())
         sampleRate = Nan::To<int>(localSampleRate).FromJust();
-    };
+
+      if (!localTicks->IsUndefined() && localTicks->IsNumber())
+        ticks = Nan::To<int>(localTicks).FromJust();
+    }
 
     const int blockSize = nodePd->pdWrapper_->blockSize();
-    const int ticks = 2;
 
     nodePd->audioConfig_->numInputChannels = numInputChannels;
     nodePd->audioConfig_->numOutputChannels = numOutputChannels;
@@ -140,6 +147,8 @@ NAN_METHOD(NodePd::init)
     nodePd->audioConfig_->blockSize = blockSize;
     nodePd->audioConfig_->ticks = ticks;
     nodePd->audioConfig_->framesPerBuffer = blockSize * ticks;
+
+    std::cout << ticks << std::endl;
 
     // init pure-data
     const bool pdInitialized = nodePd->pdWrapper_->init(nodePd->audioConfig_);
