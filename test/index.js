@@ -30,8 +30,8 @@ const pd = require('../');
 const initialized = pd.init({
   numInputChannels: 0,
   numOutputChannels: 1,
-  sampleRate: 44100,
-  ticks: 4,
+  sampleRate: 48000,
+  ticks: 128,
 });
 
 console.log('');
@@ -162,39 +162,39 @@ console.log('');
 /**
  * Sine
  */
-console.log('');
-console.log('>>>>> sine');
-console.log('');
+// console.log('');
+// console.log('>>>>> sine');
+// console.log('');
 
-const patch = pd.openPatch('sine.pd', patchesPath);
+// const patch = pd.openPatch('sine.pd', patchesPath);
 
-setTimeout(() => {
-  pd.closePatch(patch);
-}, 5 * 1000);
+// setTimeout(() => {
+//  pd.closePatch(patch);
+// }, 5 * 1000);
 
 
 /**
  * Poly
  */
-// console.log('');
-// console.log('>>>>> poly like');
-// console.log('');
+console.log('');
+console.log('>>>>> poly like');
+console.log('');
 
-// for (let i = 0; i < 3; i++) {
-//   setTimeout(() => {
-//     const patch = pd.openPatch('poly-like.pd', patchesPath);
-//     console.log(patch);
-//     const baseFreq = 200 * (i + 1);
-//     let index = 0;
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => {
+    const patch = pd.openPatch('poly-like.pd', patchesPath);
+    console.log(patch);
+    const baseFreq = 200 * (i + 1);
+    let index = 0;
 
-//     const intervalId = setInterval(() => {
-//       pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-//       pd.send(patch.$0 + '-trigger');
+    const intervalId = setInterval(() => {
+      pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
+      pd.send(patch.$0 + '-trigger');
 
-//       index += 1;
-//       if (index >= 16)
-//         clearInterval(intervalId);
-//     }, 300);
-//   }, 200 * (i + 1));
-// }
+      index += 1;
+      if (index >= 16)
+        clearInterval(intervalId);
+    }, 300);
+  }, 200 * (i + 1));
+}
 
