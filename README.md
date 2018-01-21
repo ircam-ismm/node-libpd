@@ -20,7 +20,6 @@ $ npm test
 
 ## Next Steps
 
-- expose `ticks` as a parameter
 - clock (currentTime, etc...)
 - `pd.clear()` to stop background processes
 
@@ -32,13 +31,10 @@ $ npm test
 
 #### audio
 
-- expose `ticks` as an `pd.init` parameter - default hardcoded `2` (block size: 128) seems too low for a raspberry pi
 - allow to discover available devices and configuration for input and output 
   => (maybe this should be done in a separate module)
 - more generally expose more audio configuration options
 - stream audio to javascript
-- do something when numInputChannels and numOutputChannels are 0
-- configure which sound card should be used
 
 #### messaging - I/O
 
@@ -54,8 +50,9 @@ $ npm test
 
 #### misc
 
-- move `LockedQueue` implementation in `.cpp` file
 - stop the whole pd and portaudio instances
+- make `init` asynchronous
+- move `LockedQueue` implementation in `.cpp` file
 - install babel thing to rewrite the index.js in es6
   + would be fancy to have an `index.mjs` and an `index.js`
 - add a `verbose` options to `init`
@@ -63,7 +60,8 @@ $ npm test
 
 ## Caveats
 
-`receive` - This method is asynchronous by nature, should not be used for precise scheduling.
+- `receive` - This method is asynchronous by nature, should not be used for precise scheduling.
+- `send` is processed on each block (`blockSize * ticks`) -> looks like this a pd behavior
 
 ## Resources
 

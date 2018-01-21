@@ -153,7 +153,8 @@ int PaWrapper::paCallbackMethod(
 
   // @todo - handle time informations
   // cf. http://portaudio.com/docs/v19-doxydocs/structPaStreamCallbackTimeInfo.html#af21eb5482cadb212dae38fdbbd9bebfb
-  // std::cout << timeInfo->currentTime << std::endl;
+  std::cout.precision(9);
+  std::cout << std::fixed << timeInfo->currentTime << std::endl;
 
   return paContinue;
 }

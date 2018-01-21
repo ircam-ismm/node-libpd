@@ -141,22 +141,22 @@ console.log('');
 /**
  * Send
  */
-console.log('');
-console.log('>>>>> send / receive');
-console.log('');
+// console.log('');
+// console.log('>>>>> send / receive');
+// console.log('');
 
-const patch = pd.openPatch('receive-msg.pd', patchesPath);
-const $0 = patch.$0;
+// const patch = pd.openPatch('receive-msg.pd', patchesPath);
+// const $0 = patch.$0;
 
-pd.subscribe(`${$0}-log-bang`, function() { console.log('bang'); });
-pd.subscribe(`${$0}-log-float`, function(val) { console.log(val); });
-pd.subscribe(`${$0}-log-symbol`, function(val) { console.log(val); });
-pd.subscribe(`${$0}-log-list`, function(val) { console.log(val); });
+// pd.subscribe(`${$0}-log-bang`, function() { console.log('bang'); });
+// pd.subscribe(`${$0}-log-float`, function(val) { console.log(val); });
+// pd.subscribe(`${$0}-log-symbol`, function(val) { console.log(val); });
+// pd.subscribe(`${$0}-log-list`, function(val) { console.log(val); });
 
-pd.send(`${$0}-bang`);
-pd.send(`${$0}-float`, 42);
-pd.send(`${$0}-symbol`, 'mySymbol');
-pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
+// pd.send(`${$0}-bang`);
+// pd.send(`${$0}-float`, 42);
+// pd.send(`${$0}-symbol`, 'mySymbol');
+// pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
 
 /**
  * Sine
@@ -175,26 +175,26 @@ pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
 /**
  * Poly
  */
-// console.log('');
-// console.log('>>>>> poly like');
-// console.log('');
+console.log('');
+console.log('>>>>> poly like');
+console.log('');
 
-// for (let i = 0; i < 3; i++) {
-//   setTimeout(() => {
-//     const patch = pd.openPatch('poly-like.pd', patchesPath);
-//     console.log(patch);
-//     const baseFreq = 200 * (i + 1);
-//     let index = 0;
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => {
+    const patch = pd.openPatch('poly-like.pd', patchesPath);
+    console.log(patch);
+    const baseFreq = 200 * (i + 1);
+    let index = 0;
 
-//     const intervalId = setInterval(() => {
-//       pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-//       pd.send(patch.$0 + '-trigger');
+    const intervalId = setInterval(() => {
+      pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
+      pd.send(patch.$0 + '-trigger');
 
-//       index += 1;
+      index += 1;
 
-//       if (index >= 16)
-//         clearInterval(intervalId);
-//     }, 300);
-//   }, 200 * (i + 1));
-// }
+      if (index >= 16)
+        clearInterval(intervalId);
+    }, 300);
+  }, 200 * (i + 1));
+}
 
