@@ -25,6 +25,7 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
         Nan::Callback * onProgress,
         audio_config_t * audioConfig,
         LockedQueue<pd_msg_t> * msgQueue,
+        pd::PdBase * pd,
         PaStream * paStream);
     ~BackgroundProcess();
 
@@ -35,6 +36,7 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
 
   private:
     Nan::Callback * onProgress_;
+    pd::PdBase * pd_;
     PaStream * paStream_;
     LockedQueue<pd_msg_t> * msgQueue_;
 

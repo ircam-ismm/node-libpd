@@ -140,37 +140,36 @@ console.log('');
 
 /**
  * Send
- * > multiple instances of the same patch, kind of poly :)
  */
-// console.log('');
-// console.log('>>>>> send');
-// console.log('');
+console.log('');
+console.log('>>>>> send');
+console.log('');
 
-// const patch = pd.openPatch('receive-msg.pd', patchesPath);
-// const $0 = patch.$0;
+const patch = pd.openPatch('receive-msg.pd', patchesPath);
+const $0 = patch.$0;
 
-// pd.subscribe(`${$0}-log-bang`, function() { console.log('bang'); });
-// pd.subscribe(`${$0}-log-float`, function(val) { console.log(val); });
-// pd.subscribe(`${$0}-log-symbol`, function(val) { console.log(val); });
-// pd.subscribe(`${$0}-log-list`, function(val) { console.log(val); });
+pd.subscribe(`${$0}-log-bang`, function() { console.log('bang'); });
+pd.subscribe(`${$0}-log-float`, function(val) { console.log(val); });
+pd.subscribe(`${$0}-log-symbol`, function(val) { console.log(val); });
+pd.subscribe(`${$0}-log-list`, function(val) { console.log(val); });
 
-// pd.send(`${$0}-bang`);
-// pd.send(`${$0}-float`, 42);
-// pd.send(`${$0}-symbol`, 'mySymbol');
-// pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
+pd.send(`${$0}-bang`);
+pd.send(`${$0}-float`, 42);
+pd.send(`${$0}-symbol`, 'mySymbol');
+pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
 
 /**
  * Sine
  */
-console.log('');
-console.log('>>>>> sine');
-console.log('');
+// console.log('');
+// console.log('>>>>> sine');
+// console.log('');
 
-const patch = pd.openPatch('sine.pd', patchesPath);
+// const patch = pd.openPatch('sine.pd', patchesPath);
 
-setTimeout(() => {
-  pd.closePatch(patch);
-}, 5 * 1000);
+// setTimeout(() => {
+//   pd.closePatch(patch);
+// }, 5 * 1000);
 
 
 /**

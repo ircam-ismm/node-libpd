@@ -80,3 +80,10 @@ libuv book:
 Debug with lldb: 
 - https://medium.com/@ccnokes/how-to-debug-native-node-addons-in-mac-osx-66f69f81afcb
 
+
+
+## Problems on raspberry pi
+
+- port audio do not seem to find to find jack server
+
+

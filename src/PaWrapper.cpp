@@ -150,8 +150,6 @@ int PaWrapper::paCallbackMethod(
   float * out = (float *) outputBuffer;
 
   this->pd_->processFloat(this->audioConfig_->ticks, in, out);
-  // // @fixme - this should not be done here but in the event loop thread
-  // this->pd_->receiveMessages();
 
   // @todo - handle time informations
   // cf. http://portaudio.com/docs/v19-doxydocs/structPaStreamCallbackTimeInfo.html#af21eb5482cadb212dae38fdbbd9bebfb

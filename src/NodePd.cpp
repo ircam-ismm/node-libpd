@@ -167,6 +167,7 @@ NAN_METHOD(NodePd::init)
       nodePd->messageCallback_,
       nodePd->audioConfig_,
       nodePd->msgQueue_,
+      nodePd->pdWrapper_->getLibPdInstance(),
       nodePd->paWrapper_->getStream()
     );
 

@@ -7,12 +7,14 @@ BackgroundProcess::BackgroundProcess(
   Nan::Callback * onProgress,
   audio_config_t * audioConfig,
   LockedQueue<pd_msg_t> * msgQueue,
+  pd::PdBase * pd,
   PaStream * paStream)
   : Nan::AsyncProgressWorker(callback)
   , onProgress_(onProgress)
-  , paStream_(paStream)
   , msgQueue_(msgQueue)
-  , interval_((float) audioConfig->framesPerBuffer / (float) audioConfig->sampleRate * 1000.0f)
+  , pd_(pd)
+  , paStream_(paStream)
+  , interval_((float) audioConfig->blockSize / (float) audioConfig->sampleRate * 1000.0f)
 {}
 
 BackgroundProcess::~BackgroundProcess() {}
@@ -20,6 +22,7 @@ BackgroundProcess::~BackgroundProcess() {}
 void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress)
 {
   while (Pa_IsStreamActive(this->paStream_) == 1) {
+    this->pd_->receiveMessages();
 
     // add flag to progress callback if the queue is not empty
     if (!this->msgQueue_->empty()) {
@@ -31,7 +34,7 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
     // "This function is provided only as a convenience for authors of portable code"
     // then maybe it should be done in some other way, but can't find any doc or example
     //
-    // sleep for a block (framesPerBuffer / sampleRate * 1000)
+    // sleep for a block (blockSize / sampleRate * 1000)
     Pa_Sleep(this->interval_);
   }
 }
