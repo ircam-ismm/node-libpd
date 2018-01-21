@@ -31,7 +31,7 @@ const initialized = pd.init({
   numInputChannels: 0,
   numOutputChannels: 1,
   sampleRate: 48000,
-  ticks: 128,
+  ticks: 1,
 });
 
 console.log('');
@@ -142,7 +142,7 @@ console.log('');
  * Send
  */
 console.log('');
-console.log('>>>>> send');
+console.log('>>>>> send / receive');
 console.log('');
 
 const patch = pd.openPatch('receive-msg.pd', patchesPath);
@@ -175,25 +175,26 @@ pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
 /**
  * Poly
  */
-console.log('');
-console.log('>>>>> poly like');
-console.log('');
+// console.log('');
+// console.log('>>>>> poly like');
+// console.log('');
 
-for (let i = 0; i < 3; i++) {
-  setTimeout(() => {
-    const patch = pd.openPatch('poly-like.pd', patchesPath);
-    console.log(patch);
-    const baseFreq = 200 * (i + 1);
-    let index = 0;
+// for (let i = 0; i < 3; i++) {
+//   setTimeout(() => {
+//     const patch = pd.openPatch('poly-like.pd', patchesPath);
+//     console.log(patch);
+//     const baseFreq = 200 * (i + 1);
+//     let index = 0;
 
-    const intervalId = setInterval(() => {
-      pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-      pd.send(patch.$0 + '-trigger');
+//     const intervalId = setInterval(() => {
+//       pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
+//       pd.send(patch.$0 + '-trigger');
 
-      index += 1;
-      if (index >= 16)
-        clearInterval(intervalId);
-    }, 300);
-  }, 200 * (i + 1));
-}
+//       index += 1;
+
+//       if (index >= 16)
+//         clearInterval(intervalId);
+//     }, 300);
+//   }, 200 * (i + 1));
+// }
 

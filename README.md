@@ -38,6 +38,7 @@ $ npm test
 - more generally expose more audio configuration options
 - stream audio to javascript
 - do something when numInputChannels and numOutputChannels are 0
+- configure which sound card should be used
 
 #### messaging - I/O
 

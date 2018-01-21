@@ -32,7 +32,7 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
 
     // @note - as stated in the doc of `Pa_Sleep`
     // "This function is provided only as a convenience for authors of portable code"
-    // then maybe it should be done in some other way, but can't find any doc or example
+    // > maybe we should be do this in some other way, but can't find any doc or example
     //
     // sleep for a block (blockSize / sampleRate * 1000)
     Pa_Sleep(this->interval_);
@@ -74,9 +74,8 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
         break;
       }
 
+      // @note - not used: print an OSC-style type string
       case PD_MSG_TYPES::LIST_MSG: {
-        // @note - not used: print an OSC-style type string
-        // std::cout << list.types() << std::endl;
         const int len = ptr->list.len();
         v8::Local<v8::Array> list = Nan::New<v8::Array>(len);
 

@@ -148,8 +148,6 @@ NAN_METHOD(NodePd::init)
     nodePd->audioConfig_->ticks = ticks;
     nodePd->audioConfig_->framesPerBuffer = blockSize * ticks;
 
-    std::cout << ticks << std::endl;
-
     // init pure-data
     const bool pdInitialized = nodePd->pdWrapper_->init(nodePd->audioConfig_);
     nodePd->pdWrapper_->setReceiver(nodePd->pdReceiver_);
