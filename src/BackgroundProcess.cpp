@@ -14,7 +14,7 @@ BackgroundProcess::BackgroundProcess(
   , msgQueue_(msgQueue)
   , pd_(pd)
   , paStream_(paStream)
-  , interval_((float) audioConfig->blockSize / (float) audioConfig->sampleRate * 1000.0f)
+  , audioConfig_(audioConfig)
 {}
 
 BackgroundProcess::~BackgroundProcess() {}
@@ -34,8 +34,9 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
     // "This function is provided only as a convenience for authors of portable code"
     // > maybe we should be do this in some other way, but can't find any doc or example
     //
-    // sleep for a block (blockSize / sampleRate * 1000)
-    Pa_Sleep(this->interval_);
+    // sleep for a block (in ms)
+    // http://portaudio.com/docs/v19-doxydocs/portaudio_8h.html#a1b3c20044c9401c42add29475636e83d
+    Pa_Sleep(this->audioConfig_->bufferDuration * 1000.0f);
   }
 }
 

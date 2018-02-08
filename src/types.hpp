@@ -12,6 +12,7 @@ typedef struct audio_config_s {
   int blockSize;
   int ticks;
   int framesPerBuffer; // blockSize * ticks
+  double bufferDuration;
 } audio_config_t;
 
 typedef struct patch_infos_s {

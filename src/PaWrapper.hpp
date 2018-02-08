@@ -20,7 +20,17 @@ class PaWrapper {
      * callback
      */
     bool init(audio_config_t * audioConfig, pd::PdBase * pd);
+
+    /**
+     * accessor for the PaStream
+     */
     PaStream * getStream();
+
+    /**
+     * Pointer to the last `PaStreamCallbackTimeInfo`
+     */
+    const PaStreamCallbackTimeInfo * timeInfo;
+    double currentTime;
 
   private:
     audio_config_t * audioConfig_;

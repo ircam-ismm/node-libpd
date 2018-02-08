@@ -45,7 +45,7 @@ class NodePd : public Nan::ObjectWrap {
     PdReceiver * pdReceiver_;
     BackgroundProcess * backgroundProcess_;
 
-    Nan::Callback *  messageCallback_;
+    Nan::Callback * messageCallback_;
 
     static const int DEFAULT_NUM_INPUT_CHANNELS = 1;
     static const int DEFAULT_NUM_OUTPUT_CHANNELS = 2;
@@ -68,7 +68,7 @@ class NodePd : public Nan::ObjectWrap {
     // communications
     /**
      * @important
-     * `subscribe` and ùnsubscribe` follow here the libPd API,
+     * `subscribe` and `unsubscribe` follow here the libPd API,
      * not the API exposed in javascript, see `index.js` to see the  exposed
      * signature of these methods.
      */
@@ -81,13 +81,18 @@ class NodePd : public Nan::ObjectWrap {
     static NAN_METHOD(unsubscribe);
 
     /**
-     * Set the callback for pd messages
-     * must be called before `init`
+     * Set the callback for pd messages.
+     * Is considered private as it is called in the js wrapper that implement
+     * a more idiomatic js `subscribe/unsucbscribe` pattern.
+     * @important - must be called before `init`
      * @private
      */
     static NAN_METHOD(_setMessageCallback);
 
     static NAN_METHOD(send);
+
+
+    static NAN_PROPERTY_GETTER(currentTime);
 };
 
 }; // namespace

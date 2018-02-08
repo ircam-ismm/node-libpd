@@ -4,6 +4,7 @@ namespace nodePd {
 
 PaWrapper::PaWrapper()
   : paInitErr_(Pa_Initialize())
+  , currentTime(0)
 {}
 
 PaWrapper::~PaWrapper()
@@ -153,8 +154,12 @@ int PaWrapper::paCallbackMethod(
 
   // @todo - handle time informations
   // cf. http://portaudio.com/docs/v19-doxydocs/structPaStreamCallbackTimeInfo.html#af21eb5482cadb212dae38fdbbd9bebfb
-  std::cout.precision(9);
-  std::cout << std::fixed << timeInfo->currentTime << std::endl;
+  // std::cout.precision(9);
+  // std::cout << std::fixed << timeInfo->outputBufferDacTime << std::endl;
+  // std::cout << std::fixed << timeInfo->outputBufferDacTime - this->timeInfo->outputBufferDacTime << std::endl;
+
+  this->timeInfo = timeInfo;
+  this->currentTime = (double) timeInfo->outputBufferDacTime;
 
   return paContinue;
 }

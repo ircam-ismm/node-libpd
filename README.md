@@ -18,6 +18,18 @@ npm install [--save] b-ma/node-libpd
 $ npm test
 ```
 
+## Raspberry pi tests
+
+test ">>>>> poly like": 
+
+- on-board audio card: needs at least 32 ticks
+- HifiBerry dac+ - works with 1 tick
+
+_@todo_
+
+- test other sound cards (including one with input)
+- 
+
 ## Next Steps
 
 - clock (currentTime, etc...)
@@ -28,6 +40,7 @@ $ npm test
 #### tests
 
 - find a proper way to organize tests
+- fix the race condition between js and worker threads (implement a Promise based API for `init`) => initialization can be quite long (> 100ms on mac OSX)
 
 #### audio
 

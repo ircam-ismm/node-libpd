@@ -28,6 +28,10 @@ NAN_MODULE_INIT(NodePd::Init)
   // @note - pseudo-private method (is nullified in index.js)
   Nan::SetPrototypeMethod(tpl, "_setMessageCallback", _setMessageCallback);
 
+  // getter / setter
+  v8::Local<v8::ObjectTemplate> itpl = tpl->InstanceTemplate();
+  Nan::SetAccessor(itpl, Nan::New<v8::String>("currentTime").ToLocalChecked(), currentTime);
+
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("NodePd").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
 }
@@ -144,9 +148,10 @@ NAN_METHOD(NodePd::init)
     nodePd->audioConfig_->numInputChannels = numInputChannels;
     nodePd->audioConfig_->numOutputChannels = numOutputChannels;
     nodePd->audioConfig_->sampleRate = sampleRate;
-    nodePd->audioConfig_->blockSize = blockSize;
-    nodePd->audioConfig_->ticks = ticks;
+    nodePd->audioConfig_->blockSize = blockSize; // size of the pd blocks (e.g. 64)
+    nodePd->audioConfig_->ticks = ticks; // number of blocks processed by pd in
     nodePd->audioConfig_->framesPerBuffer = blockSize * ticks;
+    nodePd->audioConfig_->bufferDuration = blockSize * ticks / sampleRate;
 
     // init pure-data
     const bool pdInitialized = nodePd->pdWrapper_->init(nodePd->audioConfig_);
@@ -430,6 +435,16 @@ NAN_METHOD(NodePd::_setMessageCallback) {
     Nan::Callback * callback = new Nan::Callback(info[0].As<v8::Function>());
     nodePd->messageCallback_ = callback;
   }
+}
+
+
+NAN_PROPERTY_GETTER(NodePd::currentTime) {
+  NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+  double currentTime = nodePd->paWrapper_->currentTime;
+
+  v8::Local<v8::Number> ret = Nan::New<v8::Number>(currentTime);
+
+  info.GetReturnValue().Set(ret);
 }
 
 }; // namespace

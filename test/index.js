@@ -175,26 +175,37 @@ console.log('');
 /**
  * Poly
  */
-console.log('');
-console.log('>>>>> poly like');
-console.log('');
+// console.log('');
+// console.log('>>>>> poly like');
+// console.log('');
 
-for (let i = 0; i < 3; i++) {
-  setTimeout(() => {
-    const patch = pd.openPatch('poly-like.pd', patchesPath);
-    console.log(patch);
-    const baseFreq = 200 * (i + 1);
-    let index = 0;
+// for (let i = 0; i < 3; i++) {
+//   setTimeout(() => {
+//     const patch = pd.openPatch('poly-like.pd', patchesPath);
+//     console.log(patch);
+//     const baseFreq = 200 * (i + 1);
+//     let index = 0;
 
-    const intervalId = setInterval(() => {
-      pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-      pd.send(patch.$0 + '-trigger');
+//     const intervalId = setInterval(() => {
+//       pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
+//       pd.send(patch.$0 + '-trigger');
 
-      index += 1;
+//       index += 1;
 
-      if (index >= 16)
-        clearInterval(intervalId);
-    }, 300);
-  }, 200 * (i + 1));
-}
+//       if (index >= 16)
+//         clearInterval(intervalId);
+//     }, 300);
+//   }, 200 * (i + 1));
+// }
 
+/**
+ * currentTime
+ */
+function logCurrentTime() {
+  const currentTime = pd.currentTime;
+  console.log('currentTime:', currentTime);
+
+  setTimeout(logCurrentTime, 100);
+};
+
+setTimeout(logCurrentTime, 0);
