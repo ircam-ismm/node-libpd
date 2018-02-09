@@ -39,16 +39,23 @@ enum class PD_MSG_TYPES {
 
 struct pd_msg_t {
   pd_msg_t(std::string c)
-    : type(PD_MSG_TYPES::BANG_MSG), channel(c) {};
+    : type(PD_MSG_TYPES::BANG_MSG)
+    , channel(c) {};
 
   pd_msg_t(std::string c, float n)
-    : type(PD_MSG_TYPES::FLOAT_MSG), channel(c), num(n) {};
+    : type(PD_MSG_TYPES::FLOAT_MSG)
+    , channel(c)
+    , num(n) {};
 
   pd_msg_t(std::string c, std::string s)
-    : type(PD_MSG_TYPES::SYMBOL_MSG), channel(c), symbol(s) {};
+    : type(PD_MSG_TYPES::SYMBOL_MSG)
+    , channel(c)
+    , symbol(s) {};
 
   pd_msg_t(std::string c, pd::List l)
-    : type(PD_MSG_TYPES::LIST_MSG), channel(c), list(l) {};
+    : type(PD_MSG_TYPES::LIST_MSG)
+    , channel(c)
+    , list(l) {};
 
   PD_MSG_TYPES type;
   std::string channel;
@@ -58,8 +65,30 @@ struct pd_msg_t {
 };
 
 // for time
-struct pd_timed_msg_t : pd_msg_t {
+struct pd_scheduled_msg_t : pd_msg_t {
+  pd_scheduled_msg_t(std::string c, double t)
+    : pd_msg_t(c)
+    , time(t) {};
+
+  pd_scheduled_msg_t(std::string c, double t, float n)
+    : pd_msg_t(c, n)
+    , time(t) {};
+
+  pd_scheduled_msg_t(std::string c, double t, std::string s)
+    : pd_msg_t(c, s)
+    , time(t) {};
+
+  pd_scheduled_msg_t(std::string c, double t, pd::List l)
+    : pd_msg_t(c, l)
+    , time(t) {};
+
   double time;
+};
+
+struct compare_msg_time_t {
+  bool operator()(pd_scheduled_msg_t const & msg1, pd_scheduled_msg_t const & msg2) {
+    return msg1.time > msg2.time;
+  }
 };
 
 }; // namespace

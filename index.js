@@ -1,4 +1,25 @@
-var nodelibpd = require('bindings')('nodelibpd');
+const nodelibpd = require('bindings')('nodelibpd');
+
+/**
+ * @namespace pd
+ *
+ */
+/**
+ * @method pd.send
+ * @todo - note on messsages order
+ *
+ * @param {String} channel - name of the corresponding receive in pd patch
+ * @param {Any} value - payload of the message, the corresponding mapping is
+ *  made with pd types:
+ *  - Number -> float
+ *  - String -> symbol
+ *  - Array  -> list (all value that neither Number nor String are ignored)
+ *  - else   -> bang
+ * @param {Number} [time=undefined] - audio time at which the message should be
+ *  sent. If undefined or < currentTime, is sent as fast as possible. Messages
+ *  are processed at pd control rate.
+ */
+
 
 // singleton
 var _pd = new nodelibpd.NodePd();

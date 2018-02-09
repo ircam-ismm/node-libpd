@@ -52,7 +52,7 @@ class NodePd : public Nan::ObjectWrap {
     static const int DEFAULT_NUM_INPUT_CHANNELS = 1;
     static const int DEFAULT_NUM_OUTPUT_CHANNELS = 2;
     static const int DEFAULT_SAMPLE_RATE = 44100;
-    static const int DEFAULT_NUM_TICKS = 2;
+    static const int DEFAULT_NUM_TICKS = 1;
 
     static NAN_METHOD(New);
     static Nan::Persistent<v8::Function> constructor;

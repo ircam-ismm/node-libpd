@@ -93,6 +93,20 @@ console.log('');
 //   }, 1000);
 // }, 1000);
 
+
+/**
+ * currentTime
+ */
+// function logCurrentTime() {
+//   const currentTime = pd.currentTime;
+//   console.log('currentTime:', currentTime);
+
+//   setTimeout(logCurrentTime, 100);
+// };
+
+// logCurrentTime();
+
+
 /**
  * Audio Input / Output
  */
@@ -153,10 +167,12 @@ console.log('');
 // pd.subscribe(`${$0}-log-symbol`, function(val) { console.log(val); });
 // pd.subscribe(`${$0}-log-list`, function(val) { console.log(val); });
 
-// pd.send(`${$0}-bang`);
-// pd.send(`${$0}-float`, 42);
-// pd.send(`${$0}-symbol`, 'mySymbol');
-// pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3]);
+// const now = pd.currentTime;
+
+// pd.send(`${$0}-bang`, true);
+// pd.send(`${$0}-float`, 42, now + 1);
+// pd.send(`${$0}-symbol`, 'mySymbol', now + 2);
+// pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3], now + 3);
 
 /**
  * Sine
@@ -199,13 +215,28 @@ console.log('');
 // }
 
 /**
- * currentTime
+ * Poly scheduled
  */
-function logCurrentTime() {
-  const currentTime = pd.currentTime;
-  console.log('currentTime:', currentTime);
+console.log('');
+console.log('>>>>> poly scheduled');
+console.log('');
 
-  setTimeout(logCurrentTime, 100);
-};
+const patches = [];
+for (let i = 0; i < 3; i++)
+  patches[i] = pd.openPatch('poly-like.pd', patchesPath);
 
-logCurrentTime();
+const startDelay = 0.2; // in sec
+const noteDelay = 0.3; // in sec
+const now = pd.currentTime;
+
+for (let i = 0; i < 3; i++) {
+  const startOffset = now + (i * startDelay);
+  const baseFreq = 200 * (i + 1);
+
+  for (let j = 0; j < 16; j++) {
+    const triggerTime = startOffset + j * noteDelay;
+    pd.send(patches[i].$0 + '-freq', baseFreq * (j + 1), triggerTime);
+    pd.send(patches[i].$0 + '-trigger', true, triggerTime);
+  }
+}
+

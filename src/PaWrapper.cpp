@@ -43,6 +43,8 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
   std::cout << "blockSize: " << audioConfig->blockSize << std::endl;
   std::cout << "ticks: " << audioConfig->ticks << std::endl;
   std::cout << "framesPerBuffer: " << audioConfig->framesPerBuffer << std::endl;
+  std::cout.precision(9);
+  std::cout << "bufferDuration: " << std::fixed << audioConfig->bufferDuration << std::endl;
 
   PaStreamParameters inputParameters;
   PaStreamParameters outputParameters;

@@ -31,14 +31,15 @@ class PdWrapper {
     patch_infos_t openPatch(const std::string patch, const std::string path);
     patch_infos_t closePatch(int dollarZero);
 
-    void sendBang(const std::string & channel);
-    void sendFloat(const std::string & channel, float value);
-    void sendSymbol(const std::string & channel, const std::string & symbol);
+    void sendMessage(const pd_scheduled_msg_t);
+    // void sendBang(const std::string & channel);
+    // void sendFloat(const std::string & channel, float value);
+    // void sendSymbol(const std::string & channel, const std::string & symbol);
 
-    void startMessage();
-    void addFloat(const float num);
-    void addSymbol(const std::string & symbol);
-    void finishList(const std::string & dest);
+    // void startMessage();
+    // void addFloat(const float num);
+    // void addSymbol(const std::string & symbol);
+    // void finishList(const std::string & dest);
 
     void setReceiver(PdReceiver * receiver);
     void subscribe(const std::string & channel);

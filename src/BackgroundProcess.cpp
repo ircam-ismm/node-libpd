@@ -11,7 +11,7 @@ BackgroundProcess::BackgroundProcess(
   PdWrapper * pdWrapper)
   : Nan::AsyncProgressWorker(callback)
   , onProgress_(onProgress)
-  , msgQueue_(msgQueue)
+  , msgReceiveQueue_(msgQueue)
   , audioConfig_(audioConfig)
   , paWrapper_(paWrapper)
   , pdWrapper_(pdWrapper)
@@ -19,22 +19,39 @@ BackgroundProcess::BackgroundProcess(
 
 BackgroundProcess::~BackgroundProcess() {}
 
+void BackgroundProcess::addScheduledMessage(pd_scheduled_msg_t msg) {
+  this->sendMsgQueue_.push(msg);
+}
+
+/**
+ * Nan::AsyncProgressQueueWorker API
+ */
 void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress)
 {
   PaStream * paStream = this->paWrapper_->getStream();
-  pd::PdBase * pd = this->pdWrapper_->getLibPdInstance();
 
   while (Pa_IsStreamActive(paStream) == 1) {
-    pd->receiveMessages();
+    double currentTime = this->paWrapper_->currentTime;
+    double lookAhead = this->audioConfig_->bufferDuration;
+    double nextTime = currentTime + lookAhead;
 
-    // process messages in priority_queue
+    // send scheduled messages to pd
+    while (!this->sendMsgQueue_.empty() && this->sendMsgQueue_.top().time <= nextTime) {
+      pd_scheduled_msg_t nextMsg = this->sendMsgQueue_.top();
+      this->pdWrapper_->sendMessage(nextMsg);
+      this->sendMsgQueue_.pop();
+    }
+
+    // receive messages from pd
+    this->pdWrapper_->getLibPdInstance()->receiveMessages();
 
     // add flag to progress callback if the queue is not empty
-    if (!this->msgQueue_->empty()) {
+    if (!this->msgReceiveQueue_->empty()) {
       bool flag = true;
       progress.Send(reinterpret_cast<const char *>(& flag), sizeof(bool));
     }
 
+    // wait for next tick...
     // @note - as stated in the doc of `Pa_Sleep`
     // "This function is provided only as a convenience for authors of portable code"
     // > maybe we should be do this in some other way, but can't find any doc or example
@@ -45,6 +62,8 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
   }
 }
 
+
+// here we are in the JS tick
 void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
 {
   Nan::HandleScope scope;
@@ -52,8 +71,8 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
   const bool flag = * reinterpret_cast<bool *>(const_cast<char *>(data));
   (void) flag; // prevent unused warning
 
-  while (!this->msgQueue_->empty()) {
-    auto ptr = this->msgQueue_->pop();
+  while (!this->msgReceiveQueue_->empty()) {
+    auto ptr = this->msgReceiveQueue_->pop();
 
     v8::Local<v8::String> channel =
       Nan::New<v8::String>(ptr->channel).ToLocalChecked();

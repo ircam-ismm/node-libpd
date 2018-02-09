@@ -105,38 +105,55 @@ patch_infos_t PdWrapper::createPatchInfos_(pd::Patch patch)
 // --------------------------------------------------------------------------
 
 // ------- send to pd
-
-void PdWrapper::sendBang(const std::string & channel)
+void PdWrapper::sendMessage(const pd_scheduled_msg_t msg)
 {
-  this->pd_->sendBang(channel);
+  switch (msg.type) {
+    case PD_MSG_TYPES::BANG_MSG:
+      this->pd_->sendBang(msg.channel);
+      break;
+    case PD_MSG_TYPES::FLOAT_MSG:
+      this->pd_->sendFloat(msg.channel, msg.num);
+      break;
+    case PD_MSG_TYPES::SYMBOL_MSG:
+      this->pd_->sendSymbol(msg.channel, msg.symbol);
+      break;
+    case PD_MSG_TYPES::LIST_MSG:
+      this->pd_->sendList(msg.channel, msg.list);
+      break;
+  }
 }
 
-void PdWrapper::sendFloat(const std::string & channel, float value)
-{
-  this->pd_->sendFloat(channel, value);
-}
+// void PdWrapper::sendBang(const std::string & channel)
+// {
+//   this->pd_->sendBang(channel);
+// }
 
-void PdWrapper::sendSymbol(const std::string & channel, const std::string & symbol)
-{
-  this->pd_->sendSymbol(channel, symbol);
-}
+// void PdWrapper::sendFloat(const std::string & channel, float value)
+// {
+//   this->pd_->sendFloat(channel, value);
+// }
 
-// lists
-void PdWrapper::startMessage() {
-  this->pd_->startMessage();
-}
+// void PdWrapper::sendSymbol(const std::string & channel, const std::string & symbol)
+// {
+//   this->pd_->sendSymbol(channel, symbol);
+// }
 
-void PdWrapper::addFloat(const float num) {
-  this->pd_->addFloat(num);
-}
+// // lists
+// void PdWrapper::startMessage() {
+//   this->pd_->startMessage();
+// }
 
-void PdWrapper::addSymbol(const std::string & symbol) {
-  this->pd_->addSymbol(symbol);
-}
+// void PdWrapper::addFloat(const float num) {
+//   this->pd_->addFloat(num);
+// }
 
-void PdWrapper::finishList(const std::string & dest) {
-  this->pd_->finishList(dest);
-}
+// void PdWrapper::addSymbol(const std::string & symbol) {
+//   this->pd_->addSymbol(symbol);
+// }
+
+// void PdWrapper::finishList(const std::string & dest) {
+//   this->pd_->finishList(dest);
+// }
 
 // ------- receive from pd
 

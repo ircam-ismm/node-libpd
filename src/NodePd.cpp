@@ -151,7 +151,7 @@ NAN_METHOD(NodePd::init)
     nodePd->audioConfig_->blockSize = blockSize; // size of the pd blocks (e.g. 64)
     nodePd->audioConfig_->ticks = ticks; // number of blocks processed by pd in
     nodePd->audioConfig_->framesPerBuffer = blockSize * ticks;
-    nodePd->audioConfig_->bufferDuration = blockSize * ticks / sampleRate;
+    nodePd->audioConfig_->bufferDuration = (double) blockSize * (double) ticks / (double) sampleRate;
 
     // init pure-data
     const bool pdInitialized = nodePd->pdWrapper_->init(nodePd->audioConfig_);
@@ -349,6 +349,7 @@ NAN_METHOD(NodePd::clearSearchPath) {}
  */
 NAN_METHOD(NodePd::send) {
   NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+
   // get channel
   if (!info[0]->IsString())
     std::cout << "send: no channel given" << std::endl;
@@ -357,52 +358,63 @@ NAN_METHOD(NodePd::send) {
   Nan::Utf8String nanChannel(localChannel);
   std::string channel(*nanChannel);
 
+
+  double time = 0.;
+
+  if (info[2]->IsNumber()) {
+    v8::Local<v8::Number> number = Nan::To<v8::Number>(info[2]).ToLocalChecked();
+    time = number->Value();
+  }
+
   if (info[1]->IsString()) {
     // @todo - test when receive is implemented
     v8::Local<v8::String> localSymbol = Nan::To<v8::String>(info[1]).ToLocalChecked();
     Nan::Utf8String nanSymbol(localSymbol);
     std::string symbol(*nanSymbol);
 
-    nodePd->pdWrapper_->sendSymbol(channel, symbol);
+    pd_scheduled_msg_t msg(channel, time, symbol);
+    nodePd->backgroundProcess_->addScheduledMessage(msg);
 
   } else if (info[1]->IsNumber()) {
 
     v8::Local<v8::Number> number = Nan::To<v8::Number>(info[1]).ToLocalChecked();
-    const float value = number->Value();
+    const float num = number->Value();
 
-    nodePd->pdWrapper_->sendFloat(channel, value);
+    pd_scheduled_msg_t msg(channel, time, num);
+    nodePd->backgroundProcess_->addScheduledMessage(msg);
 
   } else if (info[1]->IsArray()) {
 
-    v8::Local<v8::Array> list = v8::Local<v8::Array>::Cast(info[1]);
-    const int len = list->Length();
+    v8::Local<v8::Array> arr = v8::Local<v8::Array>::Cast(info[1]);
+    const int len = arr->Length();
 
     if (len > 0) {
-      nodePd->pdWrapper_->startMessage();
+      pd::List list;
 
       for (int i = 0; i < len; i++) {
-        if (Nan::Has(list, i).FromJust()) {
+        if (Nan::Has(arr, i).FromJust()) {
           // @note - ignore everything non float or string
-          v8::Local<v8::Value> localValue = Nan::Get(list, i).ToLocalChecked();
+          v8::Local<v8::Value> localValue = Nan::Get(arr, i).ToLocalChecked();
 
           if (localValue->IsNumber()) {
             float num = localValue->NumberValue();
-
-            nodePd->pdWrapper_->addFloat(num);
+            list.addFloat(num);
           } else if (localValue->IsString()) {
             Nan::Utf8String nanSymbol(localValue);
             std::string symbol(*nanSymbol);
-
-            nodePd->pdWrapper_->addSymbol(symbol);
+            list.addSymbol(symbol);
           }
         }
       }
 
-      nodePd->pdWrapper_->finishList(channel);
+      pd_scheduled_msg_t msg(channel, time, list);
+      nodePd->backgroundProcess_->addScheduledMessage(msg);
     }
   } else {
-    nodePd->pdWrapper_->sendBang(channel);
+    pd_scheduled_msg_t msg(channel, time);
+    nodePd->backgroundProcess_->addScheduledMessage(msg);
   }
+
 }
 
 // kind of private method - document only receive(channel, callback) wrapper

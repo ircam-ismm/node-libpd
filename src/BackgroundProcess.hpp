@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <queue>
 
 #include "nan.h"
 #include "portaudio.h"
@@ -37,13 +38,17 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
     void HandleProgressCallback(const char * data, size_t size);
     void HandleOkCallback();
 
+    void addScheduledMessage(pd_scheduled_msg_t);
+
   private:
     Nan::Callback * onProgress_;
 
     audio_config_t * audioConfig_;
-    LockedQueue<pd_msg_t> * msgQueue_;
+    LockedQueue<pd_msg_t> * msgReceiveQueue_;
     PaWrapper * paWrapper_;
     PdWrapper * pdWrapper_;
+
+    std::priority_queue<pd_scheduled_msg_t, std::vector<pd_scheduled_msg_t>, compare_msg_time_t> sendMsgQueue_;
 };
 
 }; // namespace
