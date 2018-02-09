@@ -170,12 +170,17 @@ NAN_METHOD(NodePd::init)
       nodePd->messageCallback_,
       nodePd->audioConfig_,
       nodePd->msgQueue_,
-      nodePd->pdWrapper_->getLibPdInstance(),
-      nodePd->paWrapper_->getStream()
+      nodePd->paWrapper_,
+      nodePd->pdWrapper_
     );
 
     // launch audio loop
     AsyncQueueWorker(nodePd->backgroundProcess_);
+
+    // block while time <= 0
+    while ((double) nodePd->paWrapper_->currentTime <= 0.0f) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
 
     nodePd->initialized_ = (pdInitialized && paInitialized);
     info.GetReturnValue().Set(nodePd->initialized_);

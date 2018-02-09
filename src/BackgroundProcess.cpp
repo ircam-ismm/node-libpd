@@ -7,22 +7,27 @@ BackgroundProcess::BackgroundProcess(
   Nan::Callback * onProgress,
   audio_config_t * audioConfig,
   LockedQueue<pd_msg_t> * msgQueue,
-  pd::PdBase * pd,
-  PaStream * paStream)
+  PaWrapper * paWrapper,
+  PdWrapper * pdWrapper)
   : Nan::AsyncProgressWorker(callback)
   , onProgress_(onProgress)
   , msgQueue_(msgQueue)
-  , pd_(pd)
-  , paStream_(paStream)
   , audioConfig_(audioConfig)
+  , paWrapper_(paWrapper)
+  , pdWrapper_(pdWrapper)
 {}
 
 BackgroundProcess::~BackgroundProcess() {}
 
 void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress)
 {
-  while (Pa_IsStreamActive(this->paStream_) == 1) {
-    this->pd_->receiveMessages();
+  PaStream * paStream = this->paWrapper_->getStream();
+  pd::PdBase * pd = this->pdWrapper_->getLibPdInstance();
+
+  while (Pa_IsStreamActive(paStream) == 1) {
+    pd->receiveMessages();
+
+    // process messages in priority_queue
 
     // add flag to progress callback if the queue is not empty
     if (!this->msgQueue_->empty()) {

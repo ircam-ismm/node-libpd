@@ -57,4 +57,9 @@ struct pd_msg_t {
   pd::List list; // should be a ref, but crash at compile time
 };
 
+// for time
+struct pd_timed_msg_t : pd_msg_t {
+  double time;
+};
+
 }; // namespace

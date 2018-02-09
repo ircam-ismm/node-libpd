@@ -40,7 +40,6 @@ _@todo_
 #### tests
 
 - find a proper way to organize tests
-- fix the race condition between js and worker threads (implement a Promise based API for `init`) => initialization can be quite long (> 100ms on mac OSX)
 
 #### audio
 
@@ -64,7 +63,7 @@ _@todo_
 #### misc
 
 - stop the whole pd and portaudio instances
-- make `init` asynchronous
+- make `init` asynchronous to fix the race condition between js and worker threads (initialization can be quite long (> 100ms on mac OSX)). `init` should return a `Promise` => current workaround is to block the `init` method until `currentTime != 0`
 - move `LockedQueue` implementation in `.cpp` file
 - install babel thing to rewrite the index.js in es6
   + would be fancy to have an `index.mjs` and an `index.js`

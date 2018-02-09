@@ -152,13 +152,14 @@ int PaWrapper::paCallbackMethod(
 
   this->pd_->processFloat(this->audioConfig_->ticks, in, out);
 
-  // @todo - handle time informations
-  // cf. http://portaudio.com/docs/v19-doxydocs/structPaStreamCallbackTimeInfo.html#af21eb5482cadb212dae38fdbbd9bebfb
-  // std::cout.precision(9);
-  // std::cout << std::fixed << timeInfo->outputBufferDacTime << std::endl;
-  // std::cout << std::fixed << timeInfo->outputBufferDacTime - this->timeInfo->outputBufferDacTime << std::endl;
+  /**
+   * @todo - handle time informations
+   * cf. http://portaudio.com/docs/v19-doxydocs/structPaStreamCallbackTimeInfo.html#af21eb5482cadb212dae38fdbbd9bebfb
+   * std::cout.precision(9);
+   * std::cout << std::fixed << timeInfo->outputBufferDacTime << std::endl;
+   * std::cout << std::fixed << timeInfo->outputBufferDacTime - this->timeInfo->outputBufferDacTime << std::endl;
+   */
 
-  this->timeInfo = timeInfo;
   this->currentTime = (double) timeInfo->outputBufferDacTime;
 
   return paContinue;

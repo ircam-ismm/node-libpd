@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "nan.h"
 #include "PdBase.hpp"

@@ -7,6 +7,8 @@
 #include "libpd/PdBase.hpp"
 #include "./types.hpp"
 #include "./LockedQueue.hpp"
+#include "./PaWrapper.hpp"
+#include "./PdWrapper.hpp"
 
 namespace nodePd {
 
@@ -25,10 +27,11 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
         Nan::Callback * onProgress,
         audio_config_t * audioConfig,
         LockedQueue<pd_msg_t> * msgQueue,
-        pd::PdBase * pd,
-        PaStream * paStream);
+        PaWrapper * paWrapper,
+        PdWrapper * pdWrapper);
     ~BackgroundProcess();
 
+    // void scheduleMsg(timed_msg_t);
     // async worker signature
     void Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress);
     void HandleProgressCallback(const char * data, size_t size);
@@ -39,8 +42,8 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
 
     audio_config_t * audioConfig_;
     LockedQueue<pd_msg_t> * msgQueue_;
-    pd::PdBase * pd_;
-    PaStream * paStream_;
+    PaWrapper * paWrapper_;
+    PdWrapper * pdWrapper_;
 };
 
 }; // namespace

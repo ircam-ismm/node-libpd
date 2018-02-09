@@ -208,4 +208,4 @@ function logCurrentTime() {
   setTimeout(logCurrentTime, 100);
 };
 
-setTimeout(logCurrentTime, 0);
+logCurrentTime();

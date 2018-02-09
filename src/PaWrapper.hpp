@@ -27,9 +27,8 @@ class PaWrapper {
     PaStream * getStream();
 
     /**
-     * Pointer to the last `PaStreamCallbackTimeInfo`
+     * last `Pa::timeInfo->outputBufferDacTime`
      */
-    const PaStreamCallbackTimeInfo * timeInfo;
     double currentTime;
 
   private:
@@ -62,7 +61,7 @@ class PaWrapper {
       PaStreamCallbackFlags statusFlags,
       void * userData)
     {
-      return ((PaWrapper*)userData)->paCallbackMethod(
+      return ((PaWrapper *)userData)->paCallbackMethod(
         inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
     }
 };
