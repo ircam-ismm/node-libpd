@@ -8,10 +8,12 @@
   "gypfile": true,
   "scripts": {
     "install": "node-gyp rebuild",
+    "deploy": "np --yolo",
     "test": "node ./test/index.js"
   },
   "devDependencies": {
     "node-gyp": "^1.0.3",
+    "np": "^3.0.4",
     "segfault-handler": "^1.0.0",
     "tape": "^4.8.0"
   },

@@ -20,10 +20,9 @@ const nodelibpd = require('bindings')('nodelibpd');
  *  are processed at pd control rate.
  */
 
-
 // singleton
-var _pd = new nodelibpd.NodePd();
-var _listeners = {};
+let _pd = new nodelibpd.NodePd();
+let _listeners = {};
 
 // set message listener
 _pd._setMessageCallback(function(channel, value) {
