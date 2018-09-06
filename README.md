@@ -17,9 +17,7 @@ npm install [--save] node-libpd
 $ npm run test
 ```
 
-## Raspberry pi tests
-
-## Todos
+## Notes / Todos
 
 - `pd.clear()` to stop background processes
 - find a proper way to organize tests
