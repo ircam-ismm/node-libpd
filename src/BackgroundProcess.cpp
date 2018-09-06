@@ -63,7 +63,9 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
 }
 
 
-// here we are in the JS tick
+/**
+ * This is called in the js event loop
+ */
 void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
 {
   Nan::HandleScope scope;

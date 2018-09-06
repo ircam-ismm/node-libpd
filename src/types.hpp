@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libpd/PdBase.hpp"
-#include "portaudio.h"
+// #include "portaudio.h"
 
 namespace nodePd {
 
@@ -60,7 +60,7 @@ struct pd_msg_t {
   PD_MSG_TYPES type;
   std::string channel;
   float num;
-  std::string symbol = ""; // should be a ref, but crash at compile time
+  std::string symbol = ""; // should be a ref, but crashes at compile time
   pd::List list; // should be a ref, but crash at compile time
 };
 

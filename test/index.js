@@ -28,7 +28,7 @@ const pd = require('../');
  * @todo - fix the race condition between the js and the worker thread
  */
 const initialized = pd.init({
-  numInputChannels: 0,
+  numInputChannels: 1,
   numOutputChannels: 1,
   sampleRate: 48000,
   ticks: 1,
@@ -110,15 +110,15 @@ console.log('');
 /**
  * Audio Input / Output
  */
-// console.log('');
-// console.log('>>>>> audio in / out');
-// console.log('');
+console.log('');
+console.log('>>>>> audio in / out');
+console.log('');
 
-// const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
+const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
 
-// setInterval(() => {
-//   pd.send('tone');
-// }, 2000);
+setInterval(() => {
+  pd.send('tone');
+}, 2000);
 
 /**
  * Subscribe / Unsubscribe
@@ -217,11 +217,13 @@ console.log('');
 /**
  * Poly scheduled
  */
+/*
 console.log('');
 console.log('>>>>> poly scheduled');
 console.log('');
 
 const patches = [];
+
 for (let i = 0; i < 3; i++)
   patches[i] = pd.openPatch('poly-like.pd', patchesPath);
 
@@ -239,4 +241,5 @@ for (let i = 0; i < 3; i++) {
     pd.send(patches[i].$0 + '-trigger', true, triggerTime);
   }
 }
+// */
 
