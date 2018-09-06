@@ -162,7 +162,8 @@ int PaWrapper::paCallbackMethod(
    * std::cout << std::fixed << timeInfo->outputBufferDacTime - this->timeInfo->outputBufferDacTime << std::endl;
    */
 
-  this->currentTime = (double) timeInfo->outputBufferDacTime;
+  // this->currentTime = (double) timeInfo->outputBufferDacTime;
+  this->currentTime += (double) framesPerBuffer / (double) this->audioConfig_->sampleRate;
 
   return paContinue;
 }
