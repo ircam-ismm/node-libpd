@@ -44,6 +44,11 @@ bool PdWrapper::isInited()
   return this->pd_->isInited();
 }
 
+void PdWrapper::clear()
+{
+  this->pd_->clear();
+}
+
 int PdWrapper::blockSize()
 {
   return this->pd_->blockSize();
@@ -172,4 +177,21 @@ void PdWrapper::unsubscribe(const std::string & channel)
   this->pd_->unsubscribe(channel);
 }
 
+// -------- arrays
+
+int PdWrapper::arraySize(const std::string & size)
+{
+  return this->pd_->arraySize(size);
 }
+
+bool PdWrapper::writeArray(const std::string& name, std::vector<float>& source, int writeLen, int offset)
+{
+  return this->pd_->writeArray(name, source, writeLen, offset);
+}
+
+bool PdWrapper::readArray(const std::string& name, std::vector<float>& dest, int readLen, int offset)
+{
+  return this->pd_->readArray(name, dest, readLen, offset);
+}
+
+} // namespace

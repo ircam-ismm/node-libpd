@@ -20,6 +20,7 @@ class PaWrapper {
      * callback
      */
     bool init(audio_config_t * audioConfig, pd::PdBase * pd);
+    void clear();
 
     /**
      * accessor for the PaStream

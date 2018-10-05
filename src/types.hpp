@@ -68,26 +68,39 @@ struct pd_msg_t {
 struct pd_scheduled_msg_t : pd_msg_t {
   pd_scheduled_msg_t(std::string c, double t)
     : pd_msg_t(c)
-    , time(t) {};
+    , time(t)
+    , index(counter++) {};
 
   pd_scheduled_msg_t(std::string c, double t, float n)
     : pd_msg_t(c, n)
-    , time(t) {};
+    , time(t)
+    , index(counter++) {};
 
   pd_scheduled_msg_t(std::string c, double t, std::string s)
     : pd_msg_t(c, s)
-    , time(t) {};
+    , time(t)
+    , index(counter++) {};
 
   pd_scheduled_msg_t(std::string c, double t, pd::List l)
     : pd_msg_t(c, l)
-    , time(t) {};
+    , time(t)
+    , index(counter++) {};
 
   double time;
+  long index;
+
+  static long counter;
 };
 
 struct compare_msg_time_t {
   bool operator()(pd_scheduled_msg_t const & msg1, pd_scheduled_msg_t const & msg2) {
-    return msg1.time > msg2.time;
+    if (msg1.time > msg2.time) {
+      return true;
+    } else if (msg1.time == msg2.time) {
+      return msg1.index > msg2.index;
+    } else {
+      return false;
+    }
   }
 };
 

@@ -14,7 +14,7 @@ NAN_MODULE_INIT(NodePd::Init)
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   Nan::SetPrototypeMethod(tpl, "init", init);
-  // Nan::SetPrototypeMethod(tpl, "clear", clear);
+  Nan::SetPrototypeMethod(tpl, "clear", clear);
 
   Nan::SetPrototypeMethod(tpl, "openPatch", openPatch);
   Nan::SetPrototypeMethod(tpl, "closePatch", closePatch);
@@ -24,6 +24,12 @@ NAN_MODULE_INIT(NodePd::Init)
   Nan::SetPrototypeMethod(tpl, "send", send);
   Nan::SetPrototypeMethod(tpl, "subscribe", subscribe);
   Nan::SetPrototypeMethod(tpl, "unsubscribe", unsubscribe);
+
+  //  arrays
+  Nan::SetPrototypeMethod(tpl, "arraySize", arraySize);
+  Nan::SetPrototypeMethod(tpl, "writeArray", writeArray);
+  // Nan::SetPrototypeMethod(tpl, "readArray", readArray);
+  // Nan::SetPrototypeMethod(tpl, "clearArray", clearArray);
 
   // @note - pseudo-private method (is nullified in index.js)
   Nan::SetPrototypeMethod(tpl, "_setMessageCallback", _setMessageCallback);
@@ -194,8 +200,10 @@ NAN_METHOD(NodePd::init)
  */
 NAN_METHOD(NodePd::clear)
 {
-  // NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
-  // nodePd->pd_.clear();
+  std::cout << "clear" << std::endl;
+  NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+  nodePd->pdWrapper_->clear(); // clear pd
+  // nodePd->paWrapper_->clear(); // clear portaudio
 }
 
 
@@ -416,6 +424,82 @@ NAN_METHOD(NodePd::send) {
   }
 
 }
+
+NAN_METHOD(NodePd::arraySize) {
+  NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+
+  // ignore * else
+  if (info[0]->IsString()) {
+    v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
+    Nan::Utf8String nanName(localName);
+    std::string name(*nanName);
+
+    const int size = nodePd->pdWrapper_->arraySize(name);
+
+    v8::Local<v8::Integer> localSize =
+      Nan::New<v8::Integer>(size);
+
+    info.GetReturnValue().Set(localSize);
+  }
+}
+
+NAN_METHOD(NodePd::writeArray) {
+  if (!info[0]->IsString() || !info[1]->IsTypedArray()) {
+    v8::Local<v8::String> errMsg =
+      Nan::New("Invalid arguments: `name` must be a string and `source` must be a Float32Array").ToLocalChecked();
+    Nan::ThrowTypeError(errMsg);
+  } else {
+    NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+
+    v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
+    Nan::Utf8String nanName(localName);
+    std::string name(*nanName);
+
+    v8::Local<v8::TypedArray> localArray = v8::Local<v8::TypedArray>::Cast(info[1]);
+    Nan::TypedArrayContents<float> typed(localArray);
+
+    std::vector<float> source(*typed, *typed + typed.length());//  = *typedd;
+
+    // @todo length, offset
+    // writeLen (default=-1)
+    // offset (default=0)
+
+    const bool result = nodePd->pdWrapper_->writeArray(name, source);
+
+    v8::Local<v8::Integer> v8result =
+      Nan::New<v8::Integer>(result);
+
+    info.GetReturnValue().Set(result);
+  }
+}
+
+// NAN_METHOD(NodePd::readArray) {
+
+//   if (!info[0]->IsString()) {
+//     v8::Local<v8::String> errMsg =
+//       Nan::New("Invalid arguments: `name` must be a string").ToLocalChecked();
+//     Nan::ThrowTypeError(errMsg);
+//   } else {
+//     NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+
+//     v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
+//     Nan::Utf8String nanName(localName);
+//     std::string name(*nanName);
+
+//     std::vector<float> dest;
+
+//     nodePd->pdWrapper_->readArray(name, dest);
+
+//     float test = dest[0];
+//     std::cout << test << std::endl;
+//   }
+// }
+
+// NAN_METHOD(NodePd::clearArray) {
+
+// }
+
+
 
 // kind of private method - document only receive(channel, callback) wrapper
 NAN_METHOD(NodePd::subscribe) {

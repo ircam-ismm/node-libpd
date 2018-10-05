@@ -3,6 +3,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <vector>
+#include <iterator>
 
 #include "nan.h"
 #include "PdBase.hpp"
@@ -58,7 +60,6 @@ class NodePd : public Nan::ObjectWrap {
     static Nan::Persistent<v8::Function> constructor;
 
     static NAN_METHOD(init);
-    // @todo - update
     static NAN_METHOD(clear);
 
     static NAN_METHOD(openPatch);
@@ -85,13 +86,18 @@ class NodePd : public Nan::ObjectWrap {
     /**
      * Set the callback for pd messages.
      * Is considered private as it is called in the js wrapper that implement
-     * a more idiomatic js `subscribe/unsucbscribe` pattern.
+     * a more idiomatic js `subscribe/unsubscribe` pattern.
      * @important - must be called before `init`
      * @private
      */
     static NAN_METHOD(_setMessageCallback);
 
     static NAN_METHOD(send);
+
+    static NAN_METHOD(arraySize);
+    static NAN_METHOD(writeArray);
+    // static NAN_METHOD(readArray);
+    // static NAN_METHOD(clearArray);
 
 
     static NAN_PROPERTY_GETTER(currentTime);

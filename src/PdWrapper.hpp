@@ -25,6 +25,7 @@ class PdWrapper {
 
     bool init(audio_config_t * config);
     bool isInited();
+    void clear();
     int blockSize();
 
 
@@ -44,6 +45,12 @@ class PdWrapper {
     void setReceiver(PdReceiver * receiver);
     void subscribe(const std::string & channel);
     void unsubscribe(const std::string & channel);
+
+    int arraySize(const std::string & name);
+    bool writeArray(const std::string& name, std::vector<float>& source, int writeLen=-1, int offset=0);
+    bool readArray(const std::string& name, std::vector<float>& dest, int readLen=-1, int offset=0);
+    // void unsubscribe(const std::string & channel);
+    // void unsubscribe(const std::string & channel);
 
   private:
     pd::PdBase * pd_;

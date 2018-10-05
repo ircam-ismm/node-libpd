@@ -9,6 +9,7 @@
         "./src/PaWrapper.cpp",
         "./src/PdReceiver.cpp",
         "./src/PdWrapper.cpp",
+        "./src/types.cpp",
       ],
       "include_dirs" : [
         "<!(node -e \"require('nan')\")",

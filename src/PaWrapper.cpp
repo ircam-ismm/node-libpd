@@ -142,6 +142,23 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
   return true;
 }
 
+void PaWrapper::clear()
+{
+  // // Pa_StopStream(this->paStream_);
+  // // Pa_Terminate();
+  // PaError err;
+
+  // // err = Pa_StopStream(this->paStream_);
+  // // if (err != paNoError) {
+  // //   std::cout << '[Error] Failed to close paStream' << std::endl;
+  // // }
+
+  // err = Pa_Terminate();
+  // if (err != paNoError) {
+  //   std::cout << '[Error] Failed to close portaudio' << std::endl;
+  // }
+}
+
 int PaWrapper::paCallbackMethod(
   const void * inputBuffer,
   void * outputBuffer,
@@ -153,7 +170,6 @@ int PaWrapper::paCallbackMethod(
   float * out = (float *) outputBuffer;
 
   this->pd_->processFloat(this->audioConfig_->ticks, in, out);
-
   this->currentTime += (double) framesPerBuffer / (double) this->audioConfig_->sampleRate;
 
   return paContinue;

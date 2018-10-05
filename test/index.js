@@ -110,15 +110,15 @@ console.log('');
 /**
  * Audio Input / Output
  */
-console.log('');
-console.log('>>>>> audio in / out');
-console.log('');
+// console.log('');
+// console.log('>>>>> audio in / out');
+// console.log('');
 
-const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
+// const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
 
-setInterval(() => {
-  pd.send('tone');
-}, 2000);
+// setInterval(() => {
+//   pd.send('tone');
+// }, 1000);
 
 /**
  * Subscribe / Unsubscribe
@@ -242,4 +242,52 @@ for (let i = 0; i < 3; i++) {
   }
 }
 // */
+
+/**
+ * Arrays
+ */
+console.log('');
+console.log('>>>>> write arrays');
+console.log('');
+
+const patch = pd.openPatch('array-test.pd', patchesPath);
+const size = pd.arraySize('my-array');
+
+const source = new Float32Array(100);
+
+for (let i = 0; i < 100; i++) {
+  source[i] = i / 100;
+}
+
+const written = pd.writeArray('my-array', source);
+
+for (let i = 0; i < 100; i++) {
+  pd.send('index', i);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
