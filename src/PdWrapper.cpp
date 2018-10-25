@@ -8,7 +8,9 @@ PdWrapper::PdWrapper()
 }
 
 PdWrapper::~PdWrapper()
-{}
+{
+  // this->pd_->clear();
+}
 
 pd::PdBase * PdWrapper::getLibPdInstance()
 {

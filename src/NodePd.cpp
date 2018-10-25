@@ -71,11 +71,13 @@ NodePd::~NodePd() {
 
 NAN_METHOD(NodePd::New)
 {
-  if (!info.IsConstructCall())
+  if (!info.IsConstructCall()) {
     return Nan::ThrowError(Nan::New("NodePd::New - called without new keyword").ToLocalChecked());
+  }
 
-  if (info.Length() > 0)
+  if (info.Length() > 0) {
     return Nan::ThrowError(Nan::New("NodePd::New - don't accept any arguments").ToLocalChecked());
+  }
 
   NodePd * nodePd = new NodePd();
   nodePd->Wrap(info.This());
