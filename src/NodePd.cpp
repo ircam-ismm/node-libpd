@@ -446,7 +446,7 @@ NAN_METHOD(NodePd::arraySize) {
 }
 
 NAN_METHOD(NodePd::writeArray) {
-  if (!info[0]->IsString() || !info[1]->IsTypedArray()) {
+  if (!info[0]->IsString() || !info[1]->IsTypedArray()) {
     v8::Local<v8::String> errMsg =
       Nan::New("Invalid arguments: `name` must be a string and `source` must be a Float32Array").ToLocalChecked();
     Nan::ThrowTypeError(errMsg);
