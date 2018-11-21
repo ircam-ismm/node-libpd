@@ -14,7 +14,8 @@ class PdReceiver : public pd::PdReceiver {
 
   public:
     PdReceiver(LockedQueue<pd_msg_t> * msgQueue);
-    ~PdReceiver();
+    // should be virtual in base class
+    virtual ~PdReceiver();
 
     // pd message receiver callbacks
     void print(const std::string& message);

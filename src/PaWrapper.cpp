@@ -3,8 +3,8 @@
 namespace nodePd {
 
 PaWrapper::PaWrapper()
-  : paInitErr_(Pa_Initialize())
-  , currentTime(0)
+  : currentTime(0)
+  , paInitErr_(Pa_Initialize())
 {}
 
 PaWrapper::~PaWrapper()

@@ -11,8 +11,8 @@ BackgroundProcess::BackgroundProcess(
   PdWrapper * pdWrapper)
   : Nan::AsyncProgressWorker(callback)
   , onProgress_(onProgress)
-  , msgReceiveQueue_(msgQueue)
   , audioConfig_(audioConfig)
+  , msgReceiveQueue_(msgQueue)
   , paWrapper_(paWrapper)
   , pdWrapper_(pdWrapper)
 {}

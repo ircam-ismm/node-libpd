@@ -63,6 +63,7 @@ NodePd::NodePd()
 
 NodePd::~NodePd() {
   // clean the mess...
+  delete paWrapper_;
   delete pdWrapper_;
   delete pdReceiver_;
 

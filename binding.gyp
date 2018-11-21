@@ -43,7 +43,8 @@
               'MACOSX_DEPLOYMENT_TARGET': '10.7',
               'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
               'OTHER_CPLUSPLUSFLAGS' : [
-                '-std=c++11','-stdlib=libc++'
+                '-std=c++11','-stdlib=libc++',
+                '-Wno-sign-compare',
               ],
               'OTHER_LDFLAGS': [
                 '-stdlib=libc++',"-Wl,-rpath,<@(module_root_dir)/build/Release"
@@ -84,7 +85,8 @@
                   ],
                   "ldflags": [
                     "-L<@(module_root_dir)/build/Release",
-                    "-Wl,-rpath,<@(module_root_dir)/build/Release"
+                    "-Wl,-rpath,<@(module_root_dir)/build/Release",
+                    '-Wno-sign-compare',
                   ]
                 },
                 "copies": [

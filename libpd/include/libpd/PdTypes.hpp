@@ -265,7 +265,7 @@ class List {
     /// \section Util
 
         /// return number of items
-        const unsigned int len() const {return (unsigned int) objects.size();}
+        unsigned int len() const {return (unsigned int) objects.size();}
 
         /// return OSC style type string ie "fsfs"
         const std::string& types() const {return typeString;}

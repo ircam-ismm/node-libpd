@@ -6,6 +6,9 @@ PdReceiver::PdReceiver(LockedQueue<pd_msg_t> * msgQueue)
   : msgQueue_(msgQueue)
 {}
 
+PdReceiver::~PdReceiver()
+{}
+
 //--------------------------------------------------------------
 void PdReceiver::print(const std::string& message) {
   std::cout << message << std::endl;
