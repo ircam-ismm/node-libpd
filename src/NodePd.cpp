@@ -203,7 +203,7 @@ NAN_METHOD(NodePd::init)
  */
 NAN_METHOD(NodePd::clear)
 {
-  std::cout << "clear" << std::endl;
+  // std::cout << "clear" << std::endl;
   NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
   nodePd->pdWrapper_->clear(); // clear pd
   // nodePd->paWrapper_->clear(); // clear portaudio
