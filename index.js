@@ -55,14 +55,17 @@ _pd.subscribe = function(channel, callback) {
 
 _pd.unsubscribe = function(channel, callback) {
   const listeners = _listeners[channel];
-  const index = listeners.indexOf(callback);
 
-  if (index !== -1) {
-    listeners.splice(index, 1);
+  if (Array.isArray(listeners)) {
+    const index = listeners.indexOf(callback);
 
-    if (listeners.length === 0) {
-      nativeUnsubscribe(channel);
-      delete _listeners[channel];
+    if (index !== -1) {
+      listeners.splice(index, 1);
+
+      if (listeners.length === 0) {
+        nativeUnsubscribe(channel);
+        delete _listeners[channel];
+      }
     }
   }
 }
