@@ -120,7 +120,9 @@ NAN_METHOD(NodePd::init)
 
     // handle arguments if definde
     if (!info[0]->IsUndefined() && info[0]->IsObject()) {
-      v8::Local<v8::Object> obj = info[0]->ToObject();
+      v8::Local<v8::Context> ctx = Nan::GetCurrentContext();
+      v8::MaybeLocal<v8::Object> maybeObj = info[0]->ToObject(ctx);
+      v8::Local<v8::Object> obj = maybeObj.ToLocalChecked();
 
       v8::Local<v8::String> numInputChannelsProp =
         Nan::New<v8::String>("numInputChannels").ToLocalChecked();
@@ -134,10 +136,10 @@ NAN_METHOD(NodePd::init)
       v8::Local<v8::String> ticksProp =
         Nan::New<v8::String>("ticks").ToLocalChecked();
 
-      v8::Local<v8::Value> localNumInputChannels = obj->Get(numInputChannelsProp);
-      v8::Local<v8::Value> localNumOutputChannels = obj->Get(numOutputChannelsProp);
-      v8::Local<v8::Value> localSampleRate = obj->Get(numSampleRateProp);
-      v8::Local<v8::Value> localTicks = obj->Get(ticksProp);
+      v8::Local<v8::Value> localNumInputChannels = Nan::Get(obj, numInputChannelsProp).ToLocalChecked();
+      v8::Local<v8::Value> localNumOutputChannels = Nan::Get(obj, numOutputChannelsProp).ToLocalChecked();
+      v8::Local<v8::Value> localSampleRate = Nan::Get(obj, numSampleRateProp).ToLocalChecked();
+      v8::Local<v8::Value> localTicks = Nan::Get(obj, ticksProp).ToLocalChecked();
 
       if (!localNumInputChannels->IsUndefined() && localNumInputChannels->IsNumber())
         numInputChannels = Nan::To<int>(localNumInputChannels).FromJust();
@@ -153,6 +155,11 @@ NAN_METHOD(NodePd::init)
     }
 
     const int blockSize = nodePd->pdWrapper_->blockSize();
+
+    // std::cout << numInputChannels << std::endl;
+    // std::cout << numOutputChannels << std::endl;
+    // std::cout << sampleRate << std::endl;
+    // std::cout << ticks << std::endl;
 
     nodePd->audioConfig_->numInputChannels = numInputChannels;
     nodePd->audioConfig_->numOutputChannels = numOutputChannels;
@@ -292,7 +299,9 @@ NAN_METHOD(NodePd::closePatch)
   NodePd* nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
 
   if (info[0]->IsObject()) {
-    v8::Local<v8::Object> patch = info[0]->ToObject();
+    v8::Local<v8::Context> ctx = Nan::GetCurrentContext();
+    v8::MaybeLocal<v8::Object> maybePatch = info[0]->ToObject(ctx);
+    v8::Local<v8::Object> patch = maybePatch.ToLocalChecked();
     v8::Local<v8::String> dollarZeroProp = Nan::New<v8::String>("$0").ToLocalChecked();
     v8::Local<v8::String> isValidProp = Nan::New<v8::String>("isValid").ToLocalChecked();
     v8::Local<v8::String> filenameProp = Nan::New<v8::String>("filename").ToLocalChecked();
@@ -313,11 +322,11 @@ NAN_METHOD(NodePd::closePatch)
       v8::Local<v8::Boolean> localIsValid =
         Nan::New<v8::Boolean>((bool) patchInfos.isValid);
 
-      v8::Local<v8::Integer> localDollarZero =
+      v8::Local<v8::Integer> newDollarZero =
         Nan::New<v8::Integer>(patchInfos.dollarZero);
 
       Nan::Set(patch, isValidProp, localIsValid);
-      Nan::Set(patch, dollarZeroProp, localDollarZero);
+      Nan::Set(patch, dollarZeroProp, newDollarZero);
     }
   } else {
     Nan::ThrowError(Nan::New("patch is not an object").ToLocalChecked());

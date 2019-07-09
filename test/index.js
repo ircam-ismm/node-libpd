@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 
+
 // debug
 const SegfaultHandler = require('segfault-handler');
 SegfaultHandler.registerHandler("crash.log");
@@ -35,44 +36,36 @@ const initialized = pd.init({
   ticks: 1,
 });
 
-const patch = pd.openPatch('receive-msg.pd', patchesPath);
-let int = 0;
 
-setInterval(() => {
-  for (let i = 0; i < 100; i++) {
-    pd.send(`${patch.$0}-list`, [int++]);
-    // pd.send(`${patch.$0}-list`, [int++, 'test', Math.random()], pd.currentTime + 1);
-    // pd.send(`${patch.$0}-bang`, true, pd.currentTime + 1);
-  }
-}, 10);
+describe('node-libpd', () => {
+  it('initialized', () => {
+    console.log(pd);
+    assert(initialized);
+  });
 
-// describe('node-libpd', () => {
-//   it('initialized', () => {
-//     assert(initialized);
-//   });
+  it('opening/closing patches', function(done) {
+    this.timeout(2100);
+    const patch1 = pd.openPatch('open-close.pd', patchesPath);
+    console.log('patch 1 opened: ', patch1);
 
-//   it('opening/closing patches', () => {
-//     const patch1 = pd.openPatch('open-close.pd', patchesPath);
-//     console.log('patch 1 opened: ', patch1);
+    setTimeout(() => {
+      const patch2 = pd.openPatch('open-close.pd', patchesPath);
+      console.log('patch 2 opened: ', patch2);
 
-//     setTimeout(() => {
-//       const patch2 = pd.openPatch('open-close.pd', patchesPath);
-//       console.log('patch 2 opened: ', patch2);
+      setTimeout(() => {
+        pd.closePatch(patch1);
+        pd.closePatch(patch2);
+        // close several time to test if crashes
+        pd.closePatch(patch2);
+        pd.closePatch(patch2);
 
-//       setTimeout(() => {
-//         pd.closePatch(patch1);
-//         pd.closePatch(patch2);
-//         // close several time to test if crashes
-//         pd.closePatch(patch2);
-//         pd.closePatch(patch2);
+        console.log('patch 1 closed: ', patch1);
+        console.log('patch 2 closed: ', patch2);
 
-//         console.log('patch 1 closed: ', patch1);
-//         console.log('patch 2 closed: ', patch2);
-
-//         done();
-//       }, 1000);
-//     }, 1000);
-//   });
+        done();
+      }, 1000);
+    }, 1000);
+  });
 
 //   it('opening/closing invalid patches', () => {
 //     const doNotExistsPatch = pd.openPatch('do-not-exists.pd', patchesPath);
@@ -180,10 +173,27 @@ setInterval(() => {
 //     pd.send(`${$0}-float`, 42, now + 1);
 //     pd.send(`${$0}-symbol`, 'mySymbol', now + 2);
 //     pd.send(`${$0}-list`, ['test', 21, 'niap', true /* ignored */, 0.3], now + 3);
+
 //     setTimeout(() => {
 //       done();
 //     }, 1000);
 //   });
+
+//   it('send at lot (double free fixed in 1171345)', () => {
+//     const patch = pd.openPatch('receive-msg.pd', patchesPath);
+//     let int = 0;
+
+//     const intervalId = setInterval(() => {
+//       for (let i = 0; i < 100; i++) {
+//         pd.send(`${patch.$0}-list`, [int++]);
+//       }
+//     }, 10);
+
+//     setTimeout(() => {
+//       clearInterval(intervalId);
+//       done();
+//     }, 10000);
+//   })
 
 //   it('sine', () => {
 //     const patch = pd.openPatch('sine.pd', patchesPath);
@@ -261,4 +271,4 @@ setInterval(() => {
 //       done();
 //     }, 5000);
 //   });
-// });
+});
