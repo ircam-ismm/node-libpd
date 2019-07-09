@@ -1,6 +1,6 @@
 {
   "name": "node-libpd",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "index.js",
   "author": [
     "Benjamin Matuszewski <benjamin.matuszewski@gmail.com>"
