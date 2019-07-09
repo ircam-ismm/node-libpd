@@ -20,10 +20,9 @@ namespace nodePd {
  * @todo - extends Nan::AsyncProgressQueueWorker
  * @todo - add a reference to flag to be able to close the process
  */
-class BackgroundProcess : public Nan::AsyncProgressWorker
+class BackgroundProcess : public Nan::AsyncProgressQueueWorker<char>
 {
   public:
-    // BackgroundProcess();
     BackgroundProcess(
         Nan::Callback * callback,
         Nan::Callback * onProgress,
@@ -35,7 +34,7 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
 
     // void scheduleMsg(timed_msg_t);
     // async worker signature
-    void Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress);
+    void Execute(const Nan::AsyncProgressQueueWorker<char>::ExecutionProgress & progress);
     void HandleProgressCallback(const char * data, size_t size);
     void HandleOkCallback();
 

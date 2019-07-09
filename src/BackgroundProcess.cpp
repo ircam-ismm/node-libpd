@@ -9,7 +9,7 @@ BackgroundProcess::BackgroundProcess(
   LockedQueue<pd_msg_t> * msgQueue,
   PaWrapper * paWrapper,
   PdWrapper * pdWrapper)
-  : Nan::AsyncProgressWorker(callback)
+  : Nan::AsyncProgressQueueWorker<char>(callback)
   , onProgress_(onProgress)
   , audioConfig_(audioConfig)
   , msgReceiveQueue_(msgQueue)
@@ -28,7 +28,9 @@ void BackgroundProcess::addScheduledMessage(pd_scheduled_msg_t msg) {
 /**
  * Nan::AsyncProgressQueueWorker API
  */
-void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgress & progress)
+
+// void Execute (const AsyncProgressQueueWorker::ExecutionProgress & progress) {
+void BackgroundProcess::Execute(const Nan::AsyncProgressQueueWorker<char>::ExecutionProgress & progress)
 {
   PaStream * paStream = this->paWrapper_->getStream();
 
@@ -87,14 +89,14 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
     switch (ptr->type) {
       case PD_MSG_TYPES::BANG_MSG: {
         v8::Local<v8::Value> argv[] = { channel };
-        this->onProgress_->Call(1, argv);
+        this->onProgress_->Call(1, argv, async_resource);
         break;
       }
 
       case PD_MSG_TYPES::FLOAT_MSG: {
         v8::Local<v8::Number> num = Nan::New<v8::Number>(ptr->num);
         v8::Local<v8::Value> argv[] = { channel, num };
-        this->onProgress_->Call(2, argv);
+        this->onProgress_->Call(2, argv, async_resource);
         break;
       }
 
@@ -102,7 +104,7 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
         v8::Local<v8::String> symbol =
           Nan::New<v8::String>(ptr->symbol).ToLocalChecked();
         v8::Local<v8::Value> argv[] = { channel, symbol };
-        this->onProgress_->Call(2, argv);
+        this->onProgress_->Call(2, argv, async_resource);
         break;
       }
 
@@ -126,7 +128,7 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
         }
 
         v8::Local<v8::Value> argv[] = { channel, list };
-        this->onProgress_->Call(2, argv);
+        this->onProgress_->Call(2, argv, async_resource);
         break;
       }
     }
@@ -141,7 +143,7 @@ void BackgroundProcess::HandleProgressCallback(const char * data, size_t size)
 void BackgroundProcess::HandleOkCallback()
 {
   v8::Local<v8::Value> argv[] = {};
-  callback->Call(1, argv);
+  callback->Call(1, argv, async_resource);
 }
 
 }; // namespace
