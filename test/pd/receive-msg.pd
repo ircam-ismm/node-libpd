@@ -1,4 +1,4 @@
-#N canvas 947 427 596 140 10;
+#N canvas 475 791 596 140 10;
 #X obj 165 30 receive \$0-float;
 #X obj 36 30 receive \$0-bang;
 #X obj 36 68 send \$0-log-bang;
@@ -7,7 +7,13 @@
 #X obj 298 68 send \$0-log-symbol;
 #X obj 443 30 receive \$0-list;
 #X obj 443 68 send \$0-log-list;
+#X obj 161 101 print;
+#X obj 433 100 print list;
+#X obj 23 101 print bang-receive;
 #X connect 0 0 3 0;
+#X connect 0 0 8 0;
 #X connect 1 0 2 0;
+#X connect 1 0 10 0;
 #X connect 4 0 5 0;
 #X connect 6 0 7 0;
+#X connect 6 0 9 0;

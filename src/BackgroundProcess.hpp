@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <queue>
+#include <mutex>
 
 #include "nan.h"
 #include "portaudio.h"
@@ -49,6 +50,8 @@ class BackgroundProcess : public Nan::AsyncProgressWorker
     PdWrapper * pdWrapper_;
 
     std::priority_queue<pd_scheduled_msg_t, std::vector<pd_scheduled_msg_t>, compare_msg_time_t> sendMsgQueue_;
+
+    mutable std::mutex mut_;
 };
 
 }; // namespace

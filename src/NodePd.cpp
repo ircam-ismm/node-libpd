@@ -472,7 +472,7 @@ NAN_METHOD(NodePd::writeArray) {
     v8::Local<v8::Integer> v8result =
       Nan::New<v8::Integer>(result);
 
-    info.GetReturnValue().Set(result);
+    info.GetReturnValue().Set(v8result);
   }
 }
 

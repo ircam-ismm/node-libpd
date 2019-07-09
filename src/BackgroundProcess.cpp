@@ -15,11 +15,13 @@ BackgroundProcess::BackgroundProcess(
   , msgReceiveQueue_(msgQueue)
   , paWrapper_(paWrapper)
   , pdWrapper_(pdWrapper)
+  , mut_()
 {}
 
 BackgroundProcess::~BackgroundProcess() {}
 
 void BackgroundProcess::addScheduledMessage(pd_scheduled_msg_t msg) {
+  std::lock_guard<std::mutex> lock(mut_);
   this->sendMsgQueue_.push(msg);
 }
 
@@ -35,12 +37,15 @@ void BackgroundProcess::Execute(const Nan::AsyncProgressWorker::ExecutionProgres
     double lookAhead = this->audioConfig_->bufferDuration;
     double nextTime = currentTime + lookAhead;
 
+    std::unique_lock<std::mutex> lock(mut_);
     // send scheduled messages to pd
     while (!this->sendMsgQueue_.empty() && this->sendMsgQueue_.top().time <= nextTime) {
       pd_scheduled_msg_t nextMsg = this->sendMsgQueue_.top();
       this->pdWrapper_->sendMessage(nextMsg);
       this->sendMsgQueue_.pop();
     }
+
+    lock.unlock();
 
     // receive messages from pd
     this->pdWrapper_->getLibPdInstance()->receiveMessages();

@@ -34,7 +34,7 @@ _pd._setMessageCallback(function(channel, value) {
     listeners.forEach(function(listener) { listener(value); });
 });
 
-// don't allow somebody to use that (look like we can't delete it...  )
+// don't allow somebody to use that (looks like we can't delete it...  )
 _pd._setMessageCallback = null;
 
 /**
