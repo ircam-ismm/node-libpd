@@ -59,7 +59,7 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
     inputParameters.device = index;
 
     if (inputParameters.device == paNoDevice) {
-      std::cout << "[Error] No device found" << std::endl;
+      std::cout << "[Error] No input device found" << std::endl;
       return false;
     }
 
@@ -89,7 +89,7 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
     outputParameters.device = index;
 
     if (outputParameters.device == paNoDevice) {
-      std::cout << "[Error] No device found" << std::endl;
+      std::cout << "[Error] No output device found" << std::endl;
       return false;
     }
 
@@ -157,6 +157,28 @@ void PaWrapper::clear()
   // if (err != paNoError) {
   //   std::cout << '[Error] Failed to close portaudio' << std::endl;
   // }
+}
+
+void PaWrapper::listDevices() {
+  int numDevices = Pa_GetDeviceCount();
+  const PaDeviceInfo *deviceInfo;
+
+  // int     structVersion
+  // const char *    name
+  // PaHostApiIndex  hostApi
+  // int     maxInputChannels
+  // int     maxOutputChannels
+  // PaTime  defaultLowInputLatency
+  // PaTime  defaultLowOutputLatency
+  // PaTime  defaultHighInputLatency
+  // PaTime  defaultHighOutputLatency
+  // double  defaultSampleRate
+  for (int i = 0; i < numDevices; i++)
+  {
+      deviceInfo = Pa_GetDeviceInfo(i);
+      std::cout << i << ": " << deviceInfo->name << std::endl;
+      std::cout << "(numInput: " << deviceInfo->maxInputChannels << ", numOutput: " << deviceInfo->maxOutputChannels <<  ") "<< std::endl;
+  }
 }
 
 int PaWrapper::paCallbackMethod(

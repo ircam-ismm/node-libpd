@@ -21,6 +21,7 @@ class PaWrapper {
      */
     bool init(audio_config_t * audioConfig, pd::PdBase * pd);
     void clear();
+    void listDevices();
 
     /**
      * accessor for the PaStream

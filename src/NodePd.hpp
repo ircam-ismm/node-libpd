@@ -62,6 +62,8 @@ class NodePd : public Nan::ObjectWrap {
     static NAN_METHOD(init);
     static NAN_METHOD(clear);
 
+    static NAN_METHOD(listDevices);
+
     static NAN_METHOD(openPatch);
     static NAN_METHOD(closePatch);
     // @todo - update

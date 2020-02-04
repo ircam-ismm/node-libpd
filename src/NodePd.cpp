@@ -216,6 +216,25 @@ NAN_METHOD(NodePd::clear)
   // nodePd->paWrapper_->clear(); // clear portaudio
 }
 
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// DEVICES
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+/**
+ * clear Pd instance.
+ */
+NAN_METHOD(NodePd::listDevices)
+{
+  // std::cout << "clear" << std::endl;
+  NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
+  nodePd->paWrapper_->listDevices(); // clear pd
+  // nodePd->paWrapper_->clear(); // clear portaudio
+}
+
 
 
 // --------------------------------------------------------------------------
