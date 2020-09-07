@@ -60,7 +60,7 @@ $ npm run test
 
 ## Todos
 
-- port to NAPI
+- port to NAPI to support current LTS and future version of Node.js
 - support pd externals
 
 ## Credits
