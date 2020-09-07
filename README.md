@@ -1,6 +1,11 @@
-# node-libpd
+# `node-libpd`
 
-> `nodejs` wrapper around `libpd` and `portaudio`
+> Wrapper around `libpd` and `portaudio` for Node.js
+
+## Notes / Caveats:
+- The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
+- The library can only be used with pd-vanilla objects, it does not support (yet) patches that import external objects.
+- The library can run on `Node.js` <= 10.x.x, build fails on `Node.js` >= 12.x.x
 
 _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
 
@@ -10,6 +15,42 @@ _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for
 npm install [--save] node-libpd
 ```
 
+
+## Usage
+
+```js
+import pd from 'node-libpd';
+
+// init pd
+const initialized = pd.init({
+  numInputChannels: 0,
+  numOutputChannels: 2,
+  sampleRate: 48000,
+  ticks: 1, // a pd block (or tick) is 64 samples, be aware that increasing this value will throttle messages
+});
+
+// 
+const patchesPath = path.join(process.cwd(), 'my-patches');
+const patch = pd.openPatch('my-patch.pd', patchesPath);
+
+// subscribe to messages from the patchd
+pd.subscribe(`${patch.$0}-output`, function(msg) {
+  console.log(msg);
+});
+
+// send message to the patch
+pd.send(`${patch.$0}-input`, 1234);
+
+// send a scheduled message
+const now = pd.currentTime; // time in sec.
+// send message to the patch in two seconds from `now`, this accuracy of the
+// scheduling will depend on the number of ticks defined at initialization
+pd.send(`${patch.$0}-input`, 1234, now + 2);
+
+// close the patch
+pd.close(`${patch.$0}-input`, 1234);
+```
+
 ### Tests:
 
 ```
@@ -17,44 +58,15 @@ npm install [--save] node-libpd
 $ npm run test
 ```
 
-## Notes / Todos
+## Todos
 
-- `pd.clear()` to stop background processes
-- find a proper way to organize tests
-- allow to discover available devices and configuration for input and output 
-  => (maybe this should be done in a separate module)
-- more generally expose more audio configuration options
-- handle audio in
-- implement array API
-- refactor messaging struct (cf `pd_msg_t`)
-  + use more specialized structs and `dynamic_pointer_cast`
-  + use `const` and references as in PdReceiver callbacks
-- re-enable `addToSearchPath` and `clearSearchPath`
-- stop the whole pd and portaudio instances
-- make `init` asynchronous to fix the race condition between js and worker threads (initialization can be quite long (> 100ms on mac OSX)). `init` should return a `Promise` => current workaround is to block the `init` method until `currentTime != 0`
-- move `LockedQueue` implementation in `.cpp` file
-- install babel thing to rewrite the index.js in es6
-  + would be fancy to have an `index.mjs` and an `index.js`
-- add a `verbose` options to `init`
-- properly handle errors using : `Nan::ThrowError("...");`
+- port to NAPI
+- support pd externals
 
+## Credits
 
-## Resources
-
-`libpd` usage example (patch + test): 
-- https://github.com/libpd/libpd/tree/master/samples/cpp/pdtest  
-
-Node/Nan tutorial
-- https://nodejs.org/api/addons.html#addons_wrapping_c_objects  
-- https://nodeaddons.com/book/  
-- https://medium.com/netscape/tutorial-building-native-c-modules-for-node-js-using-nan-part-1-755b07389c7c  
-
-libuv book: 
-- https://nikhilm.github.io/uvbook/threads.html
-
-Debug with lldb: 
-- https://medium.com/@ccnokes/how-to-debug-native-node-addons-in-mac-osx-66f69f81afcb
+The library has received support from the Ircam's project BeCoMe.
 
 ## License
 
-TBD
+BSD-3-Clause

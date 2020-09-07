@@ -198,7 +198,7 @@ describe('node-libpd', () => {
 //   it('sine', () => {
 //     const patch = pd.openPatch('sine.pd', patchesPath);
 
-//     setTimeout(() => {
+//     setTimeout(() => {
 //       pd.closePatch(patch);
 //       done();
 //     }, 5 * 1000);
