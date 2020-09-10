@@ -2,14 +2,14 @@ const nodelibpd = require('bindings')('nodelibpd');
 const path = require('path');
 
 /**
- * @namespace pd
+ * @module pd
  */
 /**
  *
  *
  */
 /**
- * @method pd.send
+ * @method send
  *
  * send a named message to the pd backend
  *

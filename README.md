@@ -12,10 +12,8 @@
   * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Usage](#usage)
 - [API](#api)
-  * [Objects](#objects)
-  * [Functions](#functions)
-  * [pd : object](#pd--object)
-  * [pd.send](#pdsend)
+  * [pd](#pd)
+    + [pd~send](#pdsend)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -88,36 +86,17 @@ pd.close(`${patch.$0}-input`, 1234);
 
 <!-- api -->
 
-### Objects
+<a name="module_pd"></a>
 
-<dl>
-<dt><a href="#pd">pd</a> : <code>object</code></dt>
-<dd></dd>
-</dl>
-
-### Functions
-
-<dl>
-<dt><a href="#pd.send
-
-send a named message to the pd backend">pd.send
-
-send a named message to the pd backend(channel, value, [time])</a></dt>
-<dd></dd>
-</dl>
-
-<a name="pd"></a>
-
-### pd : <code>object</code>
-**Kind**: global namespace  
-<a name="pd.send
+### pd
+<a name="module_pd..send
 
 send a named message to the pd backend"></a>
 
-### pd.send
+#### pd~send
 
 send a named message to the pd backend(channel, value, [time])
-**Kind**: global function  
+**Kind**: inner method of [<code>pd</code>](#module_pd)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
