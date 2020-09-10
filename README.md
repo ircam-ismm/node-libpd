@@ -12,8 +12,8 @@
   * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Usage](#usage)
 - [API](#api)
-  * [pd](#pd)
-    + [pd~send(channel, value, [time])](#pdsendchannel-value-time)
+  * [pd : object](#pd--object)
+    + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -86,15 +86,18 @@ pd.close(`${patch.$0}-input`, 1234);
 
 <!-- api -->
 
-<a name="module_pd"></a>
+<a name="pd"></a>
 
-### pd
-<a name="module_pd..send"></a>
+### pd : <code>object</code>
+Singleton that represents the instance of underlying of libpd
 
-#### pd~send(channel, value, [time])
+**Kind**: global namespace  
+<a name="pd.send"></a>
+
+#### pd.send(channel, value, [time])
 Send a named message to the pd backend
 
-**Kind**: inner method of [<code>pd</code>](#module_pd)  
+**Kind**: static method of [<code>pd</code>](#pd)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |

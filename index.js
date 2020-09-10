@@ -2,7 +2,8 @@ const nodelibpd = require('bindings')('nodelibpd');
 const path = require('path');
 
 /**
- * @module pd
+ * Singleton that represents the instance of underlying of libpd
+ * @namespace pd
  */
 /**
  *
@@ -12,6 +13,7 @@ const path = require('path');
  * Send a named message to the pd backend
  *
  * @function send
+ * @memberof pd
  *
  * @param {String} channel - name of the corresponding `receive` box in the patch
  *  the avoid conflict a good practice is the prepend the channel name with `patch.$0`
