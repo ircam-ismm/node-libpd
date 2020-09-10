@@ -27,7 +27,7 @@ if (hasTagEnd) {
 const templateDataFormatted = `<!-- ${tag} -->
 
 ${jsdoc2md.renderSync({
-  'heading-depth': 4,
+  'heading-depth': 3,
   data: templateData,
   template: '{{>main}}'
 })}
