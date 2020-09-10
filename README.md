@@ -11,9 +11,8 @@
   * [Install on Mac OSX](#install-on-mac-osx)
   * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Usage](#usage)
-- [API](#api)
-  * [pd : object](#pd--object)
-    + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
+- [pd : object](#pd--object)
+  * [pd.send(channel, value, [time])](#pdsendchannel-value-time)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -82,19 +81,17 @@ pd.send(`${patch.$0}-input`, 1234, now + 2);
 pd.close(`${patch.$0}-input`, 1234);
 ```
 
-## API
-
 <!-- api -->
 
 <a name="pd"></a>
 
-### pd : <code>object</code>
+## pd : <code>object</code>
 Singleton that represents the instance of underlying of libpd
 
 **Kind**: global namespace  
 <a name="pd.send"></a>
 
-#### pd.send(channel, value, [time])
+### pd.send(channel, value, [time])
 Send a named message to the pd backend
 
 **Kind**: static method of [<code>pd</code>](#pd)  
