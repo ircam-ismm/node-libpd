@@ -12,7 +12,10 @@
   * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Usage](#usage)
 - [API](#api)
+  * [Objects](#objects)
+  * [Functions](#functions)
   * [pd : object](#pd--object)
+  * [pd.send](#pdsend)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -85,10 +88,43 @@ pd.close(`${patch.$0}-input`, 1234);
 
 <!-- api -->
 
+### Objects
+
+<dl>
+<dt><a href="#pd">pd</a> : <code>object</code></dt>
+<dd></dd>
+</dl>
+
+### Functions
+
+<dl>
+<dt><a href="#pd.send
+
+send a named message to the pd backend">pd.send
+
+send a named message to the pd backend(channel, value, [time])</a></dt>
+<dd></dd>
+</dl>
+
 <a name="pd"></a>
 
 ### pd : <code>object</code>
 **Kind**: global namespace  
+<a name="pd.send
+
+send a named message to the pd backend"></a>
+
+### pd.send
+
+send a named message to the pd backend(channel, value, [time])
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| channel | <code>String</code> |  | name of the corresponding `receive` box in the patch  the avoid conflict a good practice is the prepend the channel name with `patch.$0` |
+| value | <code>Any</code> |  | payload of the message, the corresponding mapping is  made with pd types: Number -> float, String -> symbol, Array -> list  (all value that neither Number nor String are ignored), else -> bang |
+| [time] | <code>Number</code> | <code></code> | audio time at which the message should be  sent. If null or < currentTime, is sent as fast as possible. (@tbc messages  are processed at pd control rate). |
+
 
 <!-- apistop -->
 

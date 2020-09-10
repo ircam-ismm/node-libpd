@@ -9,8 +9,7 @@ const path = require('path');
  *
  */
 /**
- * @method send
- * @memberof pd
+ * @method pd.send
  *
  * send a named message to the pd backend
  *
