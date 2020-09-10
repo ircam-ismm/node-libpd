@@ -10,7 +10,7 @@ const path = require('path');
  */
 /**
  * @memberof pd
- * @method pd.send
+ * @method send
  *
  * send a named message to the pd
  *

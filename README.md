@@ -13,7 +13,7 @@
 - [Usage](#usage)
 - [API](#api)
   * [pd : object](#pd--object)
-    + [pdpd.send](#pdpdsend)
+    + [pd.send](#pdsend)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -94,10 +94,10 @@ pd.close(`${patch.$0}-input`, 1234);
 
 send a named message to the pd"></a>
 
-#### pdpd.send
+#### pd.send
 
 send a named message to the pd(channel, value, [time])
-**Kind**: global method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
