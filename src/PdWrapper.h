@@ -3,10 +3,10 @@
 #include <iostream>
 
 #include "libpd/PdBase.hpp"
-#include "./PdReceiver.hpp"
-#include "./types.hpp"
+#include "./PdReceiver.h"
+#include "./types.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 /**
  * Wrapper around pd::PdBase for more simple use in NodePd
@@ -25,7 +25,7 @@ class PdWrapper {
 
     bool init(audio_config_t * config);
     bool isInited();
-    void clear();
+    // void clear();
     int blockSize();
 
 

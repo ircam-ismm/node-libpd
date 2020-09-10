@@ -4,7 +4,7 @@
 #include <queue>
 #include <memory>
 
-namespace nodePd {
+namespace node_lib_pd {
 
 /**
  * Thread safe locked queue of shared pointers.

@@ -62,6 +62,7 @@ $ npm run test
 
 - port to NAPI to support current LTS and future version of Node.js
 - support pd externals
+- rebuild libpd without jack
 
 ## Credits
 

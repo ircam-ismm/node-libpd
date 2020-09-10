@@ -3,22 +3,21 @@
     {
       "target_name": "nodelibpd",
       "sources": [
-        "nodelibpd.cpp",
-        "./src/BackgroundProcess.cpp",
-        "./src/NodePd.cpp",
-        "./src/PaWrapper.cpp",
-        "./src/PdReceiver.cpp",
-        "./src/PdWrapper.cpp",
-        "./src/types.cpp",
+        "nodelibpd.cc",
+        "./src/NodePd.cc",
+        "./src/types.cc",
+        "./src/PaWrapper.cc",
+        "./src/PdReceiver.cc",
+        "./src/PdWrapper.cc",
+        "./src/BackgroundProcess.c",
       ],
       "include_dirs" : [
-        "<!(node -e \"require('nan')\")",
-
-        # include deps headers
+        "<!@(node -p \"require('node-addon-api').include\")",
+        # # include deps headers
         "./portaudio/include",
         "./libpd/include",
 
-        # needed by PdBase.h itself
+        # # needed by PdBase.h itself
         "./libpd/include/libpd",
         "./libpd/include/libpd/util",
 			],
@@ -29,10 +28,11 @@
       #   '<(module_root_dir)/libs', # fix lib pd inconsistency
       # ],
 
-      "cflags": [
-        "-std=c++11",
-        # "-stdlib=libc++"
-      ],
+      "defines": ["NAPI_CPP_EXCEPTIONS"],
+      # "cflags": [
+      #   "-std=c++11",
+      #   # "-stdlib=libc++"
+      # ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
 
@@ -40,16 +40,16 @@
         [
           'OS=="mac"', {
             'xcode_settings': {
+              'GCC_ENABLE_CPP_RTTI': 'YES',
               'MACOSX_DEPLOYMENT_TARGET': '10.7',
-              'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
-              'OTHER_CPLUSPLUSFLAGS' : [
-                '-std=c++11','-stdlib=libc++',
-                '-Wno-sign-compare',
+              'OTHER_CPLUSPLUSFLAGS': [
+                '-std=c++11',
+                '-stdlib=libc++',
+                '-fexceptions',
               ],
               'OTHER_LDFLAGS': [
-                '-stdlib=libc++',"-Wl,-rpath,<@(module_root_dir)/build/Release"
-              ],
-              # 'GCC_ENABLE_CPP_RTTI': 'YES',
+                "-Wl,-rpath,<@(module_root_dir)/build/Release"
+              ]
             },
             'link_settings': {
               'libraries': [

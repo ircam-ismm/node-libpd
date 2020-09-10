@@ -4,10 +4,10 @@
 #include <memory>
 
 #include "PdBase.hpp"
-#include "./types.hpp"
-#include "./LockedQueue.hpp"
+#include "./types.h"
+#include "./LockedQueue.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 // custom receiver class
 class PdReceiver : public pd::PdReceiver {

@@ -1,6 +1,6 @@
-#include "./types.hpp"
+#include "./types.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 long pd_scheduled_msg_t::counter = 0;
 

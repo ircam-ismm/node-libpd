@@ -2,9 +2,9 @@
 
 #include "portaudio.h"
 #include "libpd/PdBase.hpp"
-#include "./types.hpp"
+#include "./types.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 /**
  * portaudio wrapper
@@ -20,7 +20,7 @@ class PaWrapper {
      * callback
      */
     bool init(audio_config_t * audioConfig, pd::PdBase * pd);
-    void clear();
+    // void clear();
     void listDevices();
 
     /**

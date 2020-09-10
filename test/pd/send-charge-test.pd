@@ -1,0 +1,4 @@
+#N canvas 475 791 596 140 10;
+#X obj 443 30 receive \$0-list;
+#X obj 443 68 send \$0-log-list;
+#X connect 0 0 1 0;

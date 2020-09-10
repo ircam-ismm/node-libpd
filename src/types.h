@@ -1,9 +1,9 @@
 #pragma once
 
 #include "libpd/PdBase.hpp"
-// #include "portaudio.h"
+#include "portaudio.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 typedef struct audio_config_s {
   int numInputChannels;

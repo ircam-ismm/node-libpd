@@ -1,25 +1,30 @@
-#include "./PaWrapper.hpp"
+#include "./PaWrapper.h"
 
-namespace nodePd {
+namespace node_lib_pd {
 
 PaWrapper::PaWrapper()
   : currentTime(0)
   , paInitErr_(Pa_Initialize())
 {}
 
-PaWrapper::~PaWrapper()
-{
-  if (this->paInitErr_ == paNoError)
-    Pa_Terminate();
+PaWrapper::~PaWrapper() {
+  #ifdef DEBUG
+    std::cout << "[node-libpd] closing portaudio stream" << std::endl;
+  #endif
+
+  if (this->paInitErr_ == paNoError) {
+    PaError err = Pa_CloseStream(this->paStream_);
+    if (err != paNoError) {
+      std::cout << '[node-libpd] failed to close  portaudio stream' << std::endl;
+    }
+  }
 }
 
-PaStream * PaWrapper::getStream()
-{
+PaStream * PaWrapper::getStream() {
   return this->paStream_;
 }
 
-bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
-{
+bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd) {
   this->audioConfig_ = audioConfig;
   this->pd_ = pd;
 
@@ -66,7 +71,7 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
     const PaDeviceInfo * pInputInfo = Pa_GetDeviceInfo(index);
 
     if (pInputInfo != 0) {
-      std::cout << std::endl;
+      std::cout << "" << std::endl;
       std::cout << ">>> Input:" << std::endl;
       std::cout << "Input device name: " << pInputInfo->name << std::endl;
       std::cout << "DefaultLowInputLatency: " << pInputInfo->defaultLowOutputLatency << std::endl;
@@ -140,23 +145,6 @@ bool PaWrapper::init(audio_config_t * audioConfig, pd::PdBase * pd)
   }
 
   return true;
-}
-
-void PaWrapper::clear()
-{
-  // // Pa_StopStream(this->paStream_);
-  // // Pa_Terminate();
-  // PaError err;
-
-  // // err = Pa_StopStream(this->paStream_);
-  // // if (err != paNoError) {
-  // //   std::cout << '[Error] Failed to close paStream' << std::endl;
-  // // }
-
-  // err = Pa_Terminate();
-  // if (err != paNoError) {
-  //   std::cout << '[Error] Failed to close portaudio' << std::endl;
-  // }
 }
 
 void PaWrapper::listDevices() {
