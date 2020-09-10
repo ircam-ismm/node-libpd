@@ -9,10 +9,10 @@ const path = require('path');
  *
  */
 /**
- * @memberof pd
  * @method send
+ * @memberof pd
  *
- * send a named message to the pd
+ * send a named message to the pd backend
  *
  * @param {String} channel - name of the corresponding `receive` box in the patch
  *  the avoid conflict a good practice is the prepend the channel name with `patch.$0`
