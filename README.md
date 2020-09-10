@@ -13,7 +13,7 @@
 - [Usage](#usage)
 - [API](#api)
   * [pd](#pd)
-    + [pd~send](#pdsend)
+    + [pd~send(channel, value, [time])](#pdsendchannel-value-time)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -89,13 +89,11 @@ pd.close(`${patch.$0}-input`, 1234);
 <a name="module_pd"></a>
 
 ### pd
-<a name="module_pd..send
+<a name="module_pd..send"></a>
 
-send a named message to the pd backend"></a>
+#### pd~send(channel, value, [time])
+Send a named message to the pd backend
 
-#### pd~send
-
-send a named message to the pd backend(channel, value, [time])
 **Kind**: inner method of [<code>pd</code>](#module_pd)  
 
 | Param | Type | Default | Description |
