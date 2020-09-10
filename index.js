@@ -11,7 +11,7 @@ const path = require('path');
 /**
  * Send a named message to the pd backend
  *
- * @method send
+ * @function send
  *
  * @param {String} channel - name of the corresponding `receive` box in the patch
  *  the avoid conflict a good practice is the prepend the channel name with `patch.$0`
