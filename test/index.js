@@ -1,29 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const assert = require('chai').assert;
-
-
+const pd = require('../');
 // debug
 const SegfaultHandler = require('segfault-handler');
 SegfaultHandler.registerHandler("crash.log");
 
 const patchesPath = path.join(process.cwd(), 'test', 'pd');
-
-/**
- * import pd instance
- */
-const pd = require('../');
-
-/**
- * list methods
- */
-{
-  console.log('************************************************');
-  console.log('* API *');
-  for (let i in pd)
-    console.log(`- ${i}`);
-  console.log('************************************************');
-}
 
 describe('node-libpd', () => {
   it('pd.init(config)', () => {

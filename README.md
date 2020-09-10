@@ -1,11 +1,31 @@
 # `node-libpd`
 
-> Wrapper around `libpd` and `portaudio` for Node.js
+> Node.js binding for [`lib-pd`](https://github.com/libpd/libpd) that uses [`portaudio`](http://www.portaudio.com/) as audio backend.
+
+## Table of Content
+
+<!-- toc -->
+
+- [Notes / Caveats:](#notes--caveats)
+- [Install](#install)
+  * [Install on Mac OSX](#install-on-mac-osx)
+  * [Install on Raspberry Pi](#install-on-raspberry-pi)
+- [Usage](#usage)
+  * [API](#api)
+    + [pd : object](#pd--object)
+      - [pd.send(channel, value, [time])](#pdsendchannel-value-time)
+  * [Tests:](#tests)
+- [Todos](#todos)
+- [Credits](#credits)
+- [License](#license)
+
+<!-- tocstop -->
 
 ## Notes / Caveats:
+
 - The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
-- The library can only be used with pd-vanilla objects, it does not support (yet) patches that import external objects.
-- The library can run on `Node.js` <= 10.x.x, build fails on `Node.js` >= 12.x.x
+- The library can only be used with pd-vanilla objects, it does not, and maybe will never, support externals.
+- The bindings are created with N-API, therefore v1 should work on Node.js > 10.x.x, for previous version of Node.js you should install node-libpd v0.2.6 that was created with Nan (be aware that this version won't receive support).
 
 _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
 
@@ -15,6 +35,17 @@ _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for
 npm install [--save] node-libpd
 ```
 
+### Install on Mac OSX
+
+```
+xcode-select --install
+```
+
+### Install on Raspberry Pi
+
+```
+apt-get install -y ... ???
+```
 
 ## Usage
 
@@ -51,17 +82,42 @@ pd.send(`${patch.$0}-input`, 1234, now + 2);
 pd.close(`${patch.$0}-input`, 1234);
 ```
 
+### API
+
+<!-- api -->
+
+<a name="pd"></a>
+
+#### pd : <code>object</code>
+**Kind**: global namespace  
+<a name="pd.send"></a>
+
+##### pd.send(channel, value, [time])
+**Kind**: static method of [<code>pd</code>](#pd)  
+**Todo**
+
+- [ ] - note on messsages order
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| channel | <code>String</code> | name of the corresponding receive in pd patch |
+| value | <code>Any</code> | payload of the message, the corresponding mapping is  made with pd types:  - Number -> float  - String -> symbol  - Array  -> list (all value that neither Number nor String are ignored)  - else   -> bang |
+| [time] | <code>Number</code> | audio time at which the message should be  sent. If undefined or < currentTime, is sent as fast as possible. Messages  are processed at pd control rate. |
+
+
+<!-- apistop -->
+
 ### Tests:
 
-```
+```sh
 # cf. test/index.js
-$ npm run test
+npm run test
 ```
 
 ## Todos
 
-- port to NAPI to support current LTS and future version of Node.js
-- support pd externals
+- support pd externals (see if only it's possible...)
 - rebuild libpd without jack
 
 ## Credits
