@@ -9,19 +9,19 @@ const path = require('path');
  *
  */
 /**
+ * @memberof pd
  * @method pd.send
- * @todo - note on messsages order
  *
- * @param {String} channel - name of the corresponding receive in pd patch
+ * send a named message to the pd
+ *
+ * @param {String} channel - name of the corresponding `receive` box in the patch
+ *  the avoid conflict a good practice is the prepend the channel name with `patch.$0`
  * @param {Any} value - payload of the message, the corresponding mapping is
- *  made with pd types:
- *  - Number -> float
- *  - String -> symbol
- *  - Array  -> list (all value that neither Number nor String are ignored)
- *  - else   -> bang
- * @param {Number} [time=undefined] - audio time at which the message should be
- *  sent. If undefined or < currentTime, is sent as fast as possible. Messages
- *  are processed at pd control rate.
+ *  made with pd types: Number -> float, String -> symbol, Array -> list
+ *  (all value that neither Number nor String are ignored), else -> bang
+ * @param {Number} [time=null] - audio time at which the message should be
+ *  sent. If null or < currentTime, is sent as fast as possible. (@tbc messages
+ *  are processed at pd control rate).
  */
 
 // singleton

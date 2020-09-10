@@ -13,7 +13,7 @@
 - [Usage](#usage)
 - [API](#api)
   * [pd : object](#pd--object)
-    + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
+    + [pdpd.send](#pdpdsend)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -90,20 +90,20 @@ pd.close(`${patch.$0}-input`, 1234);
 
 ### pd : <code>object</code>
 **Kind**: global namespace  
-<a name="pd.send"></a>
+<a name="pd.send
 
-#### pd.send(channel, value, [time])
-**Kind**: static method of [<code>pd</code>](#pd)  
-**Todo**
+send a named message to the pd"></a>
 
-- [ ] - note on messsages order
+#### pdpd.send
 
+send a named message to the pd(channel, value, [time])
+**Kind**: global method of [<code>pd</code>](#pd)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| channel | <code>String</code> | name of the corresponding receive in pd patch |
-| value | <code>Any</code> | payload of the message, the corresponding mapping is  made with pd types:  - Number -> float  - String -> symbol  - Array  -> list (all value that neither Number nor String are ignored)  - else   -> bang |
-| [time] | <code>Number</code> | audio time at which the message should be  sent. If undefined or < currentTime, is sent as fast as possible. Messages  are processed at pd control rate. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| channel | <code>String</code> |  | name of the corresponding `receive` box in the patch  the avoid conflict a good practice is the prepend the channel name with `patch.$0` |
+| value | <code>Any</code> |  | payload of the message, the corresponding mapping is  made with pd types: Number -> float, String -> symbol, Array -> list  (all value that neither Number nor String are ignored), else -> bang |
+| [time] | <code>Number</code> | <code></code> | audio time at which the message should be  sent. If null or < currentTime, is sent as fast as possible. (@tbc messages  are processed at pd control rate). |
 
 
 <!-- apistop -->
