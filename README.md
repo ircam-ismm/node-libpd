@@ -1,6 +1,6 @@
 # `node-libpd`
 
-> Node.js binding for [`lib-pd`](https://github.com/libpd/libpd) that uses [`portaudio`](http://www.portaudio.com/) as audio backend.
+> Node.js bindings for [`libpd`](https://github.com/libpd/libpd) using [`portaudio`](http://www.portaudio.com/) as audio backend.
 
 ## Install
 
@@ -366,8 +366,8 @@ npm run test
 
 ## Todos
 
-- list devices and choose device
-- midi event ? (probably not)
+- list devices and choose device, is a portaudio problem
+- midi event ? is there some real-world use case
 - support pd externals, if only possible...
 - rebuild portaudio without jack on linux
 
