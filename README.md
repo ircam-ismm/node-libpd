@@ -13,6 +13,9 @@ npm install [--save] node-libpd
 <!-- toc -->
 
 - [Basic Usage](#basic-usage)
+- [Notes / Caveats:](#notes--caveats)
+  * [Install on Mac OSX](#install-on-mac-osx)
+  * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [API](#api)
   * [Objects](#objects)
   * [pd : object](#pd--object)
@@ -35,9 +38,6 @@ npm install [--save] node-libpd
     + [Patch.isValid : Boolean](#patchisvalid--boolean)
     + [Patch.filename : String](#patchfilename--string)
     + [Patch.path : Number](#patchpath--number)
-- [Notes / Caveats:](#notes--caveats)
-  * [Install on Mac OSX](#install-on-mac-osx)
-  * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -81,6 +81,27 @@ pd.send(`${patch.$0}-input`, 1234, now + 2);
 // close the patch
 pd.close(`${patch.$0}-input`, 1234);
 ```
+
+## Notes / Caveats:
+
+- The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
+- The library can only be used with pd-vanilla objects, it does not, and maybe will never, support externals.
+- The bindings are created with N-API, therefore v1 should work on Node.js > 10.x.x, for previous version of Node.js you should install node-libpd v0.2.6 that was created with Nan (be aware that this version won't receive support).
+
+_Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
+
+### Install on Mac OSX
+
+```
+xcode-select --install
+```
+
+### Install on Raspberry Pi
+
+```
+apt-get install -y ... ???
+```
+
 
 ## API
 
@@ -327,26 +348,6 @@ Directory of the pd patch file
 **Kind**: static property of [<code>Patch</code>](#Patch)  
 
 <!-- apistop -->
-
-## Notes / Caveats:
-
-- The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
-- The library can only be used with pd-vanilla objects, it does not, and maybe will never, support externals.
-- The bindings are created with N-API, therefore v1 should work on Node.js > 10.x.x, for previous version of Node.js you should install node-libpd v0.2.6 that was created with Nan (be aware that this version won't receive support).
-
-_Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
-
-### Install on Mac OSX
-
-```
-xcode-select --install
-```
-
-### Install on Raspberry Pi
-
-```
-apt-get install -y ... ???
-```
 
 ## Tests
 
