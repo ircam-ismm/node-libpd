@@ -86,8 +86,9 @@ pd.closePatch(`${patch.$0}-input`, 1234);
 
 - The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
 - The library can only be used with pd-vanilla objects, it does not, and maybe will never, support externals.
+- The audio interface used is the one that is set as default system wise.
 - The bindings are created with N-API, therefore v1 should work on Node.js > 10.x.x, for previous version of Node.js you should install node-libpd v0.2.6 that was created with Nan (be aware that this version won't receive support).
-- The library does not support all the features of libpd while the most important ones should be there, the API has also been adapted at particular places to be more JS idiomatic.
+- The library does not support all the interface of libpd, however the most important ones should be there. The API has also been adapted at particular places to match common JS idiomatisms.
 
 _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
 
