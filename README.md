@@ -12,11 +12,8 @@ npm install [--save] node-libpd
 
 <!-- toc -->
 
-- [Notes / Caveats:](#notes--caveats)
-  * [Install on Mac OSX](#install-on-mac-osx)
-  * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Basic Usage](#basic-usage)
-  * [API](#api)
+- [API](#api)
   * [Objects](#objects)
   * [pd : object](#pd--object)
     + [pd.currentTime : Number](#pdcurrenttime--number)
@@ -38,6 +35,9 @@ npm install [--save] node-libpd
     + [Patch.isValid : Boolean](#patchisvalid--boolean)
     + [Patch.filename : String](#patchfilename--string)
     + [Patch.path : Number](#patchpath--number)
+- [Notes / Caveats:](#notes--caveats)
+  * [Install on Mac OSX](#install-on-mac-osx)
+  * [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
