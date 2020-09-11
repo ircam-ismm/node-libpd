@@ -31,7 +31,7 @@ npm install [--save] node-libpd
     + [pd.unsubscribe(channel, [callback])](#pdunsubscribechannel-callback)
     + [pd.writeArray(name, data, [writeLen], [offset]) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
     + [pd.readArray(name, data, [readLen], [offset]) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
-    + [pd.clearArray(name, value)](#pdcleararrayname-value)
+    + [pd.clearArray(name, [value])](#pdcleararrayname-value)
     + [pd.arraySize(name) ⇒ Number](#pdarraysizename-%E2%87%92-number)
   * [Patch : object](#patch--object)
     + [Patch.$0 : Number](#patch0--number)
@@ -138,7 +138,7 @@ Singleton that represents an instance of the underlying libpd library
     * [.unsubscribe(channel, [callback])](#pd.unsubscribe)
     * [.writeArray(name, data, [writeLen], [offset])](#pd.writeArray) ⇒ <code>Boolean</code>
     * [.readArray(name, data, [readLen], [offset])](#pd.readArray) ⇒ <code>Boolean</code>
-    * [.clearArray(name, value)](#pd.clearArray)
+    * [.clearArray(name, [value])](#pd.clearArray)
     * [.arraySize(name)](#pd.arraySize) ⇒ <code>Number</code>
 
 <a name="pd.currentTime"></a>
@@ -286,15 +286,15 @@ Read values into a pd array.
 
 <a name="pd.clearArray"></a>
 
-#### pd.clearArray(name, value)
+#### pd.clearArray(name, [value])
 Fill a pd array with a given value.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>Name</code> | name of the pd array |
-| value | <code>Number</code> | value used to fill the pd array |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| name | <code>Name</code> |  | name of the pd array |
+| [value] | <code>Number</code> | <code>0</code> | value used to fill the pd array |
 
 <a name="pd.arraySize"></a>
 
