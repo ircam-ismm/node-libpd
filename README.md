@@ -22,7 +22,7 @@ npm install [--save] node-libpd
     + [pd.currentTime : Number](#pdcurrenttime--number)
     + [pd.init(config) ⇒ Boolean](#pdinitconfig-%E2%87%92-boolean)
     + [pd.destroy()](#pddestroy)
-    + [pd.openPatch() ⇒ Object](#pdopenpatch-%E2%87%92-object)
+    + [pd.openPatch(pathname) ⇒ Object](#pdopenpatchpathname-%E2%87%92-object)
     + [pd.closePatch(patch)](#pdclosepatchpatch)
     + [pd.addToSearchPath(pathname)](#pdaddtosearchpathpathname)
     + [pd.clearSearchPath()](#pdclearsearchpath)
@@ -130,7 +130,7 @@ Singleton that represents an instance of the underlying libpd library
     * [.currentTime](#pd.currentTime) : <code>Number</code>
     * [.init(config)](#pd.init) ⇒ <code>Boolean</code>
     * [.destroy()](#pd.destroy)
-    * [.openPatch()](#pd.openPatch) ⇒ <code>Object</code>
+    * [.openPatch(pathname)](#pd.openPatch) ⇒ <code>Object</code>
     * [.closePatch(patch)](#pd.closePatch)
     * [.addToSearchPath(pathname)](#pd.addToSearchPath)
     * [.clearSearchPath()](#pd.clearSearchPath)
@@ -178,7 +178,7 @@ calliing `destroy` migth throw a SegFault error.
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.openPatch"></a>
 
-#### pd.openPatch() ⇒ <code>Object</code>
+#### pd.openPatch(pathname) ⇒ <code>Object</code>
 Open a pd patch instance. As the same patch can be opened several times,
 think of it as a kind of poly with a nice API, be careful to use patch.$0
 in your patches.
@@ -186,9 +186,9 @@ in your patches.
 **Kind**: static method of [<code>pd</code>](#pd)  
 **Returns**: <code>Object</code> - - instance of the patch  
 
-| Type | Description |
-| --- | --- |
-| <code>pathname</code> | absolute path to the pd patch |
+| Param | Type | Description |
+| --- | --- | --- |
+| pathname | <code>String</code> | absolute path to the pd patch |
 
 <a name="pd.closePatch"></a>
 

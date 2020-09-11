@@ -47,7 +47,7 @@ const path = require('path');
  *
  * @function openPatch
  * @memberof pd
- * @param {pathname} - absolute path to the pd patch
+ * @param {String} pathname - absolute path to the pd patch
  * @return {Object} - instance of the patch
  */
 /**
