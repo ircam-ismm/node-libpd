@@ -10,6 +10,7 @@ const path = require('path');
  *
  * @member currentTime
  * @type {Number}
+ * @readonly
  * @memberof pd
  */
 /**
@@ -131,7 +132,7 @@ const path = require('path');
  * @param {Number} [value=0] - value used to fill the pd array
  */
 /**
- * Fill a pd array with a given value.
+ * Retrieve the size of a pd array.
  *
  * @function arraySize
  * @memberof pd
@@ -148,24 +149,29 @@ const path = require('path');
  * in send and receive channel.
  * @member $0
  * @type {Number}
+ * @readonly
  * @memberof Patch
  */
 /**
- * Tells you if the patch is valid, for example is Valid is false is the patch
+ * Validity of the patch instance. False typically means that the given filename
+ * does not point to a valid pd patch, or that the patch has been closed.
  * @member isValid
  * @type {Boolean}
+ * @readonly
  * @memberof Patch
  */
 /**
  * Name of the the pd patch file
  * @member filename
  * @type {String}
+ * @readonly
  * @memberof Patch
  */
 /**
  * Directory of the pd patch file
  * @member path
- * @type {Number}
+ * @type {String}
+ * @readonly
  * @memberof Patch
  */
 

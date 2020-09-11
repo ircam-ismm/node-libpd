@@ -37,7 +37,7 @@ npm install [--save] node-libpd
     + [Patch.$0 : Number](#patch0--number)
     + [Patch.isValid : Boolean](#patchisvalid--boolean)
     + [Patch.filename : String](#patchfilename--string)
-    + [Patch.path : Number](#patchpath--number)
+    + [Patch.path : String](#patchpath--string)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -147,6 +147,7 @@ Singleton that represents an instance of the underlying libpd library
 Current audio time in seconds since `init` as been called.
 
 **Kind**: static property of [<code>pd</code>](#pd)  
+**Read only**: true  
 <a name="pd.init"></a>
 
 #### pd.init(config) ⇒ <code>Boolean</code>
@@ -299,7 +300,7 @@ Fill a pd array with a given value.
 <a name="pd.arraySize"></a>
 
 #### pd.arraySize(name) ⇒ <code>Number</code>
-Fill a pd array with a given value.
+Retrieve the size of a pd array.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
 **Returns**: <code>Number</code> - size of the array  
@@ -319,7 +320,7 @@ Object representing a patch instance.
     * [.$0](#Patch.$0) : <code>Number</code>
     * [.isValid](#Patch.isValid) : <code>Boolean</code>
     * [.filename](#Patch.filename) : <code>String</code>
-    * [.path](#Patch.path) : <code>Number</code>
+    * [.path](#Patch.path) : <code>String</code>
 
 <a name="Patch.$0"></a>
 
@@ -328,24 +329,29 @@ Id of the patch. You should use this value to communicate with a given patch
 in send and receive channel.
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
+**Read only**: true  
 <a name="Patch.isValid"></a>
 
 #### Patch.isValid : <code>Boolean</code>
-Tells you if the patch is valid, for example is Valid is false is the patch
+Validity of the patch instance. False typically means that the given filename
+does not point to a valid pd patch, or that the patch has been closed.
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
+**Read only**: true  
 <a name="Patch.filename"></a>
 
 #### Patch.filename : <code>String</code>
 Name of the the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
+**Read only**: true  
 <a name="Patch.path"></a>
 
-#### Patch.path : <code>Number</code>
+#### Patch.path : <code>String</code>
 Directory of the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
+**Read only**: true  
 
 <!-- apistop -->
 
