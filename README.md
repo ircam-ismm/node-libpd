@@ -61,7 +61,7 @@ const initialized = pd.init({
 });
 
 // instantiate a patch
-const pathname = path.join(process.cwd(), 'pd', 'my-patch.pd');
+const patchPathname = path.join(process.cwd(), 'pd', 'my-patch.pd');
 const patch = pd.openPatch(patchPathname);
 
 // subscribe to messages from the patchd
