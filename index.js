@@ -25,9 +25,10 @@ const path = require('path');
  * @param {Number} [config.numOutputChannels=2] - num output channels requested
  * @param {Number} [config.sampleRate=4800] - requested sampleRate
  * @param {Number} [config.ticks=1] - number of blocks (ticks) processed by pd
- *  in one run, a pd tick is 64 samples. Be aware that this value will affect
- *  the messages sent to and received by pd, i.e. more ticks means less precision
- *  in the treatement of the messages.
+ *  in one run, a pd tick is 64 samples. Be aware that this value will affect /
+ *  throttle the messages sent to and received by pd, i.e. more ticks means less
+ *  precision in the treatement of the messages. A value of 1 or 2 is generally
+ *  good enough even in constrained platforms such as the RPi.
  * @return {Boolean} a boolean defining if pd and portaudio have been properly
  *  initialized
  */

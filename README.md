@@ -64,8 +64,8 @@ const initialized = pd.init({
 const patchPathname = path.join(process.cwd(), 'pd', 'my-patch.pd');
 const patch = pd.openPatch(patchPathname);
 
-// subscribe to messages from the patchd
-pd.subscribe(`${patch.$0}-output`, function(msg) {
+// subscribe to messages from the patch
+pd.subscribe(`${patch.$0}-output`, msg => {
   console.log(msg);
 });
 
@@ -79,7 +79,7 @@ const now = pd.currentTime; // time in sec.
 pd.send(`${patch.$0}-input`, 1234, now + 2);
 
 // close the patch
-pd.close(`${patch.$0}-input`, 1234);
+pd.closePatch(`${patch.$0}-input`, 1234);
 ```
 
 ## Notes / Caveats:
@@ -87,6 +87,7 @@ pd.close(`${patch.$0}-input`, 1234);
 - The library is meant to be used in a _Node.js_ environment, it cannot run in a browser and never will.
 - The library can only be used with pd-vanilla objects, it does not, and maybe will never, support externals.
 - The bindings are created with N-API, therefore v1 should work on Node.js > 10.x.x, for previous version of Node.js you should install node-libpd v0.2.6 that was created with Nan (be aware that this version won't receive support).
+- The library does not support all the features of libpd while the most important ones should be there, the API has also been adapted at particular places to be more JS idiomatic.
 
 _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
 
@@ -165,7 +166,7 @@ startup of the application as the process is blocking and that it can take
 | [config.numInputChannels] | <code>Number</code> | <code>1</code> | num input channels requested |
 | [config.numOutputChannels] | <code>Number</code> | <code>2</code> | num output channels requested |
 | [config.sampleRate] | <code>Number</code> | <code>4800</code> | requested sampleRate |
-| [config.ticks] | <code>Number</code> | <code>1</code> | number of blocks (ticks) processed by pd  in one run, a pd tick is 64 samples. Be aware that this value will affect  the messages sent to and received by pd, i.e. more ticks means less precision  in the treatement of the messages. |
+| [config.ticks] | <code>Number</code> | <code>1</code> | number of blocks (ticks) processed by pd  in one run, a pd tick is 64 samples. Be aware that this value will affect /  throttle the messages sent to and received by pd, i.e. more ticks means less  precision in the treatement of the messages. A value of 1 or 2 is generally  good enough even in constrained platforms such as the RPi. |
 
 <a name="pd.destroy"></a>
 
