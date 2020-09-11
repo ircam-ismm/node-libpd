@@ -8,7 +8,7 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
   Napi::HandleScope scope(env);
 
   Napi::Function func = DefineClass(env, "NodePd", {
-    // readonly synctax uses: template<getter, setter=nullptr>(name)
+    // readonly syntax uses: template<getter, setter=nullptr>(name)
     InstanceAccessor<&NodePd::CurrentTime>("currentTime"),
 
     InstanceMethod("destroy", &NodePd::Destroy),
@@ -28,7 +28,7 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("_unsubscribe", &NodePd::Unsubscribe),
   });
 
-  // node: DEBUG seems to defined when doing `node-gyp build --debug`
+  // node: DEBUG seems to be defined when doing `node-gyp build --debug`
   #ifdef DEBUG
     std::cout << "[node-libpd] c++ static init" << std::endl;
   #endif
@@ -150,7 +150,7 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
     );
 
     Napi::Function callback = info[1].As<Napi::Function>();
-    // @note - this pretends to works but crashes when the worker exits
+
     this->backgroundProcess_ = new BackgroundProcess(
       callback,
       this->audioConfig_,
@@ -163,7 +163,7 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
 
     int millis = 0; // for debug
     // block process while time is not running
-    // @note: move to Promise API ? (probably not really important here...)
+    // @note: maybe move to Promise API, but probably not really important here...
     while ((double) this->paWrapper_->currentTime <= 0.0f) {
       millis += 1; // for debug
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -191,6 +191,7 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
     std::cout << "[node-libpd] destroy node-libpd instance" << std::endl;
   #endif
 
+  // not sure c++ guys would like that...
   delete this;
 
   return info.Env().Undefined();
@@ -248,7 +249,7 @@ Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo& info) {
 
     patch_infos_t patchInfos = this->pdWrapper_->openPatch(filename, path);
 
-    // // create a js object representing the patch
+    // create a Plain Old Javascript Object to represent the patch
     Napi::Object patch = Napi::Object::New(env);
 
     patch.Set("isValid", patchInfos.isValid);
@@ -306,6 +307,7 @@ Napi::Value NodePd::AddToSearchPath(const Napi::CallbackInfo& info) {
 
   return env.Undefined();
 }
+
 Napi::Value NodePd::ClearSearchPath(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   this->pdWrapper_->clearSearchPath();
@@ -333,14 +335,12 @@ Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo& info) {
 // --------------------------------------------------------------------------
 
 /**
- * Send a message to pd. As pd only knows 3 types (Float, Symbol, and bang).
- * All messages will follow this convertion:
+ * Send a message to pd. As pd only seems to only know 3 types (Float, Symbol, and bang),
+ * we follow this convertion:
  *  Number -> Float
  *  String -> Symbol
  *  * -> bang
- *  same for lists
- *
- * @note - don't implement typed messages for now (cf. `finishMessage` API)
+ *  Array -> list
  */
 Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -366,7 +366,7 @@ Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
     std::string symbol = info[1].As<Napi::String>().Utf8Value();
     pd_scheduled_msg_t msg(channel, time, symbol);
     this->backgroundProcess_->addScheduledMessage(msg);
-  // symbol
+  // number
   } else if (info[1].IsNumber()) {
     const float num = info[1].As<Napi::Number>().FloatValue();
     pd_scheduled_msg_t msg(channel, time, num);
@@ -470,7 +470,7 @@ Napi::Value NodePd::WriteArray(const Napi::CallbackInfo& info) {
   }
 
   std::string name = info[0].As<Napi::String>().Utf8Value();
-  // https://github.com/nodejs/node-addon-examples/blob/master/array_buffer_to_native/node-addon-api/array_buffer_to_native.cc
+  // cf. https://github.com/nodejs/node-addon-examples/blob/master/array_buffer_to_native/node-addon-api/array_buffer_to_native.cc
   Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
   const float* ptr = reinterpret_cast<float*>(buf.Data());
   const size_t len = buf.ByteLength() / sizeof(float);
@@ -529,7 +529,9 @@ Napi::Value NodePd::ReadArray(const Napi::CallbackInfo& info) {
 
   bool result = this->pdWrapper_->readArray(name, dest, readLen, offset);
 
-  // copy back in Float32Array, weird, as it should be a reference from what I understand
+  // copy back values in the given Float32Array,
+  // @note: this is weird, as it should be a reference to the same pointer
+  // from what I understand (which shows I don't really understand...)
   for (int i = offset; i < readLen; i++) {
     buf[i] = dest[i];
   }
