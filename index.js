@@ -128,7 +128,7 @@ const path = require('path');
  * @function clearArray
  * @memberof pd
  * @param {Name} name - name of the pd array
- * @param {Number} value - value used to fill the pd array
+ * @param {Number} [value=0] - value used to fill the pd array
  */
 /**
  * Fill a pd array with a given value.
