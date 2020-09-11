@@ -46,53 +46,20 @@ class NodePd : public Napi::ObjectWrap<NodePd> {
     Napi::Value Destroy(const Napi::CallbackInfo& info);
     Napi::Value OpenPatch(const Napi::CallbackInfo& info);
     Napi::Value ClosePatch(const Napi::CallbackInfo& info);
+    Napi::Value AddToSearchPath(const Napi::CallbackInfo& info);
+    Napi::Value ClearSearchPath(const Napi::CallbackInfo& info);
+
     Napi::Value CurrentTime(const Napi::CallbackInfo& info);
     Napi::Value Send(const Napi::CallbackInfo& info);
     Napi::Value Subscribe(const Napi::CallbackInfo & info);
     Napi::Value Unsubscribe(const Napi::CallbackInfo & info);
 
+    Napi::Value WriteArray(const Napi::CallbackInfo& info);
+    Napi::Value ArraySize(const Napi::CallbackInfo& info);
+    Napi::Value ReadArray(const Napi::CallbackInfo& info);
+    Napi::Value ClearArray(const Napi::CallbackInfo& info);
 
     // static NAN_METHOD(listDevices);
-
-    // static NAN_METHOD(openPatch);
-    // static NAN_METHOD(closePatch);
-    // // @todo - update
-    // static NAN_METHOD(addToSearchPath);
-    // static NAN_METHOD(clearSearchPath);
-
-    // communications
-    /**
-     * @important
-     * `subscribe` and `unsubscribe` follow here the libPd API,
-     * not the API exposed in javascript, see `index.js` to see the  exposed
-     * signature of these methods.
-     */
-    // static NAN_METHOD(subscribe);
-    /**
-     * @note - As messages can already be in the queue when unsubscribing,
-     * some messages can be triggered after the call of this method.
-     * However this concurrency issue is solved on the js side
-     */
-    // static NAN_METHOD(unsubscribe);
-
-    /**
-     * Set the callback for pd messages.
-     * Is considered private as it is called in the js wrapper that implement
-     * a more idiomatic js `subscribe/unsubscribe` pattern.
-     * @important - must be called before `init`
-     * @private
-     */
-    // static NAN_METHOD(_setMessageCallback);
-
-    // static NAN_METHOD(send);
-
-    // static NAN_METHOD(arraySize);
-    // static NAN_METHOD(writeArray);
-    // static NAN_METHOD(readArray);
-    // static NAN_METHOD(clearArray);
-
-
-    // static NAN_PROPERTY_GETTER(currentTime);
 };
 
 }; // namespace

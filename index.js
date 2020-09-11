@@ -2,7 +2,7 @@ const nodelibpd = require('bindings')('nodelibpd');
 const path = require('path');
 
 /**
- * Singleton that represents the instance of underlying of libpd
+ * Singleton that represents an instance of the underlying libpd library
  * @namespace pd
  */
 /**

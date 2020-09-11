@@ -38,6 +38,7 @@ describe('node-libpd', () => {
     assert.equal(openClosePatch1.path, patchesPath);
     assert.isFinite(openClosePatch1.$0);
 
+    console.log('> should complain about non existing file "abcd.pd"');
     const inexistingPatch = pd.openPatch('abcd.pd', patchesPath);
     assert.isFalse(inexistingPatch.isValid);
     assert.equal(inexistingPatch.filename, '');
@@ -55,6 +56,7 @@ describe('node-libpd', () => {
     assert.equal(openClosePatch2.path, patchesPath);
     assert.isFinite(openClosePatch2.$0);
 
+    console.log('> should complain about non existing file "test/abcd.pd"');
     const inexistingPatch = pd.openPatch('test/abcd.pd');
     assert.isFalse(inexistingPatch.isValid);
     assert.equal(inexistingPatch.filename, '');
@@ -144,32 +146,6 @@ describe('node-libpd', () => {
 
       done();
     }, 10000);
-  });
-
-  it('pd.send(channel, msg, time) - schedule message', function(done) {
-    this.timeout(10000);
-    const patches = [];
-
-    for (let i = 0; i < 3; i++)
-      patches[i] = pd.openPatch('poly-like.pd', patchesPath);
-
-    const startDelay = 0.2; // in sec
-    const noteDelay = 0.3; // in sec
-    const now = pd.currentTime;
-
-    for (let i = 0; i < 3; i++) {
-      const startOffset = now + (i * startDelay);
-      const baseFreq = 200 * (i + 1);
-
-      for (let j = 0; j < 16; j++) {
-        const triggerTime = startOffset + j * noteDelay;
-        pd.send(patches[i].$0 + '-freq', baseFreq * (j + 1), triggerTime);
-        pd.send(patches[i].$0 + '-trigger', true, triggerTime);
-      }
-    }
-    setTimeout(() => {
-      done();
-    }, 5000);
   });
 
   it('pd.receive(channel, callback) - types', function(done) {
@@ -297,96 +273,115 @@ describe('node-libpd', () => {
     }, 10);
   });
 
+  it('pd.addToSearchPath(absPath)', function() {
+    console.log('> should not log errors');
+    pd.addToSearchPath(path.join(patchesPath, 'rj'));
+    const patch = pd.openPatch(path.join(patchesPath, 'need-search-path.pd'));
+  });
 
-////
-//// Not updated !!!!
-////
+  it('pd.clearSearchPath()', function() {
+    console.log('> should log pd error concerning "c_adsr 1 80 ..."');
+    pd.clearSearchPath();
+    const patch = pd.openPatch(path.join(patchesPath, 'need-search-path.pd'));
+  });
 
-//   it('sine', () => {
-//     const patch = pd.openPatch('sine.pd', patchesPath);
 
-//     setTimeout(() => {
-//       pd.closePatch(patch);
-//       done();
-//     }, 5 * 1000);
-//   });
+  it(`
+    pd.writeArray(name, data, writeLen=data.length, offset=0)
+    pd.readArray(name, dest, readLen=dest.length, offset=0)
+    pd.arraySize(name)
+  `, function() {
+    const patch = pd.openPatch('array-test.pd', patchesPath);
 
-//   it('poly-like', () => {
-//     for (let i = 0; i < 3; i++) {
-//       setTimeout(() => {
-//         const patch = pd.openPatch('poly-like.pd', patchesPath);
-//         console.log(patch);
-//         const baseFreq = 200 * (i + 1);
-//         let index = 0;
+    console.log('get size, default pd size is 100');
+    const size = pd.arraySize('my-array');
+    assert.equal(size, 100); // this is pd default value
 
-//         const intervalId = setInterval(() => {
-//           pd.send(patch.$0 + '-freq', (index + 1) * baseFreq);
-//           pd.send(patch.$0 + '-trigger');
+    console.log('reset array with 0');
+    pd.clearArray('my-array', 0);
 
-//           index += 1;
+    console.log('write values in array');
+    const source = new Float32Array(size);
+    // populate with float values
+    for (let i = 0; i < 20; i++) source[i] = i / 20;
 
-//           if (index >= 16)
-//             clearInterval(intervalId);
-//         }, 300);
-//       }, 200 * (i + 1));
-//     }
-//     setTimeout(() => {
-//       done();
-//     }, 5000);
-//   });
+    const writen = pd.writeArray('my-array', source);
+    assert.isTrue(writen);
 
-//   it('writing arrays', () => {
-//     const patch = pd.openPatch('array-test.pd', patchesPath);
-//     const size = pd.arraySize('my-array');
+    console.log('try to write in non existing array');
+    const notWriten = pd.writeArray('do-not-exists', source);
+    assert.isFalse(notWriten);
 
-//     const source = new Float32Array(20);
+    // log back values in console from pd print
+    console.log('read values back from pd print');
+    for (let i = 0; i < 20; i++) pd.send('index', i);
 
-//     for (let i = 0; i < 20; i++) {
-//       source[i] = i / 20;
-//     }
+    console.log('read values back');
+    const dest = new Float32Array(size);
+    // const patch = pd.openPatch('array-test.pd', patchesPath);
+    const result = pd.readArray('my-array', dest);
+    assert.isTrue(result);
+    assert.deepEqual(dest, source);
 
-//     const written = pd.writeArray('my-array', source);
-//     for (let i = 0; i < 20; i++) {
-//       pd.send('index', i);
-//     }
-//     setTimeout(() => {
-//       done();
-//     }, 5000);
-//   });
+    console.log(dest);
 
-  //   it('subscribe/unsubscribe', () => {
-//     const subscriptionPatch = pd.openPatch('subscribe-unsubscribe.pd', patchesPath);
-//     console.log('subscribing "subscription-test" channel');
+  });
 
-//     var callback = function() { console.log('bang'); };
-//     pd.subscribe('subscription-test', callback);
+  // // --------------------------------------------------------
+  // // AUDIO
+  // // --------------------------------------------------------
 
-//     setTimeout(() => {
-//       console.log('unsubscribing "subscription-test" channel');
-//       pd.unsubscribe('subscription-test', callback);
-//       done();
-//     }, 2000);
-//   });
+  it('[audio] sine', function(done) {
+    this.timeout(3000);
+    const patch = pd.openPatch('sine.pd', patchesPath);
 
-//   it('unsubscribe without subscribe', () => {
-//     const subscriptionPatch = pd.openPatch('subscribe-unsubscribe.pd', patchesPath);
+    setTimeout(() => {
+      pd.closePatch(patch);
+      done();
+    }, 2000);
+  });
 
-//     const callback = function() { console.log('bang'); };
-//     pd.unsubscribe('subscription-test', callback);
-//   });
+  it('[audio] send scheduled message', function(done) {
+    this.timeout(10000);
+    const patches = [];
 
-  // it('[audio] Input / Output fun', function(done) {
-  //   this.timeout(10000);
-  //   const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
+    for (let i = 0; i < 3; i++)
+      patches[i] = pd.openPatch('poly-like.pd', patchesPath);
 
-  //   const intervalId = setInterval(() => pd.send('tone'), 100);
+    const startDelay = 0.2; // in sec
+    const noteDelay = 0.3; // in sec
+    const now = pd.currentTime;
 
-  //   setTimeout(() => {
-  //     clearInterval(intervalId);
-  //     done();
-  //   }, 5000);
-  // });
+    for (let i = 0; i < 3; i++) {
+      const startOffset = now + (i * startDelay);
+      const baseFreq = 200 * (i + 1);
 
+      for (let j = 0; j < 16; j++) {
+        const triggerTime = startOffset + j * noteDelay;
+        pd.send(patches[i].$0 + '-freq', baseFreq * (j + 1), triggerTime);
+        pd.send(patches[i].$0 + '-trigger', true, triggerTime);
+      }
+    }
+    setTimeout(() => {
+      done();
+    }, 5000);
+  });
+
+  it('[audio] Input', function(done) {
+    console.log('----------------------------------------------');
+    console.log('MAKE SOME NOISE !');
+    console.log('----------------------------------------------');
+
+    this.timeout(10000);
+    const audioIOPatch = pd.openPatch('audio-input.pd', patchesPath);
+
+    const intervalId = setInterval(() => pd.send('tone'), 100);
+
+    setTimeout(() => {
+      clearInterval(intervalId);
+      done();
+    }, 5000);
+  });
 
   it('pd.destroy() - warning ! any interaction with `pd` after that will throw a segfault error', () => {
     pd.destroy();

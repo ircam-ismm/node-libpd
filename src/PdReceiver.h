@@ -33,7 +33,6 @@ class PdReceiver : public pd::PdReceiver {
     // void receivePitchBend(const int channel, const int value);
     // void receiveAftertouch(const int channel, const int value);
     // void receivePolyAftertouch(const int channel, const int pitch, const int value);
-
     // void receiveMidiByte(const int port, const int byte);
 
   private:

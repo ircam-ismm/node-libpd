@@ -97,6 +97,14 @@ patch_infos_t PdWrapper::createPatchInfos_(pd::Patch patch) {
   return patchInfos;
 }
 
+void PdWrapper::addToSearchPath(const std::string pathname) {
+  this->pd_->addToSearchPath(pathname);
+}
+
+void PdWrapper::clearSearchPath() {
+  this->pd_->clearSearchPath();
+}
+
 // --------------------------------------------------------------------------
 // COMMUNICATIONS
 // --------------------------------------------------------------------------
@@ -133,7 +141,10 @@ void PdWrapper::unsubscribe(const std::string & channel) {
   this->pd_->unsubscribe(channel);
 }
 
-// arrays
+// --------------------------------------------------------------------------
+// ARRAYS
+// --------------------------------------------------------------------------
+
 int PdWrapper::arraySize(const std::string & size) {
   return this->pd_->arraySize(size);
 }
@@ -144,6 +155,10 @@ bool PdWrapper::writeArray(const std::string& name, std::vector<float>& source, 
 
 bool PdWrapper::readArray(const std::string& name, std::vector<float>& dest, int readLen, int offset) {
   return this->pd_->readArray(name, dest, readLen, offset);
+}
+
+void PdWrapper::clearArray(const std::string& name, int value) {
+  return this->pd_->clearArray(name, value);
 }
 
 } // namespace

@@ -13,7 +13,13 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
 
     InstanceMethod("destroy", &NodePd::Destroy),
     InstanceMethod("closePatch", &NodePd::ClosePatch),
+    InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),
+    InstanceMethod("clearSearchPath", &NodePd::ClearSearchPath),
     InstanceMethod("send", &NodePd::Send),
+    InstanceMethod("readArray", &NodePd::ReadArray),
+    InstanceMethod("writeArray", &NodePd::WriteArray),
+    InstanceMethod("clearArray", &NodePd::ClearArray),
+    InstanceMethod("arraySize", &NodePd::ArraySize),
 
     // monkey patched on the js side
     InstanceMethod("_initialize", &NodePd::Initialize),
@@ -100,7 +106,6 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
 
   if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsFunction()) {
     Napi::Error::New(env, "Invalid Arguments").ThrowAsJavaScriptException();
-    // return;
   }
 
   if (this->initialized_ == false) {
@@ -234,6 +239,10 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
 Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't openPatch before init").ThrowAsJavaScriptException();
+  }
+
   if (!info[0].IsString() || !info[1].IsString()) {
     Napi::Error::New(env, "Invalid Arguments: pd.openPatch(filename, path)").ThrowAsJavaScriptException();
   } else {
@@ -263,6 +272,10 @@ Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo& info) {
 Napi::Value NodePd::ClosePatch(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't closePatch before init").ThrowAsJavaScriptException();
+  }
+
   if (!info[0].IsObject()) {
     Napi::Error::New(env, "Invalid Arguments: pd.closePatch(patch)").ThrowAsJavaScriptException();
   } else {
@@ -284,8 +297,31 @@ Napi::Value NodePd::ClosePatch(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+Napi::Value NodePd::AddToSearchPath(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (!info[0].IsString()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.addToSearchPath(pathname)").ThrowAsJavaScriptException();
+  }
+
+  std::string pathname = info[0].As<Napi::String>().Utf8Value();
+  this->pdWrapper_->addToSearchPath(pathname);
+
+  return env.Undefined();
+}
+Napi::Value NodePd::ClearSearchPath(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  this->pdWrapper_->clearSearchPath();
+
+  return env.Undefined();
+}
+
 Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't get currentTime before init").ThrowAsJavaScriptException();
+  }
 
   double currentTime = this->paWrapper_->currentTime;
   return Napi::Number::New(env, currentTime);
@@ -311,6 +347,10 @@ Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo& info) {
  */
 Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't send before init").ThrowAsJavaScriptException();
+  }
 
   if (!info[0].IsString()) {
     Napi::Error::New(env, "Invalid Arguments: pd.send(channel, value[, scheduledTime])").ThrowAsJavaScriptException();
@@ -373,8 +413,12 @@ Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
 }
 
 // these 2 method are hidden behind a js event emitter API
-Napi::Value NodePd::Subscribe(const Napi::CallbackInfo & info) {
+Napi::Value NodePd::Subscribe(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't subscribe before init").ThrowAsJavaScriptException();
+  }
 
   if (!info[0].IsString()) {
     Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)").ThrowAsJavaScriptException();
@@ -386,8 +430,12 @@ Napi::Value NodePd::Subscribe(const Napi::CallbackInfo & info) {
   return env.Undefined();
 }
 
-Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo & info) {
+Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't unsubscribe before init").ThrowAsJavaScriptException();
+  }
 
   if (!info[0].IsString()) {
     Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)").ThrowAsJavaScriptException();
@@ -399,96 +447,139 @@ Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo & info) {
   return env.Undefined();
 }
 
-
-// NAN_METHOD(NodePd::arraySize) {
-//   NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
-
-//   // ignore * else
-//   if (info[0]->IsString()) {
-//     v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
-//     Nan::Utf8String nanName(localName);
-//     std::string name(*nanName);
-
-//     const int size = nodePd->pdWrapper_->arraySize(name);
-
-//     v8::Local<v8::Integer> localSize =
-//       Nan::New<v8::Integer>(size);
-
-//     info.GetReturnValue().Set(localSize);
-//   }
-// }
-
-// NAN_METHOD(NodePd::writeArray) {
-//   if (!info[0]->IsString() || !info[1]->IsTypedArray()) {
-//     v8::Local<v8::String> errMsg =
-//       Nan::New("Invalid arguments: `name` must be a string and `source` must be a Float32Array").ToLocalChecked();
-//     Nan::ThrowTypeError(errMsg);
-//   } else {
-//     NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
-
-//     v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
-//     Nan::Utf8String nanName(localName);
-//     std::string name(*nanName);
-
-//     v8::Local<v8::TypedArray> localArray = v8::Local<v8::TypedArray>::Cast(info[1]);
-//     Nan::TypedArrayContents<float> typed(localArray);
-
-//     std::vector<float> source(*typed, *typed + typed.length());//  = *typedd;
-
-//     // @todo length, offset
-//     // writeLen (default=-1)
-//     // offset (default=0)
-
-//     const bool result = nodePd->pdWrapper_->writeArray(name, source);
-
-//     v8::Local<v8::Integer> v8result =
-//       Nan::New<v8::Integer>(result);
-
-//     info.GetReturnValue().Set(v8result);
-//   }
-// }
-
-// NAN_METHOD(NodePd::readArray) {
-
-//   if (!info[0]->IsString()) {
-//     v8::Local<v8::String> errMsg =
-//       Nan::New("Invalid arguments: `name` must be a string").ToLocalChecked();
-//     Nan::ThrowTypeError(errMsg);
-//   } else {
-//     NodePd * nodePd = Nan::ObjectWrap::Unwrap<NodePd>(info.This());
-
-//     v8::Local<v8::String> localName = Nan::To<v8::String>(info[0]).ToLocalChecked();
-//     Nan::Utf8String nanName(localName);
-//     std::string name(*nanName);
-
-//     std::vector<float> dest;
-
-//     nodePd->pdWrapper_->readArray(name, dest);
-
-//     float test = dest[0];
-//     std::cout << test << std::endl;
-//   }
-// }
-
-// NAN_METHOD(NodePd::clearArray) {
-
-// }
-
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// ARRAYS
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 /**
- * add the given path to the pd search path.
- * note: fails silently if path not found
- *
- * @param {String} path - pathname
- * @todo - implement
+ * @param {String} name
+ * @param {Float32Array} data
+ * @param {Number} [writeLen=data.length]
+ * @param {Number} [offset=0]
  */
-// NAN_METHOD(NodePd::addToSearchPath) {}
+Napi::Value NodePd::WriteArray(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't writeArray before init").ThrowAsJavaScriptException();
+  }
+
+  if (!info[0].IsString() || !info[1].IsTypedArray()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.writeArray(name, data, len=data.length, offset=0)").ThrowAsJavaScriptException();
+  }
+
+  std::string name = info[0].As<Napi::String>().Utf8Value();
+  // https://github.com/nodejs/node-addon-examples/blob/master/array_buffer_to_native/node-addon-api/array_buffer_to_native.cc
+  Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
+  const float* ptr = reinterpret_cast<float*>(buf.Data());
+  const size_t len = buf.ByteLength() / sizeof(float);
+
+  std::vector<float> source(ptr, ptr + len);
+
+  int writeLen = len;
+  int offset = 0;
+
+  if (info[2].IsNumber()) {
+    writeLen = info[2].As<Napi::Number>().Int32Value();
+  }
+
+  if (info[3].IsNumber()) {
+    writeLen = info[3].As<Napi::Number>().Int32Value();
+  }
+
+  bool result = this->pdWrapper_->writeArray(name, source, writeLen, offset);
+  return Napi::Boolean::New(env, result);
+}
 
 /**
- * Destroy search path.
- * @todo - implement
+ * @param {String} name
+ * @param {Float32Arra} destBuffer
+ * @param {Number} [readLen=destBuffer.length]
+ * @param {Number} [offset=0]
  */
-// NAN_METHOD(NodePd::clearSearchPath) {}
+Napi::Value NodePd::ReadArray(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't readArray before init").ThrowAsJavaScriptException();
+  }
+
+  if (!info[0].IsString() || !info[1].IsTypedArray()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.readArray(name, len=1, offset=0)").ThrowAsJavaScriptException();
+  }
+
+  std::string name = info[0].As<Napi::String>().Utf8Value();
+
+  Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
+  const float* ptr = reinterpret_cast<float*>(buf.Data());
+  const size_t len = buf.ByteLength() / sizeof(float);
+  std::vector<float> dest(ptr, ptr + len);
+
+  int readLen = len;
+  int offset = 0;
+
+  if (info[2].IsNumber()) {
+    readLen = info[2].As<Napi::Number>().Int32Value();
+  }
+
+  if (info[3].IsNumber()) {
+    offset = info[3].As<Napi::Number>().Int32Value();
+  }
+
+  bool result = this->pdWrapper_->readArray(name, dest, readLen, offset);
+
+  // copy back in Float32Array, weird, as it should be a reference from what I understand
+  for (int i = offset; i < readLen; i++) {
+    buf[i] = dest[i];
+  }
+
+  return Napi::Boolean::New(env, result);
+}
+
+
+Napi::Value NodePd::ArraySize(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't arraySize before init").ThrowAsJavaScriptException();
+  }
+
+  if (!info[0].IsString()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.arraySize(name)").ThrowAsJavaScriptException();
+  }
+
+  std::string name = info[0].As<Napi::String>().Utf8Value();
+  const int size = this->pdWrapper_->arraySize(name);
+
+  return Napi::Number::New(env, size);
+}
+
+Napi::Value NodePd::ClearArray(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't clearArray before init").ThrowAsJavaScriptException();
+  }
+
+  if (!info[0].IsString()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.clearArray(name, value=0)").ThrowAsJavaScriptException();
+  }
+
+  std::string name = info[0].As<Napi::String>().Utf8Value();
+  int value = 0;
+
+  if (info[1].IsNumber()) {
+    value = info[1].As<Napi::Number>().Int32Value();
+  }
+
+  this->pdWrapper_->clearArray(name, value);
+
+  return env.Undefined();
+}
 
 } // namespace
 

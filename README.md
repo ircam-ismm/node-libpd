@@ -49,19 +49,21 @@ apt-get install -y ... ???
 ## Usage
 
 ```js
-import pd from 'node-libpd';
+const pd = require('node-libpd');
+// or if you use some transpiler such as babel
+// import pd from 'node-libpd';
 
 // init pd
 const initialized = pd.init({
   numInputChannels: 0,
   numOutputChannels: 2,
   sampleRate: 48000,
-  ticks: 1, // a pd block (or tick) is 64 samples, be aware that increasing this value will throttle messages
+  ticks: 1, // a pd block (or tick) is 64 samples, be aware that increasing this value will throttle messages (tbc)
 });
 
-// 
-const patchesPath = path.join(process.cwd(), 'my-patches');
-const patch = pd.openPatch('my-patch.pd', patchesPath);
+// instantiate a patch
+const pathname = path.join(process.cwd(), 'pd', 'my-patch.pd');
+const patch = pd.openPatch(patchPathname);
 
 // subscribe to messages from the patchd
 pd.subscribe(`${patch.$0}-output`, function(msg) {
@@ -116,6 +118,11 @@ npm run test
 ```
 
 ## Todos
+
+- searchPath functions
+- array functions
+- list devices and choose device
+- midi event ? (probably not)
 
 - support pd externals (see if only it's possible...)
 - rebuild libpd without jack
