@@ -96,10 +96,7 @@ NodePd::~NodePd() {
  * @param {int} [param.numInputChannels=0] - number of input channels (not implemented)
  * @param {int} [param.numOutputChannels=2] - number of output channels
  * @param {int} [param.sampleRate=44100] - sample rate
- *
- * @todo - check sampleRate against portaudio informations
- * @todo - add a parameter to change the number of ticks (blocks) processed by pd
- *         force it to be a multiple of 64
+ * @param {int} [param.ticks=1] - ticks
  */
 Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
