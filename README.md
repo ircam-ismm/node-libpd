@@ -16,7 +16,7 @@
   * [pd.currentTime : Number](#pdcurrenttime--number)
   * [pd.init(config) ⇒ Boolean](#pdinitconfig-%E2%87%92-boolean)
   * [pd.destroy()](#pddestroy)
-  * [pd.openPatch() ⇒ [Patch](#Patch)](#pdopenpatch-%E2%87%92-patch%23patch)
+  * [pd.openPatch() ⇒ Object](#pdopenpatch-%E2%87%92-object)
   * [pd.closePatch(patch)](#pdclosepatchpatch)
   * [pd.addToSearchPath(pathname)](#pdaddtosearchpathpathname)
   * [pd.clearSearchPath()](#pdclearsearchpath)
@@ -126,7 +126,7 @@ Singleton that represents an instance of the underlying libpd library
     * [.currentTime](#pd.currentTime) : <code>Number</code>
     * [.init(config)](#pd.init) ⇒ <code>Boolean</code>
     * [.destroy()](#pd.destroy)
-    * [.openPatch()](#pd.openPatch) ⇒ [<code>Patch</code>](#Patch)
+    * [.openPatch()](#pd.openPatch) ⇒ <code>Object</code>
     * [.closePatch(patch)](#pd.closePatch)
     * [.addToSearchPath(pathname)](#pd.addToSearchPath)
     * [.clearSearchPath()](#pd.clearSearchPath)
@@ -173,13 +173,13 @@ calliing `destroy` migth throw a SegFault error.
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.openPatch"></a>
 
-### pd.openPatch() ⇒ [<code>Patch</code>](#Patch)
+### pd.openPatch() ⇒ <code>Object</code>
 Open a pd patch instance. As the same patch can be opened several times,
 think of it as a kind of poly with a nice API, be careful to use patch.$0
 in your patches.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
-**Returns**: [<code>Patch</code>](#Patch) - - instance of the patch  
+**Returns**: <code>Object</code> - - instance of the patch  
 
 | Type | Description |
 | --- | --- |
