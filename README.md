@@ -2,36 +2,42 @@
 
 > Node.js binding for [`lib-pd`](https://github.com/libpd/libpd) that uses [`portaudio`](http://www.portaudio.com/) as audio backend.
 
+## Install
+
+```
+npm install [--save] node-libpd
+```
+
 ## Table of Content
 
 <!-- toc -->
 
 - [Notes / Caveats:](#notes--caveats)
-- [Install](#install)
   * [Install on Mac OSX](#install-on-mac-osx)
   * [Install on Raspberry Pi](#install-on-raspberry-pi)
-- [Usage](#usage)
-- [Objects](#objects)
-- [pd : object](#pd--object)
-  * [pd.currentTime : Number](#pdcurrenttime--number)
-  * [pd.init(config) ⇒ Boolean](#pdinitconfig-%E2%87%92-boolean)
-  * [pd.destroy()](#pddestroy)
-  * [pd.openPatch() ⇒ Object](#pdopenpatch-%E2%87%92-object)
-  * [pd.closePatch(patch)](#pdclosepatchpatch)
-  * [pd.addToSearchPath(pathname)](#pdaddtosearchpathpathname)
-  * [pd.clearSearchPath()](#pdclearsearchpath)
-  * [pd.send(channel, value, [time])](#pdsendchannel-value-time)
-  * [pd.subscribe(channel, callback)](#pdsubscribechannel-callback)
-  * [pd.unsubscribe(channel, [callback])](#pdunsubscribechannel-callback)
-  * [pd.writeArray(name, data, [writeLen], offset) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
-  * [pd.readArray(name, data, [readLen], offset) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
-  * [pd.clearArray(name, value)](#pdcleararrayname-value)
-  * [pd.arraySize(name) ⇒ Number](#pdarraysizename-%E2%87%92-number)
-- [Patch : object](#patch--object)
-  * [Patch.$0 : Number](#patch0--number)
-  * [Patch.isValid : Boolean](#patchisvalid--boolean)
-  * [Patch.filename : String](#patchfilename--string)
-  * [Patch.path : Number](#patchpath--number)
+- [Basic Usage](#basic-usage)
+  * [API](#api)
+  * [Objects](#objects)
+  * [pd : object](#pd--object)
+    + [pd.currentTime : Number](#pdcurrenttime--number)
+    + [pd.init(config) ⇒ Boolean](#pdinitconfig-%E2%87%92-boolean)
+    + [pd.destroy()](#pddestroy)
+    + [pd.openPatch() ⇒ Object](#pdopenpatch-%E2%87%92-object)
+    + [pd.closePatch(patch)](#pdclosepatchpatch)
+    + [pd.addToSearchPath(pathname)](#pdaddtosearchpathpathname)
+    + [pd.clearSearchPath()](#pdclearsearchpath)
+    + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
+    + [pd.subscribe(channel, callback)](#pdsubscribechannel-callback)
+    + [pd.unsubscribe(channel, [callback])](#pdunsubscribechannel-callback)
+    + [pd.writeArray(name, data, [writeLen], offset) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
+    + [pd.readArray(name, data, [readLen], offset) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
+    + [pd.clearArray(name, value)](#pdcleararrayname-value)
+    + [pd.arraySize(name) ⇒ Number](#pdarraysizename-%E2%87%92-number)
+  * [Patch : object](#patch--object)
+    + [Patch.$0 : Number](#patch0--number)
+    + [Patch.isValid : Boolean](#patchisvalid--boolean)
+    + [Patch.filename : String](#patchfilename--string)
+    + [Patch.path : Number](#patchpath--number)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -47,12 +53,6 @@
 
 _Tested on MAC OSX 10 and Raspbian Stretch Lite version 9 (raspberry pi 3) - for other platforms, dynamic libraries for libpd and portaudio should probably be built._
 
-## Install
-
-```
-npm install [--save] node-libpd
-```
-
 ### Install on Mac OSX
 
 ```
@@ -65,7 +65,7 @@ xcode-select --install
 apt-get install -y ... ???
 ```
 
-## Usage
+## Basic Usage
 
 ```js
 const pd = require('node-libpd');
@@ -102,9 +102,11 @@ pd.send(`${patch.$0}-input`, 1234, now + 2);
 pd.close(`${patch.$0}-input`, 1234);
 ```
 
+## API
+
 <!-- api -->
 
-## Objects
+### Objects
 
 <dl>
 <dt><a href="#pd">pd</a> : <code>object</code></dt>
@@ -117,7 +119,7 @@ pd.close(`${patch.$0}-input`, 1234);
 
 <a name="pd"></a>
 
-## pd : <code>object</code>
+### pd : <code>object</code>
 Singleton that represents an instance of the underlying libpd library
 
 **Kind**: global namespace  
@@ -140,13 +142,13 @@ Singleton that represents an instance of the underlying libpd library
 
 <a name="pd.currentTime"></a>
 
-### pd.currentTime : <code>Number</code>
+#### pd.currentTime : <code>Number</code>
 Current audio time in seconds since `init` as been called.
 
 **Kind**: static property of [<code>pd</code>](#pd)  
 <a name="pd.init"></a>
 
-### pd.init(config) ⇒ <code>Boolean</code>
+#### pd.init(config) ⇒ <code>Boolean</code>
 Configure and initialize pd instance. You basically want to do that at the
 startup of the application as the process is blocking and that it can take
  a long time to have the audio running.
@@ -165,7 +167,7 @@ startup of the application as the process is blocking and that it can take
 
 <a name="pd.destroy"></a>
 
-### pd.destroy()
+#### pd.destroy()
 Destroy the pd instance. You basically want to do that want your program
 exists to clean things up, be aware the any call to the pd instance after
 calliing `destroy` migth throw a SegFault error.
@@ -173,7 +175,7 @@ calliing `destroy` migth throw a SegFault error.
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.openPatch"></a>
 
-### pd.openPatch() ⇒ <code>Object</code>
+#### pd.openPatch() ⇒ <code>Object</code>
 Open a pd patch instance. As the same patch can be opened several times,
 think of it as a kind of poly with a nice API, be careful to use patch.$0
 in your patches.
@@ -187,7 +189,7 @@ in your patches.
 
 <a name="pd.closePatch"></a>
 
-### pd.closePatch(patch)
+#### pd.closePatch(patch)
 Close a pd patch instance.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -198,7 +200,7 @@ Close a pd patch instance.
 
 <a name="pd.addToSearchPath"></a>
 
-### pd.addToSearchPath(pathname)
+#### pd.addToSearchPath(pathname)
 Add a directory to the pd search paths, for loading libraries etc.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -209,13 +211,13 @@ Add a directory to the pd search paths, for loading libraries etc.
 
 <a name="pd.clearSearchPath"></a>
 
-### pd.clearSearchPath()
+#### pd.clearSearchPath()
 Clear the pd search path
 
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.send"></a>
 
-### pd.send(channel, value, [time])
+#### pd.send(channel, value, [time])
 Send a named message to the pd backend
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -228,7 +230,7 @@ Send a named message to the pd backend
 
 <a name="pd.subscribe"></a>
 
-### pd.subscribe(channel, callback)
+#### pd.subscribe(channel, callback)
 Subscribe to named events send by a pd patch
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -240,7 +242,7 @@ Subscribe to named events send by a pd patch
 
 <a name="pd.unsubscribe"></a>
 
-### pd.unsubscribe(channel, [callback])
+#### pd.unsubscribe(channel, [callback])
 Unsubscribe to named events send by a pd patch
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -252,7 +254,7 @@ Unsubscribe to named events send by a pd patch
 
 <a name="pd.writeArray"></a>
 
-### pd.writeArray(name, data, [writeLen], offset) ⇒ <code>Boolean</code>
+#### pd.writeArray(name, data, [writeLen], offset) ⇒ <code>Boolean</code>
 Write values into a pd array. Be carefull with the size of the pd arrays
 (default to 100) in your patches.
 
@@ -268,7 +270,7 @@ Write values into a pd array. Be carefull with the size of the pd arrays
 
 <a name="pd.readArray"></a>
 
-### pd.readArray(name, data, [readLen], offset) ⇒ <code>Boolean</code>
+#### pd.readArray(name, data, [readLen], offset) ⇒ <code>Boolean</code>
 Read values into a pd array.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -283,7 +285,7 @@ Read values into a pd array.
 
 <a name="pd.clearArray"></a>
 
-### pd.clearArray(name, value)
+#### pd.clearArray(name, value)
 Fill a pd array with a given value.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -295,7 +297,7 @@ Fill a pd array with a given value.
 
 <a name="pd.arraySize"></a>
 
-### pd.arraySize(name) ⇒ <code>Number</code>
+#### pd.arraySize(name) ⇒ <code>Number</code>
 Fill a pd array with a given value.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -307,7 +309,7 @@ Fill a pd array with a given value.
 
 <a name="Patch"></a>
 
-## Patch : <code>object</code>
+### Patch : <code>object</code>
 Object representing a patch instance.
 
 **Kind**: global namespace  
@@ -320,26 +322,26 @@ Object representing a patch instance.
 
 <a name="Patch.$0"></a>
 
-### Patch.$0 : <code>Number</code>
+#### Patch.$0 : <code>Number</code>
 Id of the patch. You should use this value to communicate with a given patch
 in send and receive channel.
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
 <a name="Patch.isValid"></a>
 
-### Patch.isValid : <code>Boolean</code>
+#### Patch.isValid : <code>Boolean</code>
 Tells you if the patch is valid, for example is Valid is false is the patch
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
 <a name="Patch.filename"></a>
 
-### Patch.filename : <code>String</code>
+#### Patch.filename : <code>String</code>
 Name of the the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
 <a name="Patch.path"></a>
 
-### Patch.path : <code>Number</code>
+#### Patch.path : <code>Number</code>
 Directory of the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
@@ -358,13 +360,10 @@ npm run test
 
 ## Todos
 
-- searchPath functions
-- array functions
 - list devices and choose device
 - midi event ? (probably not)
-
-- support pd externals (see if only it's possible...)
-- rebuild libpd without jack
+- support pd externals, if only possible...
+- rebuild portaudio without jack on linux
 
 ## Credits
 
