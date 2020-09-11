@@ -108,7 +108,7 @@ const path = require('path');
  * @param {Float32Array} data - Float32Array containing the data to be written
  *  into the pd array.
  * @param {Number} [writeLen=data.length] - @todo confirm behavior
- * @param {Number} offset - @todo confirm behavior
+ * @param {Number} [offset=0] - @todo confirm behavior
  * @return {Boolean} true if the operation succeed, false otherwise
  */
 /**
@@ -119,7 +119,7 @@ const path = require('path');
  * @param {Name} name - name of the pd array
  * @param {Float32Array} data - Float32Array to populate from pd array values
  * @param {Number} [readLen=data.length] - @todo confirm behavior
- * @param {Number} offset - @todo confirm behavior
+ * @param {Number} [offset=0] - @todo confirm behavior
  * @return {Boolean} true if the operation succeed, false otherwise
  */
 /**

@@ -29,8 +29,8 @@ npm install [--save] node-libpd
     + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
     + [pd.subscribe(channel, callback)](#pdsubscribechannel-callback)
     + [pd.unsubscribe(channel, [callback])](#pdunsubscribechannel-callback)
-    + [pd.writeArray(name, data, [writeLen], offset) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
-    + [pd.readArray(name, data, [readLen], offset) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
+    + [pd.writeArray(name, data, [writeLen], [offset]) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
+    + [pd.readArray(name, data, [readLen], [offset]) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
     + [pd.clearArray(name, value)](#pdcleararrayname-value)
     + [pd.arraySize(name) ⇒ Number](#pdarraysizename-%E2%87%92-number)
   * [Patch : object](#patch--object)
@@ -136,8 +136,8 @@ Singleton that represents an instance of the underlying libpd library
     * [.send(channel, value, [time])](#pd.send)
     * [.subscribe(channel, callback)](#pd.subscribe)
     * [.unsubscribe(channel, [callback])](#pd.unsubscribe)
-    * [.writeArray(name, data, [writeLen], offset)](#pd.writeArray) ⇒ <code>Boolean</code>
-    * [.readArray(name, data, [readLen], offset)](#pd.readArray) ⇒ <code>Boolean</code>
+    * [.writeArray(name, data, [writeLen], [offset])](#pd.writeArray) ⇒ <code>Boolean</code>
+    * [.readArray(name, data, [readLen], [offset])](#pd.readArray) ⇒ <code>Boolean</code>
     * [.clearArray(name, value)](#pd.clearArray)
     * [.arraySize(name)](#pd.arraySize) ⇒ <code>Number</code>
 
@@ -255,7 +255,7 @@ Unsubscribe to named events send by a pd patch
 
 <a name="pd.writeArray"></a>
 
-#### pd.writeArray(name, data, [writeLen], offset) ⇒ <code>Boolean</code>
+#### pd.writeArray(name, data, [writeLen], [offset]) ⇒ <code>Boolean</code>
 Write values into a pd array. Be carefull with the size of the pd arrays
 (default to 100) in your patches.
 
@@ -267,11 +267,11 @@ Write values into a pd array. Be carefull with the size of the pd arrays
 | name | <code>Name</code> |  | name of the pd array |
 | data | <code>Float32Array</code> |  | Float32Array containing the data to be written  into the pd array. |
 | [writeLen] | <code>Number</code> | <code>data.length</code> | @todo confirm behavior |
-| offset | <code>Number</code> |  | @todo confirm behavior |
+| [offset] | <code>Number</code> | <code>0</code> | @todo confirm behavior |
 
 <a name="pd.readArray"></a>
 
-#### pd.readArray(name, data, [readLen], offset) ⇒ <code>Boolean</code>
+#### pd.readArray(name, data, [readLen], [offset]) ⇒ <code>Boolean</code>
 Read values into a pd array.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
@@ -282,7 +282,7 @@ Read values into a pd array.
 | name | <code>Name</code> |  | name of the pd array |
 | data | <code>Float32Array</code> |  | Float32Array to populate from pd array values |
 | [readLen] | <code>Number</code> | <code>data.length</code> | @todo confirm behavior |
-| offset | <code>Number</code> |  | @todo confirm behavior |
+| [offset] | <code>Number</code> | <code>0</code> | @todo confirm behavior |
 
 <a name="pd.clearArray"></a>
 
