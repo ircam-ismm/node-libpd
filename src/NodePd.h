@@ -24,10 +24,10 @@ class NodePd : public Napi::ObjectWrap<NodePd> {
   public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
     NodePd(const Napi::CallbackInfo& info);
+    ~NodePd();
 
   private:
     static Napi::FunctionReference constructor;
-    ~NodePd();
 
     static const int DEFAULT_NUM_INPUT_CHANNELS = 1;
     static const int DEFAULT_NUM_OUTPUT_CHANNELS = 2;

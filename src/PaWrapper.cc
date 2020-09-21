@@ -15,7 +15,7 @@ PaWrapper::~PaWrapper() {
   if (this->paInitErr_ == paNoError) {
     PaError err = Pa_CloseStream(this->paStream_);
     if (err != paNoError) {
-      std::cout << '[node-libpd] failed to close  portaudio stream' << std::endl;
+      std::cout << "[node-libpd] failed to close  portaudio stream" << std::endl;
     }
   }
 }
