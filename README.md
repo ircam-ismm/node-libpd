@@ -19,25 +19,7 @@ npm install [--save] node-libpd
 - [API](#api)
   * [Objects](#objects)
   * [pd : object](#pd--object)
-    + [pd.currentTime : Number](#pdcurrenttime--number)
-    + [pd.init(config) ⇒ Boolean](#pdinitconfig-%E2%87%92-boolean)
-    + [pd.destroy()](#pddestroy)
-    + [pd.openPatch(pathname) ⇒ Object](#pdopenpatchpathname-%E2%87%92-object)
-    + [pd.closePatch(patch)](#pdclosepatchpatch)
-    + [pd.addToSearchPath(pathname)](#pdaddtosearchpathpathname)
-    + [pd.clearSearchPath()](#pdclearsearchpath)
-    + [pd.send(channel, value, [time])](#pdsendchannel-value-time)
-    + [pd.subscribe(channel, callback)](#pdsubscribechannel-callback)
-    + [pd.unsubscribe(channel, [callback])](#pdunsubscribechannel-callback)
-    + [pd.writeArray(name, data, [writeLen], [offset]) ⇒ Boolean](#pdwritearrayname-data-writelen-offset-%E2%87%92-boolean)
-    + [pd.readArray(name, data, [readLen], [offset]) ⇒ Boolean](#pdreadarrayname-data-readlen-offset-%E2%87%92-boolean)
-    + [pd.clearArray(name, [value])](#pdcleararrayname-value)
-    + [pd.arraySize(name) ⇒ Number](#pdarraysizename-%E2%87%92-number)
   * [Patch : object](#patch--object)
-    + [Patch.$0 : Number](#patch0--number)
-    + [Patch.isValid : Boolean](#patchisvalid--boolean)
-    + [Patch.filename : String](#patchfilename--string)
-    + [Patch.path : String](#patchpath--string)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -356,6 +338,7 @@ Directory of the pd patch file
 **Read only**: true  
 
 <!-- apistop -->
+
 
 ## Tests
 

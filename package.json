@@ -5,25 +5,25 @@
   "author": [
     "Benjamin Matuszewski <benjamin.matuszewski@gmail.com>"
   ],
+  "license": "BSD-3-Clause",
   "gypfile": true,
   "scripts": {
-    "readme": "node bin/insert-api.js && markdown-toc -i README.md",
+    "api": "jsdoc-to-readme --src index.js",
+    "doc": "npm run api && npm run toc",
     "install": "node-gyp rebuild",
-    "deploy": "np --yolo",
-    "test": "mocha"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "jsdoc-to-markdown": "^6.0.1",
-    "markdown-toc": "^1.2.0",
-    "mocha": "^8.1.3",
-    "np": "^6.5.0",
-    "segfault-handler": "^1.3.0"
+    "test": "mocha",
+    "toc": "markdown-toc -i README.md  --maxdepth 3"
   },
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^3.0.0",
     "node-gyp": "^7.1.0"
   },
-  "license": "BSD-3-Clause"
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "jsdoc-to-readme": "^1.0.2",
+    "markdown-toc": "^1.2.0",
+    "mocha": "^8.1.3",
+    "segfault-handler": "^1.3.0"
+  }
 }

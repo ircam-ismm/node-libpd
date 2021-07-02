@@ -345,8 +345,9 @@ describe('node-libpd', () => {
     this.timeout(10000);
     const patches = [];
 
-    for (let i = 0; i < 3; i++)
+    for (let i = 0; i < 3; i++) {
       patches[i] = pd.openPatch('poly-like.pd', patchesPath);
+    }
 
     const startDelay = 0.2; // in sec
     const noteDelay = 0.3; // in sec
