@@ -103,6 +103,34 @@
                     ]
                   }
                 ]
+              }],
+
+            ['target_arch=="x64"', {        
+                "link_settings": {
+                  "libraries": [
+                    "<@(module_root_dir)/build/Release/libportaudio.so.2.0.0",
+                    "<@(module_root_dir)/build/Release/libpd.so",
+                  ],
+                  "ldflags": [
+                    "-L<@(module_root_dir)/build/Release",
+                    "-Wl,-rpath,<@(module_root_dir)/build/Release",
+                    '-Wno-sign-compare',
+                  ]
+                },
+                "copies": [
+                  {
+                    "destination": "build/Release/",
+                    "files": [
+                      "<@(module_root_dir)/portaudio/lib-x64/libportaudio.so.2.0.0"
+                    ]
+                  },
+                  {
+                    "destination": "build/Release/",
+                    "files": [
+                      "<@(module_root_dir)/libpd/lib-x64/libpd.so"
+                    ]
+                  }
+                ]
               }]
             ]
           }
