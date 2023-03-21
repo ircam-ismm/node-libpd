@@ -61,7 +61,7 @@ const now = pd.currentTime; // time in sec.
 pd.send(`${patch.$0}-input`, 1234, now + 2);
 
 // close the patch
-pd.closePatch(`${patch.$0}-input`, 1234);
+pd.closePatch(patch);
 ```
 
 ## Notes / Caveats:
