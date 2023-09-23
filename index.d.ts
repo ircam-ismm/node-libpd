@@ -209,3 +209,5 @@ declare module "node-libpd" {
     readonly path: string;
   }
 }
+
+export type LibPd = typeof import("node-libpd");
