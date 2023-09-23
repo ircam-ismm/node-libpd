@@ -212,4 +212,4 @@ declare module "node-libpd" {
   }
 }
 
-export type LibPd = typeof import("./index.js");
+export type LibPd = typeof import("node-libpd");
