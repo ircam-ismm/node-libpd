@@ -1,4 +1,4 @@
-declare module 'node-libpd' {
+declare module "node-libpd" {
   /**
    * The `pd` initialization configuration object.
    *
@@ -30,7 +30,7 @@ declare module 'node-libpd' {
   /**
    * Current audio time in seconds since `init` has been called.
    */
-  declare const currentTime: number;
+  const currentTime: number;
 
   /**
    * Configure and initialize `pd` instance. You basically want to do that at the
@@ -40,14 +40,14 @@ declare module 'node-libpd' {
    * @param { PdInitConfig | undefined } options
    * See also {@link PdInitConfig}
    */
-  declare function init(options?: PdInitConfig): void;
+  function init(options?: PdInitConfig): void;
 
   /**
    * Destroy the `pd` instance. You basically want to do that when your program
    * exits to clean things up, be aware that any call to the `pd` instance after
    * calling `destroy` migth throw a SegFault error.
    */
-  declare function destroy(): void;
+  function destroy(): void;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
@@ -58,7 +58,7 @@ declare module 'node-libpd' {
    * @param { string } pathname Absolute path to the `pd` patches.
    * @returns { Patch } Instance of the patch.
    */
-  declare function openPatch(name: string, pathname: string): Patch;
+  function openPatch(name: string, pathname: string): Patch;
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
    * think of it as a kind of poly with a nice API, be careful to use patch.$0
@@ -68,27 +68,27 @@ declare module 'node-libpd' {
    * @returns { Patch } Instance of the patch.
    * @overload
    */
-  declare function openPatch(pathname: string): Patch;
-  declare function openPatch(...args: string): Patch;
+  function openPatch(pathname: string): Patch;
+  function openPatch(...args: string[]): Patch;
 
   /**
    * Close a `pd` patch instance.
    *
    * @param { Patch } patch The patch to close.
    */
-  declare function closePatch(path: Patch): void;
+  function closePatch(path: Patch): void;
 
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
    *
    * @param { string } pathname
    */
-  declare function addToSearchPath(pathname: string): void;
+  function addToSearchPath(pathname: string): void;
 
   /**
    * Clear the `pd` search path.
    */
-  declare function clearSearchPath(): void;
+  function clearSearchPath(): void;
 
   /**
    * Send a named message to the `pd` backend.
@@ -101,9 +101,9 @@ declare module 'node-libpd' {
    * @param { number } time Audio time at which the message should be
    * sent. If null or < currentTime, is sent as fast as possible.
    *
-   * @tbc messages are processed at `pd` control rate).
+   * @tbc messages are processed at `pd` control rate.
    */
-  declare function send(channel: string, value: any, time?: number): void;
+  function send(channel: string, value: any, time?: number): void;
 
   /**
    * Subscribe to named events sendtby a `pd` patch.
@@ -111,7 +111,7 @@ declare module 'node-libpd' {
    * @param { string } channel Channel name corresponding to the `pd` send name.
    * @param { Function } callback Callback to execute when an event is received.
    */
-  declare function subscribe(channel: string, callback: Function): void;
+  function subscribe(channel: string, callback: Function): void;
 
   /**
    * Unsubscribe from named events sent by a `pd` patch.
@@ -120,7 +120,7 @@ declare module 'node-libpd' {
    * @param { Function | undefined } [callback=null] Callback that should stop receive event.
    *  If null, all callbacks of the channel are removed.
    */
-  declare function unsubscribe(channel: string, callback?: Function): void;
+  function unsubscribe(channel: string, callback?: Function): void;
 
   /**
    * Write values into a `pd` array. Be careful with the size of the `pd` arrays
@@ -137,7 +137,7 @@ declare module 'node-libpd' {
    * @todo
    * Confirm behavior of `writeLen` and `offset` parameters.
    */
-  declare function writeArray(
+  function writeArray(
     name: string,
     data: Float32Array,
     writeLen?: number,
@@ -157,7 +157,7 @@ declare module 'node-libpd' {
    * @todo
    * Confirm behavior of `writeLen` and `offset` parameters.
    */
-  declare function readArray(
+  function readArray(
     name: string,
     data: Float32Array,
     writeLen?: number,
@@ -170,7 +170,7 @@ declare module 'node-libpd' {
    * @param { string } name Name of the `pd` array.
    * @param { number } value Value used to fill the `pd` array.
    */
-  declare function clearArray(name: string, value?: number);
+  function clearArray(name: string, value?: number);
 
   /**
    * Retrieve the size of a `pd` array.
@@ -179,7 +179,7 @@ declare module 'node-libpd' {
    *
    * @returns { number } The size of the array.
    */
-  declare function arraySize(name: string): number;
+  function arraySize(name: string): number;
 
   /**
    * Object representing a patch instance.
