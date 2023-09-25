@@ -149,7 +149,7 @@ declare module "node-libpd" {
    *
    * @param { string } name Name of the `pd` array.
    * @param { Float32Array } data `Float32Array` to populate from `pd` array values..
-   * @param { number | undefined } [writeLen=data.length] Length of the data to read.
+   * @param { number | undefined } [readLen=data.length] Length of the data to read.
    * @param { number | undefined } [offset=0] Offset of the data.
    *
    * @returns { boolean } `true` if the operation succeeded, `false` otherwise.
@@ -160,7 +160,7 @@ declare module "node-libpd" {
   function readArray(
     name: string,
     data: Float32Array,
-    writeLen?: number,
+    readLen?: number,
     offset?: number
   ): boolean;
 
