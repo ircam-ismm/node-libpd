@@ -77,8 +77,10 @@ declare module "node-libpd" {
    * Close a `pd` patch instance.
    *
    * @param { Patch } patch The patch to close.
+   *
+   * @returns { Patch | undefined } A `Patch` instance if the patch has been opened.
    */
-  function closePatch(patch: Patch): void;
+  function closePatch(patch: Patch): Patch | undefined;
 
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
