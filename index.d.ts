@@ -38,9 +38,11 @@ declare module "node-libpd" {
    * a long time to have the audio running.
    *
    * @param { PdInitConfig | undefined } options
+   *
+   * @returns { boolean } `true` if `pd` was ssuceesfully initialized, `false` otherwise.
    * See also {@link PdInitConfig}
    */
-  function init(options?: PdInitConfig): void;
+  function init(options?: PdInitConfig): boolean;
 
   /**
    * Destroy the `pd` instance. You basically want to do that when your program
