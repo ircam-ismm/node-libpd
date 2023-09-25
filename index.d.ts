@@ -97,7 +97,7 @@ declare module "node-libpd" {
    *
    * @param { string } channel Name of the corresponding `receive` box in the patch.
    * To avoid conflict a good practice is to prepend the channel name with `patch.$0`.
-   * @param { any } value Payload of the message, the corresponding mapping is
+   * @param { any | undefined } value Payload of the message, the corresponding mapping is
    * made with `pd` types: Number -> float, String -> symbol, Array -> list
    * (all value that are neither Number nor String are ignored), else -> bang.
    * @param { number } time Audio time at which the message should be
@@ -105,7 +105,7 @@ declare module "node-libpd" {
    *
    * @tbc messages are processed at `pd` control rate.
    */
-  function send(channel: string, value: any, time?: number): void;
+  function send(channel: string, value?: any, time?: number): void;
 
   /**
    * Subscribe to named events sendtby a `pd` patch.
