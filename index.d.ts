@@ -27,6 +27,8 @@ declare module "node-libpd" {
     ticks?: number;
   }
 
+  type PdCallback = (...args: any[]) => void;
+
   /**
    * Current audio time in seconds since `init` has been called.
    */
@@ -113,18 +115,18 @@ declare module "node-libpd" {
    * Subscribe to named events sendtby a `pd` patch.
    *
    * @param { string } channel Channel name corresponding to the `pd` send name.
-   * @param { Function } callback Callback to execute when an event is received.
+   * @param { PdCallback } callback Callback to execute when an event is received.
    */
-  function subscribe(channel: string, callback: Function): void;
+  function subscribe(channel: string, callback: PdCallback): void;
 
   /**
    * Unsubscribe from named events sent by a `pd` patch.
    *
    * @param { string } channel Channel name corresponding to the `pd` send name.
-   * @param { Function | undefined } [callback=null] Callback that should stop receive event.
+   * @param { PdCallback | undefined } [callback=null] Callback that should stop receive event.
    *  If null, all callbacks of the channel are removed.
    */
-  function unsubscribe(channel: string, callback?: Function): void;
+  function unsubscribe(channel: string, callback?: PdCallback): void;
 
   /**
    * Write values into a `pd` array. Be careful with the size of the `pd` arrays
