@@ -8,7 +8,9 @@ PdReceiver::~PdReceiver() {}
 
 //--------------------------------------------------------------
 void PdReceiver::print(const std::string &message) {
-  // std::cout << message << std::endl;
+#ifdef DEBUG
+  std::cout << message << std::endl;
+#endif
   auto ptr = std::make_shared<pd_msg_t>("print", message);
   this->msgQueue_->push(ptr);
 }
