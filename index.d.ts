@@ -117,7 +117,7 @@ declare module "node-libpd" {
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
    *
-   * @param { string } pathname
+   * @param { string } pathname The path to add.
    */
   function addToSearchPath(pathname: string): void;
 
@@ -216,6 +216,29 @@ declare module "node-libpd" {
    * @returns { number } The size of the array.
    */
   function arraySize(name: string): number;
+
+  /**
+   * Starts an instance of the `pd` GUI.
+   *
+   * @param { string } pathname The absolute path to the main folder that contains bin/, tcl/ etc.
+   * On macOS it is located in /Applications/Pd-{version}.app/Contents/Resources.
+   *
+   * @returns { boolean } `true` if the operation was successful, `false` otherwise.
+   */
+  function startGUI(pathname: string): boolean;
+
+  /**
+   * Update and handle any GUI message.
+   * You should call this function periodically in order to see the GUI.
+   *
+   * @see https://github.com/libpd/libpd/pull/132#issuecomment-305504516
+   */
+  function pollGUI(): void;
+
+  /**
+   * Stops `pd` GUI.
+   */
+  function stopGUI(): void;
 
   /**
    * Object representing a patch instance.

@@ -62,6 +62,10 @@ private:
   Napi::Value ReadArray(const Napi::CallbackInfo &info);
   Napi::Value ClearArray(const Napi::CallbackInfo &info);
 
+  Napi::Value StartGUI(const Napi::CallbackInfo &info);
+  Napi::Value PollGUI(const Napi::CallbackInfo &info);
+  Napi::Value StopGUI(const Napi::CallbackInfo &info);
+
   // static NAN_METHOD(listDevices);
 };
 

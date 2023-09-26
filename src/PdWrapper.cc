@@ -2,27 +2,23 @@
 
 namespace node_lib_pd {
 
-PdWrapper::PdWrapper() {
-  this->pd_ = new pd::PdBase();
-}
+PdWrapper::PdWrapper() { this->pd_ = new pd::PdBase(); }
 
 PdWrapper::~PdWrapper() {
-  #ifdef DEBUG
-    std::cout << "[node-libpd] clear and delete pd instance" << std::endl;
-  #endif
+#ifdef DEBUG
+  std::cout << "[node-libpd] clear and delete pd instance" << std::endl;
+#endif
   this->pd_->clear();
   delete this->pd_;
 }
 
-pd::PdBase * PdWrapper::getLibPdInstance() {
-  return this->pd_;
-}
+pd::PdBase *PdWrapper::getLibPdInstance() { return this->pd_; }
 
 // --------------------------------------------------------------------------
 // INITIALIZATION
 // --------------------------------------------------------------------------
 
-bool PdWrapper::init(audio_config_t * config) {
+bool PdWrapper::init(audio_config_t *config) {
   if (this->pd_->isInited())
     return false;
 
@@ -32,7 +28,8 @@ bool PdWrapper::init(audio_config_t * config) {
   const bool queued = false;
 
   // return 1 if setup successfully
-  const int initialized = this->pd_->init(numInputChannels, numOutputChannels, sampleRate, queued);
+  const int initialized =
+      this->pd_->init(numInputChannels, numOutputChannels, sampleRate, queued);
 
   if (initialized == 0)
     return false;
@@ -41,23 +38,20 @@ bool PdWrapper::init(audio_config_t * config) {
   return true;
 }
 
-bool PdWrapper::isInited() {
-  return this->pd_->isInited();
-}
+bool PdWrapper::isInited() { return this->pd_->isInited(); }
 
-int PdWrapper::blockSize() {
-  return this->pd_->blockSize();
-}
+int PdWrapper::blockSize() { return this->pd_->blockSize(); }
 
 // --------------------------------------------------------------------------
 // PATCH
 // --------------------------------------------------------------------------
 
-patch_infos_t PdWrapper::openPatch(const std::string filename, const std::string path) {
+patch_infos_t PdWrapper::openPatch(const std::string filename,
+                                   const std::string path) {
   pd::Patch patch = this->pd_->openPatch(filename, path);
 
   if (patch.isValid()) {
-    std::pair<int, pd::Patch> element = { patch.dollarZero(), patch };
+    std::pair<int, pd::Patch> element = {patch.dollarZero(), patch};
     this->patches_.insert(element);
   };
 
@@ -101,9 +95,7 @@ void PdWrapper::addToSearchPath(const std::string pathname) {
   this->pd_->addToSearchPath(pathname);
 }
 
-void PdWrapper::clearSearchPath() {
-  this->pd_->clearSearchPath();
-}
+void PdWrapper::clearSearchPath() { this->pd_->clearSearchPath(); }
 
 // --------------------------------------------------------------------------
 // COMMUNICATIONS
@@ -112,32 +104,31 @@ void PdWrapper::clearSearchPath() {
 // send to pd
 void PdWrapper::sendMessage(const pd_scheduled_msg_t msg) {
   switch (msg.type) {
-    case PD_MSG_TYPES::BANG_MSG:
-      this->pd_->sendBang(msg.channel);
-      break;
-    case PD_MSG_TYPES::FLOAT_MSG:
-      this->pd_->sendFloat(msg.channel, msg.num);
-      break;
-    case PD_MSG_TYPES::SYMBOL_MSG:
-      this->pd_->sendSymbol(msg.channel, msg.symbol);
-      break;
-    case PD_MSG_TYPES::LIST_MSG:
-      this->pd_->sendList(msg.channel, msg.list);
-      break;
+  case PD_MSG_TYPES::BANG_MSG:
+    this->pd_->sendBang(msg.channel);
+    break;
+  case PD_MSG_TYPES::FLOAT_MSG:
+    this->pd_->sendFloat(msg.channel, msg.num);
+    break;
+  case PD_MSG_TYPES::SYMBOL_MSG:
+    this->pd_->sendSymbol(msg.channel, msg.symbol);
+    break;
+  case PD_MSG_TYPES::LIST_MSG:
+    this->pd_->sendList(msg.channel, msg.list);
+    break;
   }
 }
 
-
 // receive from pd
-void PdWrapper::setReceiver(PdReceiver * receiver) {
+void PdWrapper::setReceiver(PdReceiver *receiver) {
   this->pd_->setReceiver(receiver);
 }
 
-void PdWrapper::subscribe(const std::string & channel) {
+void PdWrapper::subscribe(const std::string &channel) {
   this->pd_->subscribe(channel);
 }
 
-void PdWrapper::unsubscribe(const std::string & channel) {
+void PdWrapper::unsubscribe(const std::string &channel) {
   this->pd_->unsubscribe(channel);
 }
 
@@ -145,20 +136,34 @@ void PdWrapper::unsubscribe(const std::string & channel) {
 // ARRAYS
 // --------------------------------------------------------------------------
 
-int PdWrapper::arraySize(const std::string & size) {
+int PdWrapper::arraySize(const std::string &size) {
   return this->pd_->arraySize(size);
 }
 
-bool PdWrapper::writeArray(const std::string& name, std::vector<float>& source, int writeLen, int offset) {
+bool PdWrapper::writeArray(const std::string &name, std::vector<float> &source,
+                           int writeLen, int offset) {
   return this->pd_->writeArray(name, source, writeLen, offset);
 }
 
-bool PdWrapper::readArray(const std::string& name, std::vector<float>& dest, int readLen, int offset) {
+bool PdWrapper::readArray(const std::string &name, std::vector<float> &dest,
+                          int readLen, int offset) {
   return this->pd_->readArray(name, dest, readLen, offset);
 }
 
-void PdWrapper::clearArray(const std::string& name, int value) {
+void PdWrapper::clearArray(const std::string &name, int value) {
   return this->pd_->clearArray(name, value);
 }
 
-} // namespace
+// --------------------------------------------------------------------------
+// GUI
+// --------------------------------------------------------------------------
+
+int PdWrapper::startGUI(const std::string &path) {
+  return libpd_start_gui((char *)path.c_str());
+}
+
+void PdWrapper::pollGUI() { return libpd_poll_gui(); }
+
+void PdWrapper::stopGUI() { return libpd_stop_gui(); }
+
+} // namespace node_lib_pd

@@ -26,6 +26,10 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("clearArray", &NodePd::ClearArray),
           InstanceMethod("arraySize", &NodePd::ArraySize),
 
+          InstanceMethod("startGUI", &NodePd::StartGUI),
+          InstanceMethod("pollGUI", &NodePd::PollGUI),
+          InstanceMethod("stopGUI", &NodePd::StopGUI),
+
           // monkey patched on the js side
           InstanceMethod("_initialize", &NodePd::Initialize),
           InstanceMethod("_openPatch", &NodePd::OpenPatch),
@@ -647,6 +651,36 @@ Napi::Value NodePd::ClearArray(const Napi::CallbackInfo &info) {
   }
 
   this->pdWrapper_->clearArray(name, value);
+
+  return env.Undefined();
+}
+
+Napi::Value NodePd::StartGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!info[0].IsString()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.startGUI(path)")
+        .ThrowAsJavaScriptException();
+  }
+
+  std::string path = info[0].As<Napi::String>().Utf8Value();
+  int result = this->pdWrapper_->startGUI(path);
+
+  return Napi::Boolean::New(env, result == 0 ? true : false);
+}
+
+Napi::Value NodePd::PollGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  this->pdWrapper_->pollGUI();
+
+  return env.Undefined();
+}
+
+Napi::Value NodePd::StopGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  this->pdWrapper_->stopGUI();
 
   return env.Undefined();
 }
