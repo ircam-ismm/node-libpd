@@ -10,8 +10,9 @@
   "gypfile": true,
   "scripts": {
     "api": "jsdoc-to-readme --src index.js",
+    "build": "node-gyp rebuild",
     "doc": "npm run api && npm run toc",
-    "install": "node-gyp rebuild",
+    "install": "yarn build",
     "test": "mocha",
     "toc": "markdown-toc -i README.md  --maxdepth 3"
   },
