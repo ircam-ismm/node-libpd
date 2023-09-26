@@ -52,6 +52,20 @@ declare module "node-libpd" {
   }
 
   /**
+   * `pd` internal messages list.
+   *
+   * @example
+   * pd.subscribe(PdInternalMessages.Log, (msg: string) => {
+   *  console.log(`Pure Data logged '${msg}'`);
+   * });
+   *
+   * pd.unsubscribe(PdInternalMessages.Log);
+   */
+  enum PdInternalMessages {
+    Log = "print",
+  }
+
+  /**
    * Current audio time in seconds since `init` has been called.
    */
   const currentTime: number;
