@@ -283,4 +283,4 @@ declare module "node-libpd" {
   }
 }
 
-export type LibPd = typeof import("node-libpd");
+export type NodePd = typeof import("node-libpd");
