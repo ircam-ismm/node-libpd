@@ -28,6 +28,30 @@ declare module "node-libpd" {
   }
 
   /**
+   * Description of a `portaudio` device.
+   *
+   * @interface PdDeviceDescription
+   * @member `name` The name of the device.
+   * @member `maxInputChannels` The maximum number of imput channels of the device.
+   * @member `maxOutputChannels` The maximum number of output channels of the device.
+   * @member `defaultLowInputLatency` The default low input latency of the device.
+   * @member `defaultLowOutputLatency` The default low output latency of the device.
+   * @member `defaultHighInputLatency` The default high input latency of the device.
+   * @member `defaultHighOutputLatency` The default high output latency of the device.
+   * @member `defaultSampleRate` The default sample rate of the device.
+   */
+  interface PdDeviceDescription {
+    name: string;
+    maxInputChannels: number;
+    maxOutputChannels: number;
+    defaultLowInputLatency: number;
+    defaultLowOutputLatency: number;
+    defaultHighInputLatency: number;
+    defaultHighOutputLatency: number;
+    defaultSampleRate: number;
+  }
+
+  /**
    * Current audio time in seconds since `init` has been called.
    */
   const currentTime: number;
@@ -50,6 +74,14 @@ declare module "node-libpd" {
    * calling `destroy` migth throw a SegFault error.
    */
   function destroy(): void;
+
+  /**
+   * Get the audio devices descriptions.
+   *
+   * @returns { Array<PdDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PdDeviceDescription}
+   */
+  function listDevices(): Array<PdDeviceDescription>;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
@@ -77,8 +109,10 @@ declare module "node-libpd" {
    * Close a `pd` patch instance.
    *
    * @param { Patch } patch The patch to close.
+   *
+   * @returns { Patch | undefined } A `Patch` instance if the patch has been opened.
    */
-  function closePatch(patch: Patch): void;
+  function closePatch(patch: Patch): Patch | undefined;
 
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
