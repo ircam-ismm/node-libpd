@@ -5,3 +5,4 @@ test
 bin
 
 crash.log
+yarn.lock
