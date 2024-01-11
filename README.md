@@ -111,7 +111,7 @@ Singleton that represents an instance of the underlying libpd library
 
 - [pd](#pd) : <code>object</code>
   - [.currentTime](#pd.currentTime) : <code>Number</code>
-  - [.init(config)](#pd.init) ⇒ <code>Boolean</code>
+  - [.init(config, computeAudio)](#pd.init) ⇒ <code>Boolean</code>
   - [.destroy()](#pd.destroy)
   - [.openPatch(pathname)](#pd.openPatch) ⇒ <code>Object</code>
   - [.closePatch(patch)](#pd.closePatch)
@@ -135,7 +135,7 @@ Current audio time in seconds since `init` as been called.
 **Read only**: true  
 <a name="pd.init"></a>
 
-#### pd.init(config) ⇒ <code>Boolean</code>
+#### pd.init(config, computeAudio) ⇒ <code>Boolean</code>
 
 Configure and initialize pd instance. You basically want to do that at the
 startup of the application as the process is blocking and that it can take
@@ -145,13 +145,14 @@ a long time to have the audio running.
 **Returns**: <code>Boolean</code> - a boolean defining if pd and portaudio have been properly
 initialized
 
-| Param                      | Type                | Default           | Description                                                                                                                                                                                                                                                                                                                              |
-| -------------------------- | ------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| config                     | <code>Object</code> |                   |                                                                                                                                                                                                                                                                                                                                          |
-| [config.numInputChannels]  | <code>Number</code> | <code>1</code>    | num input channels requested                                                                                                                                                                                                                                                                                                             |
-| [config.numOutputChannels] | <code>Number</code> | <code>2</code>    | num output channels requested                                                                                                                                                                                                                                                                                                            |
-| [config.sampleRate]        | <code>Number</code> | <code>4800</code> | requested sampleRate                                                                                                                                                                                                                                                                                                                     |
-| [config.ticks]             | <code>Number</code> | <code>1</code>    | number of blocks (ticks) processed by pd in one run, a pd tick is 64 samples. Be aware that this value will affect / throttle the messages sent to and received by pd, i.e. more ticks means less precision in the treatement of the messages. A value of 1 or 2 is generally good enough even in constrained platforms such as the RPi. |
+| Param                      | Type                 | Default           | Description                                                                                                                                                                                                                                                                                                                              |
+| -------------------------- | -------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| config                     | <code>Object</code>  |                   |                                                                                                                                                                                                                                                                                                                                          |
+| [config.numInputChannels]  | <code>Number</code>  | <code>1</code>    | num input channels requested                                                                                                                                                                                                                                                                                                             |
+| [config.numOutputChannels] | <code>Number</code>  | <code>2</code>    | num output channels requested                                                                                                                                                                                                                                                                                                            |
+| [config.sampleRate]        | <code>Number</code>  | <code>4800</code> | requested sampleRate                                                                                                                                                                                                                                                                                                                     |
+| [config.ticks]             | <code>Number</code>  | <code>1</code>    | number of blocks (ticks) processed by pd in one run, a pd tick is 64 samples. Be aware that this value will affect / throttle the messages sent to and received by pd, i.e. more ticks means less precision in the treatement of the messages. A value of 1 or 2 is generally good enough even in constrained platforms such as the RPi. |
+| computeAudio               | <code>Boolean</code> | true              | optional                                                                                                                                                                                                                                                                                                                                 |
 
 <a name="pd.destroy"></a>
 
@@ -161,8 +162,21 @@ Destroy the pd instance. You basically want to do that want your program
 exists to clean things up, be aware the any call to the pd instance after
 calliing `destroy` migth throw a SegFault error.
 
-**Kind**: static method of [<code>pd</code>](#pd)  
-<a name="pd.openPatch"></a>
+**Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.computeAudio"></a>
+
+#### pd.computeAudio(compute)
+
+Ask `pd` to compute audio.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+| Param   | Type                 | Default | Description |
+| ------- | -------------------- | ------- | ----------- |
+| compute | <code>Boolean</code> | `true`  | optional    |
+
+<a name="pd.getDevicesCount"></a>
 
 #### pd.getDevicesCount() ⇒ <code>Object</code>
 
@@ -170,11 +184,15 @@ Get system's audio devices count.
 
 **Kind**: static method of [<code>pd</code>](#pd)
 
+<a name="pd.listDevices"></a>
+
 #### pd.listDevices() ⇒ <code>Object</code>
 
 Lists system's audio devices.
 
 **Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.getDefaultInputDevice"></a>
 
 #### pd.getDefaultInputDevice() ⇒ <code>Object</code>
 
@@ -182,11 +200,15 @@ Get default input audio device.
 
 **Kind**: static method of [<code>pd</code>](#pd)
 
+<a name="pd.getDefaultOutputDevice"></a>
+
 #### pd.getDefaultOutputDevice() ⇒ <code>Object</code>
 
 Get default output audio device.
 
 **Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.openPatch"></a>
 
 #### pd.openPatch(pathname) ⇒ <code>Object</code>
 
@@ -331,6 +353,8 @@ Retrieve the size of a pd array.
 | ----- | ----------------- | -------------------- |
 | name  | <code>Name</code> | name of the pd array |
 
+<a name="pd.startGUI"></a>
+
 #### pd.startGUI(path) ⇒ <code>Object</code>
 
 Starts Pure Data GUI if Pure Data is present on the system.
@@ -341,12 +365,16 @@ Starts Pure Data GUI if Pure Data is present on the system.
 
 **Kind**: static method of [<code>pd</code>](#pd)
 
+<a name="pd.pollGUI"></a>
+
 #### pd.pollGUI() ⇒ <code>Object</code>
 
 Function to be called to update GUI and handle its messages.
 Use in a `setInterval` for example.
 
 **Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.stopGUI"></a>
 
 #### pd.stopGUI() ⇒ <code>Object</code>
 
