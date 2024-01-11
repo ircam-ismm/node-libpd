@@ -34,6 +34,8 @@ private:
   static const int DEFAULT_SAMPLE_RATE = 48000;
   static const int DEFAULT_NUM_TICKS = 1;
 
+  Napi::Object PaDeviceToObject_(Napi::Env env, PaDeviceInfo const * deviceInfo);
+
   bool initialized_;
   audio_config_t *audioConfig_;
   LockedQueue<pd_msg_t> *msgQueue_;
@@ -47,6 +49,8 @@ private:
 
   Napi::Value GetDevicesCount(const Napi::CallbackInfo &info);
   Napi::Value ListDevices(const Napi::CallbackInfo &info);
+  Napi::Value GetDefaultInputDevice(const Napi::CallbackInfo &info);
+  Napi::Value GetDefaultOutputDevice(const Napi::CallbackInfo &info);
 
   Napi::Value OpenPatch(const Napi::CallbackInfo &info);
   Napi::Value ClosePatch(const Napi::CallbackInfo &info);

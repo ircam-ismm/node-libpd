@@ -1,5 +1,7 @@
 #include "NodePd.h"
 
+
+
 namespace node_lib_pd {
 
 Napi::FunctionReference NodePd::constructor;
@@ -17,6 +19,8 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
 
           InstanceMethod("getDevicesCount", &NodePd::GetDevicesCount),
           InstanceMethod("listDevices", &NodePd::ListDevices),
+          InstanceMethod("getDefaultInputDevice", &NodePd::GetDefaultInputDevice),
+          InstanceMethod("getDefaultOutputDevice", &NodePd::GetDefaultOutputDevice),
 
           InstanceMethod("closePatch", &NodePd::ClosePatch),
           InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),
@@ -252,33 +256,65 @@ Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
   for (int i = 0; i < numDevices; i++) {
     deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
 
-    Napi::Object device = Napi::Object::New(env);
-
-    device.Set("structVersion", Napi::Number::New(env, deviceInfo->structVersion));
-    device.Set("name", Napi::String::New(env, deviceInfo->name));
-    device.Set("maxInputChannels",
-               Napi::Number::New(env, deviceInfo->maxInputChannels));
-    device.Set("maxOutputChannels",
-               Napi::Number::New(env, deviceInfo->maxOutputChannels));
-    device.Set(
-        "defaultLowInputLatency",
-        Napi::Number::New(env, (double)deviceInfo->defaultLowInputLatency));
-    device.Set(
-        "defaultLowOutputLatency",
-        Napi::Number::New(env, (double)deviceInfo->defaultLowOutputLatency));
-    device.Set(
-        "defaultHighInputLatency",
-        Napi::Number::New(env, (double)deviceInfo->defaultHighInputLatency));
-    device.Set(
-        "defaultHighOutputLatency",
-        Napi::Number::New(env, (double)deviceInfo->defaultHighOutputLatency));
-    device.Set("defaultSampleRate",
-               Napi::Number::New(env, (double)deviceInfo->defaultSampleRate));
-
+    Napi::Object device = this->PaDeviceToObject_(env, deviceInfo);
     devices[i] = device;
   }
 
   return devices;
+}
+
+Napi::Value NodePd::GetDefaultInputDevice(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+  PaDeviceIndex index = this->paWrapper_->getDefaultInputDevice();
+
+  if (index == paNoDevice) {
+    return env.Undefined();
+  }
+
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+  return this->PaDeviceToObject_(env, deviceInfo);
+}
+
+Napi::Value NodePd::GetDefaultOutputDevice(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  PaDeviceIndex index = this->paWrapper_->getDefaultOutputDevice();
+  if (index == paNoDevice) {
+    return env.Undefined();
+  }
+
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+  return this->PaDeviceToObject_(env, deviceInfo);
+}
+
+/**
+ * Convert PaDeviceInfo to object.
+ */
+Napi::Object NodePd::PaDeviceToObject_(Napi::Env env, PaDeviceInfo const * deviceInfo) {
+  Napi::Object device = Napi::Object::New(env);
+
+  device.Set("structVersion", Napi::Number::New(env, deviceInfo->structVersion));
+  device.Set("name", Napi::String::New(env, deviceInfo->name));
+  device.Set("maxInputChannels",
+              Napi::Number::New(env, deviceInfo->maxInputChannels));
+  device.Set("maxOutputChannels",
+              Napi::Number::New(env, deviceInfo->maxOutputChannels));
+  device.Set(
+      "defaultLowInputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultLowInputLatency));
+  device.Set(
+      "defaultLowOutputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultLowOutputLatency));
+  device.Set(
+      "defaultHighInputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultHighInputLatency));
+  device.Set(
+      "defaultHighOutputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultHighOutputLatency));
+  device.Set("defaultSampleRate",
+              Napi::Number::New(env, (double)deviceInfo->defaultSampleRate));
+
+  return device;
 }
 
 // --------------------------------------------------------------------------
