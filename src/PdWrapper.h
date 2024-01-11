@@ -15,9 +15,11 @@ public:
 
   pd::PdBase *getLibPdInstance();
 
-  bool init(audio_config_t *config);
+  bool init(audio_config_t *config, bool compute_audio = true);
   bool isInited();
   int blockSize();
+
+  void computeAudio(bool compute_audio);
 
   patch_infos_t openPatch(const std::string patch, const std::string path);
   patch_infos_t closePatch(int dollarZero);

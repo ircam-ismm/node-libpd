@@ -16,12 +16,16 @@ describe("node-libpd", () => {
   it("pd.init(config)", () => {
     // start worker thread, launch pd and portaudio
     // @todo - fix the race condition between the js and the worker thread
-    const initialized = pd.init({
-      numInputChannels: 1,
-      numOutputChannels: 1,
-      sampleRate: 48000,
-      ticks: 1,
-    });
+    const initialized = pd.init(
+      {
+        numInputChannels: 1,
+        numOutputChannels: 1,
+        sampleRate: 48000,
+        ticks: 1,
+      },
+      // tell `pd` not to compute audio.
+      false
+    );
 
     assert.isTrue(initialized);
   });
@@ -37,7 +41,7 @@ describe("node-libpd", () => {
 
     assert.isTrue(devicesCount === devices.length);
 
-    if (devices.lenght > 0) {
+    if (devices.length > 0) {
       const device = devices[0];
 
       assert.isNumber(device.structVersion);
@@ -412,6 +416,11 @@ describe("node-libpd", () => {
     console.log('> should log pd error concerning "c_adsr 1 80 ..."');
     pd.clearSearchPath();
     const patch = pd.openPatch(path.join(patchesPath, "need-search-path.pd"));
+  });
+
+  it("pd.computeAudio()", function () {
+    pd.computeAudio(); // shortcut for pd.computeAudio(true)
+    console.log("> you should hear some sound after this point");
   });
 
   it(`

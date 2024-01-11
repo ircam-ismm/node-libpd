@@ -201,9 +201,9 @@ pd.PdInternalMessages = {
   Print: "print",
 };
 
-pd.init = (options = {}) => {
+pd.init = (options = {}, computeAudio = true) => {
   if (!initialized) {
-    initialized = pd._initialize(options, dispatch);
+    initialized = pd._initialize(options, computeAudio, dispatch);
   }
 
   return initialized;

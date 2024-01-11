@@ -17,6 +17,8 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
 
           InstanceMethod("destroy", &NodePd::Destroy),
 
+          InstanceMethod("computeAudio", &NodePd::ComputeAudio),
+
           InstanceMethod("getDevicesCount", &NodePd::GetDevicesCount),
           InstanceMethod("listDevices", &NodePd::ListDevices),
           InstanceMethod("getDefaultInputDevice", &NodePd::GetDefaultInputDevice),
@@ -115,7 +117,7 @@ NodePd::~NodePd() {
 Napi::Value NodePd::Initialize(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsFunction()) {
+  if (info.Length() != 3 || !info[0].IsObject() || !info[1].IsBoolean() || !info[2].IsFunction()) {
     Napi::Error::New(env, "Invalid Arguments").ThrowAsJavaScriptException();
   }
 
@@ -157,15 +159,17 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo &info) {
     this->audioConfig_->bufferDuration =
         (double)blockSize * (double)ticks / (double)sampleRate;
 
+    const bool compute_audio = info[1].As<Napi::Boolean>().Value();
+
     // init lib-pd
-    const bool pdInitialized = this->pdWrapper_->init(this->audioConfig_);
+    const bool pdInitialized = this->pdWrapper_->init(this->audioConfig_, compute_audio);
     this->pdWrapper_->setReceiver(this->pdReceiver_);
 
     // // init portaudio
     const bool paInitialized = this->paWrapper_->init(
         this->audioConfig_, this->pdWrapper_->getLibPdInstance());
 
-    Napi::Function callback = info[1].As<Napi::Function>();
+    Napi::Function callback = info[2].As<Napi::Function>();
 
     this->backgroundProcess_ =
         new BackgroundProcess(callback, this->audioConfig_, this->msgQueue_,
@@ -209,6 +213,29 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo &info) {
 
   // not sure c++ guys would like that...
   delete this;
+
+  return info.Env().Undefined();
+}
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// DYNAMIC CONFIGURATION
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+/**
+ * Set PD to compute audio or not.
+ */
+Napi::Value NodePd::ComputeAudio(const Napi::CallbackInfo &info) {
+  bool compute_audio = true;
+
+  if (info.Length() >= 1 && info[0].IsBoolean()) {
+    compute_audio = info[0].As<Napi::Boolean>().Value();
+  }
+
+  this->pdWrapper_->computeAudio(compute_audio);
 
   return info.Env().Undefined();
 }
