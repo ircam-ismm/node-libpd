@@ -198,7 +198,7 @@ const dispatch = function (channel, value) {
 let initialized = false;
 
 pd.PdInternalMessages = {
-  Log: "print",
+  Print: "print",
 };
 
 pd.init = (options = {}) => {

@@ -59,14 +59,14 @@ declare module "node-libpd" {
    * `pd` internal messages list.
    *
    * @example
-   * pd.subscribe(PdInternalMessages.Log, (msg: string) => {
-   *  console.log(`Pure Data logged '${msg}'`);
+   * pd.subscribe(PdInternalMessages.Print, (msg: string) => {
+   *  console.log(`Pure Data printed '${msg}'`);
    * });
    *
-   * pd.unsubscribe(PdInternalMessages.Log);
+   * pd.unsubscribe(PdInternalMessages.Print);
    */
   enum PdInternalMessages {
-    Log = "print",
+    Print = "print",
   }
 
   type PdCallback = (...args: any[]) => void;
