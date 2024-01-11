@@ -12,7 +12,7 @@ PaWrapper::~PaWrapper() {
   if (this->paInitErr_ == paNoError) {
     PaError err = Pa_CloseStream(this->paStream_);
     if (err != paNoError) {
-      std::cout << "[node-libpd] failed to close  portaudio stream"
+      std::cout << "[node-libpd] failed to close portaudio stream"
                 << std::endl;
     }
   }
@@ -157,6 +157,11 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
  * Get number of devices returned by `portaudio`.
  */
 int PaWrapper::getDeviceCount() { return Pa_GetDeviceCount(); }
+
+/**
+ * Get `portaudio` default output device index.
+ */
+PaDeviceIndex PaWrapper::getDefaultOutputDevice() { return Pa_GetDefaultOutputDevice(); }
 
 /**
  * Get audio device at specific index from `portaudio`.
