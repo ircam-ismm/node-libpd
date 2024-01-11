@@ -109,6 +109,30 @@ declare module "node-libpd" {
   function listDevices(): Array<PaDeviceDescription>;
 
   /**
+   * Get the default input device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default input device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultInputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the default output device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default output device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultOutputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the audio devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function listDevices(): Array<PaDeviceDescription>;
+
+  /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
    * think of it as a kind of poly with a nice API, be careful to use patch.$0
    * in your patches. This signature exists for backward compatibility with `pd` native API.
