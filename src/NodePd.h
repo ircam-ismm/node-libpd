@@ -45,6 +45,7 @@ private:
   Napi::Value Initialize(const Napi::CallbackInfo &info);
   Napi::Value Destroy(const Napi::CallbackInfo &info);
 
+  Napi::Value GetDevicesCount(const Napi::CallbackInfo &info);
   Napi::Value ListDevices(const Napi::CallbackInfo &info);
 
   Napi::Value OpenPatch(const Napi::CallbackInfo &info);
