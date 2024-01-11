@@ -161,6 +161,12 @@ calliing `destroy` migth throw a SegFault error.
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.openPatch"></a>
 
+#### pd.listDevices() ⇒ <code>Object</code>
+
+Lists system's audio devices.
+
+**Kind**: static method of [<code>pd</code>](#pd)  
+
 #### pd.openPatch(pathname) ⇒ <code>Object</code>
 Open a pd patch instance. As the same patch can be opened several times,
 think of it as a kind of poly with a nice API, be careful to use patch.$0
@@ -351,7 +357,7 @@ npm run test
 
 ## Todos
 
-- list devices and choose device, is a portaudio problem
+- ~~list devices~~ and choose device, is a portaudio problem
 - midi event ? is there some real-world use case
 - support pd externals, if only possible...
 - rebuild portaudio without jack on linux

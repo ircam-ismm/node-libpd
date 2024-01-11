@@ -30,6 +30,48 @@ declare module "node-libpd" {
   type PdCallback = (...args: any[]) => void;
 
   /**
+   * Description of a `portaudio` device.
+   *
+   * @interface PaDeviceDescription
+   * @member `structVersion` The PortAudio device `struct` version.
+   * @member `name` The name of the device.
+   * @member `maxInputChannels` The maximum number of imput channels of the device.
+   * @member `maxOutputChannels` The maximum number of output channels of the device.
+   * @member `defaultLowInputLatency` The default low input latency of the device.
+   * @member `defaultLowOutputLatency` The default low output latency of the device.
+   * @member `defaultHighInputLatency` The default high input latency of the device.
+   * @member `defaultHighOutputLatency` The default high output latency of the device.
+   * @member `defaultSampleRate` The default sample rate of the device.
+   */
+  interface PaDeviceDescription {
+    structVersion: number;
+    name: string;
+    maxInputChannels: number;
+    maxOutputChannels: number;
+    defaultLowInputLatency: number;
+    defaultLowOutputLatency: number;
+    defaultHighInputLatency: number;
+    defaultHighOutputLatency: number;
+    defaultSampleRate: number;
+  }
+
+  /**
+   * `pd` internal messages list.
+   *
+   * @example
+   * pd.subscribe(PdInternalMessages.Log, (msg: string) => {
+   *  console.log(`Pure Data logged '${msg}'`);
+   * });
+   *
+   * pd.unsubscribe(PdInternalMessages.Log);
+   */
+  enum PdInternalMessages {
+    Log = "print",
+  }
+
+  type PdCallback = (...args: any[]) => void;
+
+  /**
    * Current audio time in seconds since `init` has been called.
    */
   const currentTime: number;
@@ -52,6 +94,45 @@ declare module "node-libpd" {
    * calling `destroy` migth throw a SegFault error.
    */
   function destroy(): void;
+
+  /**
+   * Get the audio devices count.
+   *
+   * @returns { number } The number of audio devices.
+   */
+  function getDevicesCount(): number;
+
+  /**
+   * Get the audio devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function listDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the default input device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default input device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultInputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the default output device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default output device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultOutputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the audio devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function listDevices(): Array<PaDeviceDescription>;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
@@ -87,7 +168,7 @@ declare module "node-libpd" {
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
    *
-   * @param { string } pathname
+   * @param { string } pathname The path to add.
    */
   function addToSearchPath(pathname: string): void;
 
@@ -186,6 +267,29 @@ declare module "node-libpd" {
    * @returns { number } The size of the array.
    */
   function arraySize(name: string): number;
+
+  /**
+   * Starts an instance of the `pd` GUI.
+   *
+   * @param { string } pathname The absolute path to the main folder that contains bin/, tcl/ etc.
+   * On macOS it is located in /Applications/Pd-{version}.app/Contents/Resources.
+   *
+   * @returns { boolean } `true` if the operation was successful, `false` otherwise.
+   */
+  function startGUI(pathname: string): boolean;
+
+  /**
+   * Update and handle any GUI message.
+   * You should call this function periodically in order to see the GUI.
+   *
+   * @see https://github.com/libpd/libpd/pull/132#issuecomment-305504516
+   */
+  function pollGUI(): void;
+
+  /**
+   * Stops `pd` GUI.
+   */
+  function stopGUI(): void;
 
   /**
    * Object representing a patch instance.
