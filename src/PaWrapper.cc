@@ -159,6 +159,11 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
 int PaWrapper::getDeviceCount() { return Pa_GetDeviceCount(); }
 
 /**
+ * Get `portaudio` default input device index.
+ */
+PaDeviceIndex PaWrapper::getDefaultInputDevice() { return Pa_GetDefaultInputDevice(); }
+
+/**
  * Get `portaudio` default output device index.
  */
 PaDeviceIndex PaWrapper::getDefaultOutputDevice() { return Pa_GetDefaultOutputDevice(); }

@@ -22,6 +22,7 @@ public:
    */
   bool init(audio_config_t *audioConfig, pd::PdBase *pd);
   // void clear();
+  PaDeviceIndex getDefaultInputDevice();
   PaDeviceIndex getDefaultOutputDevice();
   int getDeviceCount();
   const PaDeviceInfo *getDeviceAtIndex(int index);
