@@ -32,7 +32,8 @@ declare module "node-libpd" {
   /**
    * Description of a `portaudio` device.
    *
-   * @interface PdDeviceDescription
+   * @interface PaDeviceDescription
+   * @member `structVersion` The PortAudio device `struct` version.
    * @member `name` The name of the device.
    * @member `maxInputChannels` The maximum number of imput channels of the device.
    * @member `maxOutputChannels` The maximum number of output channels of the device.
@@ -42,7 +43,8 @@ declare module "node-libpd" {
    * @member `defaultHighOutputLatency` The default high output latency of the device.
    * @member `defaultSampleRate` The default sample rate of the device.
    */
-  interface PdDeviceDescription {
+  interface PaDeviceDescription {
+    structVersion: number;
     name: string;
     maxInputChannels: number;
     maxOutputChannels: number;
@@ -92,12 +94,19 @@ declare module "node-libpd" {
   function destroy(): void;
 
   /**
+   * Get the audio devices count.
+   *
+   * @returns { number } The number of audio devices.
+   */
+  function getDevicesCount(): number;
+
+  /**
    * Get the audio devices descriptions.
    *
-   * @returns { Array<PdDeviceDescription> } An `array` of audio devices descriptions.
-   * See also {@link PdDeviceDescription}
+   * @returns { Array<PaDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PaDeviceDescription}
    */
-  function listDevices(): Array<PdDeviceDescription>;
+  function listDevices(): Array<PaDeviceDescription>;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
