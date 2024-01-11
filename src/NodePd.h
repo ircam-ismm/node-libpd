@@ -47,6 +47,8 @@ private:
   Napi::Value Initialize(const Napi::CallbackInfo &info);
   Napi::Value Destroy(const Napi::CallbackInfo &info);
 
+  Napi::Value ComputeAudio(const Napi::CallbackInfo &info);
+
   Napi::Value GetDevicesCount(const Napi::CallbackInfo &info);
   Napi::Value ListDevices(const Napi::CallbackInfo &info);
   Napi::Value GetDefaultInputDevice(const Napi::CallbackInfo &info);

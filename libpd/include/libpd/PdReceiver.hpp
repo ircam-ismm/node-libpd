@@ -22,7 +22,7 @@ class PdReceiver {
 
     public:
 
-        /// receieve a print
+        /// receive a print
         virtual void print(const std::string& message) {};
 
         /// receive a bang

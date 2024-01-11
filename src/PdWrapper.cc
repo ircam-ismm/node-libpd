@@ -18,7 +18,7 @@ pd::PdBase *PdWrapper::getLibPdInstance() { return this->pd_; }
 // INITIALIZATION
 // --------------------------------------------------------------------------
 
-bool PdWrapper::init(audio_config_t *config) {
+bool PdWrapper::init(audio_config_t *config, bool compute_audio) {
   if (this->pd_->isInited())
     return false;
 
@@ -34,13 +34,17 @@ bool PdWrapper::init(audio_config_t *config) {
   if (initialized == 0)
     return false;
 
-  this->pd_->computeAudio(true);
+  this->pd_->computeAudio(compute_audio);
   return true;
 }
 
 bool PdWrapper::isInited() { return this->pd_->isInited(); }
 
 int PdWrapper::blockSize() { return this->pd_->blockSize(); }
+
+void PdWrapper::computeAudio(bool compute_audio) {
+  this->pd_->computeAudio(compute_audio);
+}
 
 // --------------------------------------------------------------------------
 // PATCH

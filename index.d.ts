@@ -82,11 +82,12 @@ declare module "node-libpd" {
    * a long time to have the audio running.
    *
    * @param { PdInitConfig | undefined } options
+   * @param { boolean } computeAudio Optional: enable `pd` audio computation. Default is `true`.
    *
    * @returns { boolean } `true` if `pd` was ssuceesfully initialized, `false` otherwise.
    * See also {@link PdInitConfig}
    */
-  function init(options?: PdInitConfig): boolean;
+  function init(options?: PdInitConfig, computeAudio?: boolean): boolean;
 
   /**
    * Destroy the `pd` instance. You basically want to do that when your program
@@ -94,6 +95,13 @@ declare module "node-libpd" {
    * calling `destroy` migth throw a SegFault error.
    */
   function destroy(): void;
+
+  /**
+   * Enable `pd` audio computation.
+   *
+   * @param { boolean } compute Optional: tells `pd` to compute audio. Default is `true`.
+   */
+  function computeAudio(compute?: boolean): void;
 
   /**
    * Get the audio devices count.
