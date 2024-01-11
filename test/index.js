@@ -54,6 +54,50 @@ describe("node-libpd", () => {
     console.log(devices);
   });
 
+  it("pd.getDefaultInputDevice()", function () {
+    const device = pd.getDefaultInputDevice();
+    if (typeof device !== "undefined") {
+      assert.isObject(device);
+
+      assert.isNumber(device.structVersion);
+      assert.isString(device.name);
+      assert.isNumber(device.maxInputChannels);
+      assert.isNumber(device.maxOutputChannels);
+      assert.isNumber(device.defaultLowInputLatency);
+      assert.isNumber(device.defaultLowOutputLatency);
+      assert.isNumber(device.defaultHighInputLatency);
+      assert.isNumber(device.defaultHighOutputLatency);
+      assert.isNumber(device.defaultSampleRate);
+
+      console.log("> default input device");
+      console.log(device);
+    } else {
+      console.warn("> no default input device found");
+    }
+  });
+
+  it("pd.getDefaultOutputDevice()", function () {
+    const device = pd.getDefaultOutputDevice();
+    if (typeof device !== "undefined") {
+      assert.isObject(device);
+
+      assert.isNumber(device.structVersion);
+      assert.isString(device.name);
+      assert.isNumber(device.maxInputChannels);
+      assert.isNumber(device.maxOutputChannels);
+      assert.isNumber(device.defaultLowInputLatency);
+      assert.isNumber(device.defaultLowOutputLatency);
+      assert.isNumber(device.defaultHighInputLatency);
+      assert.isNumber(device.defaultHighOutputLatency);
+      assert.isNumber(device.defaultSampleRate);
+
+      console.log("> default output device");
+      console.log(device);
+    } else {
+      console.warn("> no default output device found");
+    }
+  });
+
   if (process.platform === "darwin") {
     it("pd.startGUI()", function (done) {
       this.timeout(10000);
