@@ -15,6 +15,7 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
 
           InstanceMethod("destroy", &NodePd::Destroy),
 
+          InstanceMethod("getDevicesCount", &NodePd::GetDevicesCount),
           InstanceMethod("listDevices", &NodePd::ListDevices),
 
           InstanceMethod("closePatch", &NodePd::ClosePatch),
@@ -228,12 +229,21 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo &info) {
 // }
 
 /**
+ * Get audio devices count.
+ */
+Napi::Value NodePd::GetDevicesCount(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+  return Napi::Number::New(env, numDevices);
+}
+/**
  * List audio devices.
  */
 Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  // TODO: Decouple by returning a standard type from paWrapper.
+  // TODO: Decouple by returning the array from PaWrapper.
   int numDevices = this->paWrapper_->getDeviceCount();
 
   const PaDeviceInfo *deviceInfo;
@@ -244,6 +254,7 @@ Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
 
     Napi::Object device = Napi::Object::New(env);
 
+    device.Set("structVersion", Napi::Number::New(env, deviceInfo->structVersion));
     device.Set("name", Napi::String::New(env, deviceInfo->name));
     device.Set("maxInputChannels",
                Napi::Number::New(env, deviceInfo->maxInputChannels));
@@ -654,6 +665,14 @@ Napi::Value NodePd::ClearArray(const Napi::CallbackInfo &info) {
 
   return env.Undefined();
 }
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// GUI
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 Napi::Value NodePd::StartGUI(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
