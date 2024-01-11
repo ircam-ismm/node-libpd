@@ -8,7 +8,8 @@ SegfaultHandler.registerHandler("crash.log");
 
 const patchesPath = path.join(process.cwd(), "test", "pd");
 
-// GUI polling interval.
+// GUI polling.
+const GUI_POLLING_INTERVAL = 200;
 let pollInterval;
 
 describe("node-libpd", () => {
@@ -53,22 +54,44 @@ describe("node-libpd", () => {
     console.log(devices);
   });
 
-  it("pd.startGUI()", function (done) {
-    console.log("open GUI (timeout 5000ms)");
-    this.timeout(10000);
-    const result = pd.startGUI(
-      "/Applications/Pd-0.50-0.app/Contents/Resources"
-    );
+  if (process.platform === "darwin") {
+    it("pd.startGUI()", function (done) {
+      this.timeout(10000);
 
-    const timeout = setTimeout(() => {
-      clearTimeout(timeout);
-      assert.isTrue(result);
+      const apps = fs
+        .readdirSync("/Applications")
+        .filter((file) => file.startsWith("Pd-"));
 
-      pollInterval = setInterval(() => pd.pollGUI(), 200);
+      assert.isTrue(
+        apps.length > 0,
+        "Pure Data could not be found in '/Applications' folder"
+      );
 
-      done();
-    }, 5000);
-  });
+      if (apps.length > 0) {
+        console.log(
+          "open GUI (timeout 5000ms) at path '%s'",
+          `/Applications/${apps[0]}`
+        );
+
+        const result = pd.startGUI(
+          path.join("/Applications", apps[0], "Contents/Resources")
+        );
+
+        const timeout = setTimeout(() => {
+          clearTimeout(timeout);
+          assert.isTrue(result);
+
+          console.log(
+            "polling GUI every %d milliseconds",
+            GUI_POLLING_INTERVAL
+          );
+          pollInterval = setInterval(() => pd.pollGUI(), GUI_POLLING_INTERVAL);
+
+          done();
+        }, 5000);
+      }
+    });
+  }
 
   let openClosePatch1 = null;
   let openClosePatch2 = null;
@@ -366,12 +389,12 @@ describe("node-libpd", () => {
     // populate with float values
     for (let i = 0; i < 20; i++) source[i] = i / 20;
 
-    const writen = pd.writeArray("my-array", source);
-    assert.isTrue(writen);
+    const written = pd.writeArray("my-array", source);
+    assert.isTrue(written);
 
     console.log("try to write in non existing array");
-    const notWriten = pd.writeArray("do-not-exists", source);
-    assert.isFalse(notWriten);
+    const notWritten = pd.writeArray("do-not-exists", source);
+    assert.isFalse(notWritten);
 
     // log back values in console from pd print
     console.log("read values back from pd print");
@@ -444,11 +467,15 @@ describe("node-libpd", () => {
     }, 5000);
   });
 
-  it("pd.stopGUI(", function () {
-    clearInterval(pollInterval);
-    pd.stopGUI();
-    console.log("GUI should be closed");
-  });
+  if (process.platform === "darwin") {
+    it("pd.stopGUI(", function () {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pd.stopGUI();
+        console.log("GUI should be closed");
+      }
+    });
+  }
 
   it("pd.destroy() - warning ! any interaction with `pd` after that will throw a segfault error", function () {
     pd.destroy();
