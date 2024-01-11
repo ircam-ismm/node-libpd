@@ -14,12 +14,12 @@ npm install [--save] node-libpd
 
 - [Basic Usage](#basic-usage)
 - [Notes / Caveats:](#notes--caveats)
-  * [Install on Mac OSX](#install-on-mac-osx)
-  * [Install on Raspberry Pi](#install-on-raspberry-pi)
+  - [Install on Mac OSX](#install-on-mac-osx)
+  - [Install on Raspberry Pi](#install-on-raspberry-pi)
 - [API](#api)
-  * [Objects](#objects)
-  * [pd : object](#pd--object)
-  * [Patch : object](#patch--object)
+  - [Objects](#objects)
+  - [pd : object](#pd--object)
+  - [Patch : object](#patch--object)
 - [Tests](#tests)
 - [Todos](#todos)
 - [Credits](#credits)
@@ -30,7 +30,7 @@ npm install [--save] node-libpd
 ## Basic Usage
 
 ```js
-const pd = require('node-libpd');
+const pd = require("node-libpd");
 // or if you use some transpiler such as babel
 // import pd from 'node-libpd';
 
@@ -43,11 +43,11 @@ const initialized = pd.init({
 });
 
 // instantiate a patch
-const patchPathname = path.join(process.cwd(), 'pd', 'my-patch.pd');
+const patchPathname = path.join(process.cwd(), "pd", "my-patch.pd");
 const patch = pd.openPatch(patchPathname);
 
 // subscribe to messages from the patch
-pd.subscribe(`${patch.$0}-output`, msg => {
+pd.subscribe(`${patch.$0}-output`, (msg) => {
   console.log(msg);
 });
 
@@ -86,7 +86,6 @@ xcode-select --install
 apt-get install -y ... ???
 ```
 
-
 ## API
 
 <!-- api -->
@@ -105,29 +104,31 @@ apt-get install -y ... ???
 <a name="pd"></a>
 
 ### pd : <code>object</code>
+
 Singleton that represents an instance of the underlying libpd library
 
-**Kind**: global namespace  
+**Kind**: global namespace
 
-* [pd](#pd) : <code>object</code>
-    * [.currentTime](#pd.currentTime) : <code>Number</code>
-    * [.init(config)](#pd.init) ⇒ <code>Boolean</code>
-    * [.destroy()](#pd.destroy)
-    * [.openPatch(pathname)](#pd.openPatch) ⇒ <code>Object</code>
-    * [.closePatch(patch)](#pd.closePatch)
-    * [.addToSearchPath(pathname)](#pd.addToSearchPath)
-    * [.clearSearchPath()](#pd.clearSearchPath)
-    * [.send(channel, value, [time])](#pd.send)
-    * [.subscribe(channel, callback)](#pd.subscribe)
-    * [.unsubscribe(channel, [callback])](#pd.unsubscribe)
-    * [.writeArray(name, data, [writeLen], [offset])](#pd.writeArray) ⇒ <code>Boolean</code>
-    * [.readArray(name, data, [readLen], [offset])](#pd.readArray) ⇒ <code>Boolean</code>
-    * [.clearArray(name, [value])](#pd.clearArray)
-    * [.arraySize(name)](#pd.arraySize) ⇒ <code>Number</code>
+- [pd](#pd) : <code>object</code>
+  - [.currentTime](#pd.currentTime) : <code>Number</code>
+  - [.init(config)](#pd.init) ⇒ <code>Boolean</code>
+  - [.destroy()](#pd.destroy)
+  - [.openPatch(pathname)](#pd.openPatch) ⇒ <code>Object</code>
+  - [.closePatch(patch)](#pd.closePatch)
+  - [.addToSearchPath(pathname)](#pd.addToSearchPath)
+  - [.clearSearchPath()](#pd.clearSearchPath)
+  - [.send(channel, value, [time])](#pd.send)
+  - [.subscribe(channel, callback)](#pd.subscribe)
+  - [.unsubscribe(channel, [callback])](#pd.unsubscribe)
+  - [.writeArray(name, data, [writeLen], [offset])](#pd.writeArray) ⇒ <code>Boolean</code>
+  - [.readArray(name, data, [readLen], [offset])](#pd.readArray) ⇒ <code>Boolean</code>
+  - [.clearArray(name, [value])](#pd.clearArray)
+  - [.arraySize(name)](#pd.arraySize) ⇒ <code>Number</code>
 
 <a name="pd.currentTime"></a>
 
 #### pd.currentTime : <code>Number</code>
+
 Current audio time in seconds since `init` as been called.
 
 **Kind**: static property of [<code>pd</code>](#pd)  
@@ -135,25 +136,27 @@ Current audio time in seconds since `init` as been called.
 <a name="pd.init"></a>
 
 #### pd.init(config) ⇒ <code>Boolean</code>
+
 Configure and initialize pd instance. You basically want to do that at the
 startup of the application as the process is blocking and that it can take
- a long time to have the audio running.
+a long time to have the audio running.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
 **Returns**: <code>Boolean</code> - a boolean defining if pd and portaudio have been properly
- initialized  
+initialized
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| config | <code>Object</code> |  |  |
-| [config.numInputChannels] | <code>Number</code> | <code>1</code> | num input channels requested |
-| [config.numOutputChannels] | <code>Number</code> | <code>2</code> | num output channels requested |
-| [config.sampleRate] | <code>Number</code> | <code>4800</code> | requested sampleRate |
-| [config.ticks] | <code>Number</code> | <code>1</code> | number of blocks (ticks) processed by pd  in one run, a pd tick is 64 samples. Be aware that this value will affect /  throttle the messages sent to and received by pd, i.e. more ticks means less  precision in the treatement of the messages. A value of 1 or 2 is generally  good enough even in constrained platforms such as the RPi. |
+| Param                      | Type                | Default           | Description                                                                                                                                                                                                                                                                                                                              |
+| -------------------------- | ------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| config                     | <code>Object</code> |                   |                                                                                                                                                                                                                                                                                                                                          |
+| [config.numInputChannels]  | <code>Number</code> | <code>1</code>    | num input channels requested                                                                                                                                                                                                                                                                                                             |
+| [config.numOutputChannels] | <code>Number</code> | <code>2</code>    | num output channels requested                                                                                                                                                                                                                                                                                                            |
+| [config.sampleRate]        | <code>Number</code> | <code>4800</code> | requested sampleRate                                                                                                                                                                                                                                                                                                                     |
+| [config.ticks]             | <code>Number</code> | <code>1</code>    | number of blocks (ticks) processed by pd in one run, a pd tick is 64 samples. Be aware that this value will affect / throttle the messages sent to and received by pd, i.e. more ticks means less precision in the treatement of the messages. A value of 1 or 2 is generally good enough even in constrained platforms such as the RPi. |
 
 <a name="pd.destroy"></a>
 
 #### pd.destroy()
+
 Destroy the pd instance. You basically want to do that want your program
 exists to clean things up, be aware the any call to the pd instance after
 calliing `destroy` migth throw a SegFault error.
@@ -161,160 +164,214 @@ calliing `destroy` migth throw a SegFault error.
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.openPatch"></a>
 
+#### pd.getDevicesCount() ⇒ <code>Object</code>
+
+Get system's audio devices count.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
 #### pd.listDevices() ⇒ <code>Object</code>
 
 Lists system's audio devices.
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
+
+#### pd.getDefaultInputDevice() ⇒ <code>Object</code>
+
+Get default input audio device.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+#### pd.getDefaultOutputDevice() ⇒ <code>Object</code>
+
+Get default output audio device.
+
+**Kind**: static method of [<code>pd</code>](#pd)
 
 #### pd.openPatch(pathname) ⇒ <code>Object</code>
+
 Open a pd patch instance. As the same patch can be opened several times,
 think of it as a kind of poly with a nice API, be careful to use patch.$0
 in your patches.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
-**Returns**: <code>Object</code> - - instance of the patch  
+**Returns**: <code>Object</code> - - instance of the patch
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param    | Type                | Description                   |
+| -------- | ------------------- | ----------------------------- |
 | pathname | <code>String</code> | absolute path to the pd patch |
 
 <a name="pd.closePatch"></a>
 
 #### pd.closePatch(patch)
+
 Close a pd patch instance.
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param | Type                         | Description                                 |
+| ----- | ---------------------------- | ------------------------------------------- |
 | patch | [<code>Patch</code>](#Patch) | a patch instance as retrived by `openPatch` |
 
 <a name="pd.addToSearchPath"></a>
 
 #### pd.addToSearchPath(pathname)
+
 Add a directory to the pd search paths, for loading libraries etc.
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param    | Type                | Description                    |
+| -------- | ------------------- | ------------------------------ |
 | pathname | <code>String</code> | absolute path to the directory |
 
 <a name="pd.clearSearchPath"></a>
 
 #### pd.clearSearchPath()
+
 Clear the pd search path
 
 **Kind**: static method of [<code>pd</code>](#pd)  
 <a name="pd.send"></a>
 
 #### pd.send(channel, value, [time])
+
 Send a named message to the pd backend
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| channel | <code>String</code> |  | name of the corresponding `receive` box in the patch  the avoid conflict a good practice is the prepend the channel name with `patch.$0` |
-| value | <code>Any</code> |  | payload of the message, the corresponding mapping is  made with pd types: Number -> float, String -> symbol, Array -> list  (all value that neither Number nor String are ignored), else -> bang |
-| [time] | <code>Number</code> | <code></code> | audio time at which the message should be  sent. If null or < currentTime, is sent as fast as possible. (@tbc messages  are processed at pd control rate). |
+| Param   | Type                | Default       | Description                                                                                                                                                                                    |
+| ------- | ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| channel | <code>String</code> |               | name of the corresponding `receive` box in the patch the avoid conflict a good practice is the prepend the channel name with `patch.$0`                                                        |
+| value   | <code>Any</code>    |               | payload of the message, the corresponding mapping is made with pd types: Number -> float, String -> symbol, Array -> list (all value that neither Number nor String are ignored), else -> bang |
+| [time]  | <code>Number</code> | <code></code> | audio time at which the message should be sent. If null or < currentTime, is sent as fast as possible. (@tbc messages are processed at pd control rate).                                       |
 
 <a name="pd.subscribe"></a>
 
 #### pd.subscribe(channel, callback)
+
 Subscribe to named events send by a pd patch
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Description |
-| --- | --- | --- |
-| channel | <code>String</code> | channel name corresponding to the pd send name |
-| callback | <code>function</code> | callback to execute when an event is received |
+| Param    | Type                  | Description                                    |
+| -------- | --------------------- | ---------------------------------------------- |
+| channel  | <code>String</code>   | channel name corresponding to the pd send name |
+| callback | <code>function</code> | callback to execute when an event is received  |
 
 <a name="pd.unsubscribe"></a>
 
 #### pd.unsubscribe(channel, [callback])
+
 Unsubscribe to named events send by a pd patch
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| channel | <code>String</code> |  | channel name corresponding to the pd send name |
-| [callback] | <code>function</code> | <code></code> | callback that should stop receive event.  If null, all callbacks of the channel are removed |
+| Param      | Type                  | Default       | Description                                                                                |
+| ---------- | --------------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| channel    | <code>String</code>   |               | channel name corresponding to the pd send name                                             |
+| [callback] | <code>function</code> | <code></code> | callback that should stop receive event. If null, all callbacks of the channel are removed |
 
 <a name="pd.writeArray"></a>
 
 #### pd.writeArray(name, data, [writeLen], [offset]) ⇒ <code>Boolean</code>
+
 Write values into a pd array. Be carefull with the size of the pd arrays
 (default to 100) in your patches.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
-**Returns**: <code>Boolean</code> - true if the operation succeed, false otherwise  
+**Returns**: <code>Boolean</code> - true if the operation succeed, false otherwise
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| name | <code>Name</code> |  | name of the pd array |
-| data | <code>Float32Array</code> |  | Float32Array containing the data to be written  into the pd array. |
-| [writeLen] | <code>Number</code> | <code>data.length</code> | @todo confirm behavior |
-| [offset] | <code>Number</code> | <code>0</code> | @todo confirm behavior |
+| Param      | Type                      | Default                  | Description                                                       |
+| ---------- | ------------------------- | ------------------------ | ----------------------------------------------------------------- |
+| name       | <code>Name</code>         |                          | name of the pd array                                              |
+| data       | <code>Float32Array</code> |                          | Float32Array containing the data to be written into the pd array. |
+| [writeLen] | <code>Number</code>       | <code>data.length</code> | @todo confirm behavior                                            |
+| [offset]   | <code>Number</code>       | <code>0</code>           | @todo confirm behavior                                            |
 
 <a name="pd.readArray"></a>
 
 #### pd.readArray(name, data, [readLen], [offset]) ⇒ <code>Boolean</code>
+
 Read values into a pd array.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
-**Returns**: <code>Boolean</code> - true if the operation succeed, false otherwise  
+**Returns**: <code>Boolean</code> - true if the operation succeed, false otherwise
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| name | <code>Name</code> |  | name of the pd array |
-| data | <code>Float32Array</code> |  | Float32Array to populate from pd array values |
-| [readLen] | <code>Number</code> | <code>data.length</code> | @todo confirm behavior |
-| [offset] | <code>Number</code> | <code>0</code> | @todo confirm behavior |
+| Param     | Type                      | Default                  | Description                                   |
+| --------- | ------------------------- | ------------------------ | --------------------------------------------- |
+| name      | <code>Name</code>         |                          | name of the pd array                          |
+| data      | <code>Float32Array</code> |                          | Float32Array to populate from pd array values |
+| [readLen] | <code>Number</code>       | <code>data.length</code> | @todo confirm behavior                        |
+| [offset]  | <code>Number</code>       | <code>0</code>           | @todo confirm behavior                        |
 
 <a name="pd.clearArray"></a>
 
 #### pd.clearArray(name, [value])
+
 Fill a pd array with a given value.
 
-**Kind**: static method of [<code>pd</code>](#pd)  
+**Kind**: static method of [<code>pd</code>](#pd)
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| name | <code>Name</code> |  | name of the pd array |
+| Param   | Type                | Default        | Description                     |
+| ------- | ------------------- | -------------- | ------------------------------- |
+| name    | <code>Name</code>   |                | name of the pd array            |
 | [value] | <code>Number</code> | <code>0</code> | value used to fill the pd array |
 
 <a name="pd.arraySize"></a>
 
 #### pd.arraySize(name) ⇒ <code>Number</code>
+
 Retrieve the size of a pd array.
 
 **Kind**: static method of [<code>pd</code>](#pd)  
-**Returns**: <code>Number</code> - size of the array  
+**Returns**: <code>Number</code> - size of the array
 
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>Name</code> | name of the pd array |
+| Param | Type              | Description          |
+| ----- | ----------------- | -------------------- |
+| name  | <code>Name</code> | name of the pd array |
+
+#### pd.startGUI(path) ⇒ <code>Object</code>
+
+Starts Pure Data GUI if Pure Data is present on the system.
+
+| Param | Type              | Default | Description                                                          |
+| ----- | ----------------- | ------- | -------------------------------------------------------------------- |
+| path  | <code>Path</code> |         | absolute path to the Pure Data folder that contains bin/, tcl/, etc. |
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+#### pd.pollGUI() ⇒ <code>Object</code>
+
+Function to be called to update GUI and handle its messages.
+Use in a `setInterval` for example.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+#### pd.stopGUI() ⇒ <code>Object</code>
+
+Closes Pure Data GUI.
+
+**Kind**: static method of [<code>pd</code>](#pd)
 
 <a name="Patch"></a>
 
 ### Patch : <code>object</code>
+
 Object representing a patch instance.
 
-**Kind**: global namespace  
+**Kind**: global namespace
 
-* [Patch](#Patch) : <code>object</code>
-    * [.$0](#Patch.$0) : <code>Number</code>
-    * [.isValid](#Patch.isValid) : <code>Boolean</code>
-    * [.filename](#Patch.filename) : <code>String</code>
-    * [.path](#Patch.path) : <code>String</code>
+- [Patch](#Patch) : <code>object</code>
+  - [.$0](#Patch.$0) : <code>Number</code>
+  - [.isValid](#Patch.isValid) : <code>Boolean</code>
+  - [.filename](#Patch.filename) : <code>String</code>
+  - [.path](#Patch.path) : <code>String</code>
 
 <a name="Patch.$0"></a>
 
 #### Patch.$0 : <code>Number</code>
+
 Id of the patch. You should use this value to communicate with a given patch
 in send and receive channel.
 
@@ -323,6 +380,7 @@ in send and receive channel.
 <a name="Patch.isValid"></a>
 
 #### Patch.isValid : <code>Boolean</code>
+
 Validity of the patch instance. False typically means that the given filename
 does not point to a valid pd patch, or that the patch has been closed.
 
@@ -331,6 +389,7 @@ does not point to a valid pd patch, or that the patch has been closed.
 <a name="Patch.filename"></a>
 
 #### Patch.filename : <code>String</code>
+
 Name of the the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
@@ -338,13 +397,13 @@ Name of the the pd patch file
 <a name="Patch.path"></a>
 
 #### Patch.path : <code>String</code>
+
 Directory of the pd patch file
 
 **Kind**: static property of [<code>Patch</code>](#Patch)  
-**Read only**: true  
+**Read only**: true
 
 <!-- apistop -->
-
 
 ## Tests
 
