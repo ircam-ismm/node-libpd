@@ -1,6 +1,7 @@
 crash.log
 .DS_Store
 yarn.lock
+yarn-error.log
 
 node_modules
 build/

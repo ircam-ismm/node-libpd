@@ -253,7 +253,7 @@ describe("node-libpd", () => {
     pd.send(`${patch.$0}-bang`, true);
     pd.send(`${patch.$0}-float`, 42);
     pd.send(`${patch.$0}-symbol`, "mySymbol");
-    pd.send(`${patch.$0}-list`, ["test", 21, "niap", true /* ignored */, 0.3]);
+    pd.send(`${patch.$0}-list`, ["test", 21, "niap", true, 0.3]); // `true` is ignored.
 
     // wait a bit because send is async
     setTimeout(() => done(), 100);
@@ -355,7 +355,7 @@ describe("node-libpd", () => {
     });
     pd.subscribe(`${patch.$0}-list-echo`, function (list) {
       console.log("[warning] boolean are ignored in lists");
-      assert.notDeepEqual(list, ["test", 21, "niap", true /* ignored */, 12]);
+      assert.notDeepEqual(list, ["test", 21, "niap", true, 12]); // `true` is ignored
       assert.deepEqual(list, ["test", 21, "niap", 12]);
       assert.equal(messageCounter, 3);
       messageCounter += 1;
@@ -364,7 +364,7 @@ describe("node-libpd", () => {
     pd.send(`${patch.$0}-bang`, true);
     pd.send(`${patch.$0}-float`, 42);
     pd.send(`${patch.$0}-symbol`, "mySymbol");
-    pd.send(`${patch.$0}-list`, ["test", 21, "niap", true /* ignored */, 12]);
+    pd.send(`${patch.$0}-list`, ["test", 21, "niap", true, 12]); // `true` is ignored
 
     setTimeout(() => {
       if (messageCounter === 0) {
@@ -418,11 +418,6 @@ describe("node-libpd", () => {
     const patch = pd.openPatch(path.join(patchesPath, "need-search-path.pd"));
   });
 
-  it("pd.computeAudio()", function () {
-    pd.computeAudio(); // shortcut for pd.computeAudio(true)
-    console.log("> you should hear some sound after this point");
-  });
-
   it(`
     pd.writeArray(name, data, writeLen=data.length, offset=0)
     pd.readArray(name, dest, readLen=dest.length, offset=0)
@@ -467,6 +462,11 @@ describe("node-libpd", () => {
   // // AUDIO
   // // --------------------------------------------------------
 
+  it("pd.computeAudio()", function () {
+    pd.computeAudio(); // shortcut for pd.computeAudio(true)
+    console.log("> you should hear some sound after this point");
+  });
+
   it("[audio] sine", function (done) {
     this.timeout(3000);
     const patch = pd.openPatch("sine.pd", patchesPath);
@@ -506,13 +506,44 @@ describe("node-libpd", () => {
 
   it("[audio] Input", function (done) {
     console.log("----------------------------------------------");
-    console.log("MAKE SOME NOISE !");
+    console.log("MAKE SOME NOISE (Audio Input) !");
     console.log("----------------------------------------------");
 
     this.timeout(10000);
+
     const audioIOPatch = pd.openPatch("audio-input.pd", patchesPath);
 
+    // TODO: what is the purpose of this?
     const intervalId = setInterval(() => pd.send("tone"), 100);
+
+    setTimeout(() => {
+      clearInterval(intervalId);
+      done();
+    }, 5000);
+  });
+
+  it("[audio] Input to Array", function (done) {
+    console.log("----------------------------------------------");
+    console.log("MAKE SOME NOISE (Audio Input to Array) !");
+    console.log("----------------------------------------------");
+
+    this.timeout(10000);
+
+    const audioIOPatch = pd.openPatch("audio-input-array.pd", patchesPath);
+
+    pd.clearArray("input-array", 0);
+
+    const size = pd.arraySize("input-array");
+    const dest = new Float32Array(size);
+
+    assert.equal(size, dest.length);
+
+    const intervalId = setInterval(() => {
+      const result = pd.readArray("input-array", dest);
+
+      assert.isTrue(result);
+      console.log(dest);
+    }, 1);
 
     setTimeout(() => {
       clearInterval(intervalId);
@@ -526,6 +557,8 @@ describe("node-libpd", () => {
         clearInterval(pollInterval);
         pd.stopGUI();
         console.log("GUI should be closed");
+      } else {
+        console.warn("> GUI wasn't started");
       }
     });
   }
