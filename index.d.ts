@@ -33,7 +33,8 @@ declare module "node-libpd" {
    * Description of a `portaudio` device.
    *
    * @interface PaDeviceDescription
-   * @member `structVersion` The PortAudio device `struct` version.
+   * @member `structVersion` The portaudio device `struct` version.
+   * @member `index` The index of the device in the portaudio list.
    * @member `name` The name of the device.
    * @member `maxInputChannels` The maximum number of imput channels of the device.
    * @member `maxOutputChannels` The maximum number of output channels of the device.
@@ -45,6 +46,7 @@ declare module "node-libpd" {
    */
   interface PaDeviceDescription {
     structVersion: number;
+    index: number;
     name: string;
     maxInputChannels: number;
     maxOutputChannels: number;
@@ -133,6 +135,32 @@ declare module "node-libpd" {
    * See also {@link PaDeviceDescription}
    */
   function getDefaultOutputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the audio input devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio input devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function getInputDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the audio output devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of output input devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function getOutputDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the device description for a specific index in the portaudio array.
+   * Though portaudio and javascript arrays should have the same index for the same object,
+   * you should better use the index of the `PaDeviceDescription` object.
+   *
+   * @returns { PaDeviceDescription | undefined } The device description or `undefined` if the index is out of range.
+   * See also {@link PaDeviceDescription}
+   */
+  function deviceAtIndex(index: number): PaDeviceDescription | undefined;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,

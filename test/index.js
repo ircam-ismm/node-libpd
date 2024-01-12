@@ -73,8 +73,7 @@ describe("node-libpd", () => {
       assert.isNumber(device.defaultHighOutputLatency);
       assert.isNumber(device.defaultSampleRate);
 
-      console.log("> default input device");
-      console.log(device);
+      console.log("> default input device: %s", device.name);
     } else {
       console.warn("> no default input device found");
     }
@@ -95,10 +94,40 @@ describe("node-libpd", () => {
       assert.isNumber(device.defaultHighOutputLatency);
       assert.isNumber(device.defaultSampleRate);
 
-      console.log("> default output device");
-      console.log(device);
+      console.log("> default output device: %s", device.name);
     } else {
       console.warn("> no default output device found");
+    }
+  });
+
+  it(`pd.getInputDevices()
+      pd.getOutputDevices()`, function () {
+    const inputs = pd.getInputDevices();
+    const outputs = pd.getOutputDevices();
+    const devices = pd.listDevices();
+
+    console.log(`> ${inputs.length} input devices.`);
+    console.log(`> ${outputs.length} output devices.`);
+    console.log(`> ${devices.length} devices.`);
+
+    assert.equal(
+      devices.filter((dev) => dev.maxInputChannels > 0).length,
+      inputs.length
+    );
+    assert.equal(
+      devices.filter((dev) => dev.maxOutputChannels > 0).length,
+      outputs.length
+    );
+  });
+
+  it(`pd.deviceAtIndex(index)`, function () {
+    const devices = pd.listDevices();
+
+    if (devices.length > 0) {
+      const device = pd.deviceAtIndex(0);
+      assert.equal(device.index, devices[0].index);
+    } else {
+      console.log("> no device connected");
     }
   });
 

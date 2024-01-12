@@ -23,6 +23,9 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("listDevices", &NodePd::ListDevices),
           InstanceMethod("getDefaultInputDevice", &NodePd::GetDefaultInputDevice),
           InstanceMethod("getDefaultOutputDevice", &NodePd::GetDefaultOutputDevice),
+          InstanceMethod("getInputDevices", &NodePd::GetInputDevices),
+          InstanceMethod("getOutputDevices", &NodePd::GetOutputDevices),
+          InstanceMethod("deviceAtIndex", &NodePd::GetDeviceAtIndex),
 
           InstanceMethod("closePatch", &NodePd::ClosePatch),
           InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),
@@ -265,6 +268,11 @@ Napi::Value NodePd::ComputeAudio(const Napi::CallbackInfo &info) {
 Napi::Value NodePd::GetDevicesCount(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDevicesCount before init")
+        .ThrowAsJavaScriptException();
+  }
+
   int numDevices = this->paWrapper_->getDeviceCount();
   return Napi::Number::New(env, numDevices);
 }
@@ -274,7 +282,11 @@ Napi::Value NodePd::GetDevicesCount(const Napi::CallbackInfo &info) {
 Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  // TODO: Decouple by returning the array from PaWrapper.
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't listDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
   int numDevices = this->paWrapper_->getDeviceCount();
 
   const PaDeviceInfo *deviceInfo;
@@ -283,7 +295,7 @@ Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
   for (int i = 0; i < numDevices; i++) {
     deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
 
-    Napi::Object device = this->PaDeviceToObject_(env, deviceInfo);
+    Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
     devices[i] = device;
   }
 
@@ -292,6 +304,12 @@ Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
 
 Napi::Value NodePd::GetDefaultInputDevice(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDefaultInputDevice before init")
+        .ThrowAsJavaScriptException();
+  }
+
   PaDeviceIndex index = this->paWrapper_->getDefaultInputDevice();
 
   if (index == paNoDevice) {
@@ -299,11 +317,16 @@ Napi::Value NodePd::GetDefaultInputDevice(const Napi::CallbackInfo &info) {
   }
 
   const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
-  return this->PaDeviceToObject_(env, deviceInfo);
+  return this->PaDeviceToObject_(env, deviceInfo, index);
 }
 
 Napi::Value NodePd::GetDefaultOutputDevice(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDefaultOutputDevice before init")
+        .ThrowAsJavaScriptException();
+  }
 
   PaDeviceIndex index = this->paWrapper_->getDefaultOutputDevice();
   if (index == paNoDevice) {
@@ -311,16 +334,94 @@ Napi::Value NodePd::GetDefaultOutputDevice(const Napi::CallbackInfo &info) {
   }
 
   const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
-  return this->PaDeviceToObject_(env, deviceInfo);
+  return this->PaDeviceToObject_(env, deviceInfo, index);
+}
+
+Napi::Value NodePd::GetInputDevices(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getInputDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+
+  const PaDeviceInfo *deviceInfo;
+  Napi::Array devices = Napi::Array::New(env);
+
+  int next = 0;
+  for (int i = 0; i < numDevices; i++) {
+    deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
+
+    if (deviceInfo->maxInputChannels > 0) {
+      Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
+      devices[next] = device;
+      next++;
+    }
+  }
+
+  return devices;
+}
+
+Napi::Value NodePd::GetOutputDevices(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getOutputDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+
+  const PaDeviceInfo *deviceInfo;
+  Napi::Array devices = Napi::Array::New(env);
+
+  int next = 0;
+  for (int i = 0; i < numDevices; i++) {
+    deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
+
+    if (deviceInfo->maxOutputChannels > 0) {
+      Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
+      devices[next] = device;
+      next++;
+    }
+  }
+
+  return devices;
+}
+
+Napi::Value NodePd::GetDeviceAtIndex(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDeviceAtIndex before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  if (info.Length() == 0 || !info[0].IsNumber()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.getDeviceAtIndex(index)")
+        .ThrowAsJavaScriptException();
+  }
+
+  int index = info[0].As<Napi::Number>().Int32Value();
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+
+  if (deviceInfo != NULL) {
+    return this->PaDeviceToObject_(env, deviceInfo, index);
+  }
+  
+  return env.Undefined();
 }
 
 /**
  * Convert PaDeviceInfo to object.
  */
-Napi::Object NodePd::PaDeviceToObject_(Napi::Env env, PaDeviceInfo const * deviceInfo) {
+Napi::Object NodePd::PaDeviceToObject_(Napi::Env env, PaDeviceInfo const * deviceInfo, int index) {
   Napi::Object device = Napi::Object::New(env);
 
   device.Set("structVersion", Napi::Number::New(env, deviceInfo->structVersion));
+  device.Set("index", Napi::Number::New(env, index));
   device.Set("name", Napi::String::New(env, deviceInfo->name));
   device.Set("maxInputChannels",
               Napi::Number::New(env, deviceInfo->maxInputChannels));

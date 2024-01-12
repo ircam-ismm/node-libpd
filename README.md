@@ -208,6 +208,34 @@ Get default output audio device.
 
 **Kind**: static method of [<code>pd</code>](#pd)
 
+<a name="pd.getInputDevices"></a>
+
+#### pd.getInputDevices() ⇒ <code>Object</code>
+
+Get input audio devices.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.getOutputDevices"></a>
+
+#### pd.getOutputDevices() ⇒ <code>Object</code>
+
+Get output audio devices.
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
+<a name="pd.deviceAtIndex"></a>
+
+#### pd.deviceAtIndex(index) ⇒ <code>Object</code>
+
+Get device at given index.
+
+| Param | Type                | Description                              |
+| ----- | ------------------- | ---------------------------------------- |
+| index | <code>Number</code> | index of the device in `portaudio` array |
+
+**Kind**: static method of [<code>pd</code>](#pd)
+
 <a name="pd.openPatch"></a>
 
 #### pd.openPatch(pathname) ⇒ <code>Object</code>
