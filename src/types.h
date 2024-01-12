@@ -23,7 +23,7 @@ typedef struct patch_infos_s {
 } patch_infos_t;
 
 /**
- * Pack all messages in the same struct. This is kind of brut force
+ * Pack all messages in the same struct. This is kind of brute force
  * but using derived struct leads to weird (and not understood) behavior
  * (i.e when `dynamic_pointer_cast` the attribute values are sometime empty...,
  * but not always...)
