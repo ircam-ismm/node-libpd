@@ -10,15 +10,13 @@ PaWrapper::~PaWrapper() {
 #endif
 
   if (this->paInitErr_ == paNoError) {
-    PaError err = Pa_CloseStream(this->paStream_);
+    PaError err = this->closeStream();
     if (err != paNoError) {
       std::cout << "[node-libpd] failed to close portaudio stream"
                 << std::endl;
     }
   }
 }
-
-PaStream *PaWrapper::getStream() { return this->paStream_; }
 
 bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
   this->audioConfig_ = audioConfig;
@@ -113,7 +111,7 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
                 << pOutputInfo->defaultHighOutputLatency << std::endl;
     }
 
-    outputParameters.channelCount = numOutputChannels; // numOutputChannels;
+    outputParameters.channelCount = numOutputChannels; 
     outputParameters.sampleFormat = paFloat32;
     outputParameters.suggestedLatency = pOutputInfo->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
@@ -123,16 +121,11 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
 
   PaError err;
 
-  err = Pa_OpenStream(
-      &this->paStream_,
-      audioConfig->numInputChannels > 0 ? &inputParameters : NULL,
-      audioConfig->numOutputChannels > 0 ? &outputParameters : NULL, sampleRate,
-      framesPerBuffer,
-      paClipOff, // we won't output out of range samples so don't bother
-                 // clipping them
-      &PaWrapper::paCallback,
-      this // Using 'this' for userData so we can cast to LibPdWorker* in
-           // paCallback method
+  err = this->openStream(
+    audioConfig->numInputChannels > 0 ? &inputParameters : NULL,
+    audioConfig->numOutputChannels > 0 ? &outputParameters : NULL, 
+    sampleRate,
+    framesPerBuffer
   );
 
   if (err != paNoError) {
@@ -142,7 +135,7 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
     return false;
   }
 
-  err = Pa_StartStream(this->paStream_);
+  err = this->startStream(); // Pa_StartStream(this->paStream_);
 
   if (err != paNoError) {
     std::cout << "[Error] Failed to start stream" << std::endl;
@@ -152,6 +145,44 @@ bool PaWrapper::init(audio_config_t *audioConfig, pd::PdBase *pd) {
 
   return true;
 }
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// STREAM
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+PaStream *PaWrapper::getStream() { return this->paStream_; }
+
+PaError PaWrapper::openStream(PaStreamParameters *inputParameters, PaStreamParameters *outputParameters, int sampleRate, int framesPerBuffer) {
+  return Pa_OpenStream(
+      &this->paStream_,
+      inputParameters,
+      outputParameters, 
+      sampleRate,
+      framesPerBuffer,
+      paClipOff, // we won't output out of range samples so don't bother
+                 // clipping them
+      &PaWrapper::paCallback,
+      this // Using 'this' for userData so we can cast to LibPdWorker* in
+           // paCallback method
+  );
+}
+
+PaError PaWrapper::closeStream() {
+  return Pa_CloseStream(this->paStream_);
+}
+
+PaError PaWrapper::startStream() {
+  return Pa_StartStream(this->paStream_);
+}
+
+PaError PaWrapper::stopStream() {
+  return Pa_StopStream(this->paStream_);
+}
+
 
 /**
  * Get number of devices returned by `portaudio`.
@@ -172,18 +203,6 @@ PaDeviceIndex PaWrapper::getDefaultOutputDevice() { return Pa_GetDefaultOutputDe
  * Get audio device at specific index from `portaudio`.
  */
 const PaDeviceInfo *PaWrapper::getDeviceAtIndex(int index) {
-
-  // int     structVersion
-  // const char *    name
-  // PaHostApiIndex  hostApi
-  // int     maxInputChannels
-  // int     maxOutputChannels
-  // PaTime  defaultLowInputLatency
-  // PaTime  defaultLowOutputLatency
-  // PaTime  defaultHighInputLatency
-  // PaTime  defaultHighOutputLatency
-  // double  defaultSampleRate
-
   return Pa_GetDeviceInfo(index);
 }
 

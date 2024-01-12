@@ -27,6 +27,11 @@ public:
   int getDeviceCount();
   const PaDeviceInfo *getDeviceAtIndex(int index);
 
+  PaError openStream(PaStreamParameters *inputParameters, PaStreamParameters *outputParameters, int sampleRate, int framesPerBuffer);
+  PaError closeStream();
+  PaError startStream();
+  PaError stopStream();
+
   /**
    * accessor for the PaStream
    */
