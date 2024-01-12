@@ -25,7 +25,7 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("getDefaultOutputDevice", &NodePd::GetDefaultOutputDevice),
           InstanceMethod("getInputDevices", &NodePd::GetInputDevices),
           InstanceMethod("getOutputDevices", &NodePd::GetOutputDevices),
-          InstanceMethod("deviceAtIndex", &NodePd::GetDeviceAtIndex),
+          InstanceMethod("getDeviceAtIndex", &NodePd::GetDeviceAtIndex),
 
           InstanceMethod("closePatch", &NodePd::ClosePatch),
           InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),

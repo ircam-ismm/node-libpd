@@ -120,11 +120,11 @@ describe("node-libpd", () => {
     );
   });
 
-  it(`pd.deviceAtIndex(index)`, function () {
+  it(`pd.getDeviceAtIndex(index)`, function () {
     const devices = pd.listDevices();
 
     if (devices.length > 0) {
-      const device = pd.deviceAtIndex(0);
+      const device = pd.getDeviceAtIndex(0);
       assert.equal(device.index, devices[0].index);
     } else {
       console.log("> no device connected");

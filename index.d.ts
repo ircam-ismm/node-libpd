@@ -160,7 +160,7 @@ declare module "node-libpd" {
    * @returns { PaDeviceDescription | undefined } The device description or `undefined` if the index is out of range.
    * See also {@link PaDeviceDescription}
    */
-  function deviceAtIndex(index: number): PaDeviceDescription | undefined;
+  function getDeviceAtIndex(index: number): PaDeviceDescription | undefined;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,

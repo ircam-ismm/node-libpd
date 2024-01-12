@@ -224,9 +224,9 @@ Get output audio devices.
 
 **Kind**: static method of [<code>pd</code>](#pd)
 
-<a name="pd.deviceAtIndex"></a>
+<a name="pd.getDeviceAtIndex"></a>
 
-#### pd.deviceAtIndex(index) ⇒ <code>Object</code>
+#### pd.getDeviceAtIndex(index) ⇒ <code>Object</code>
 
 Get device at given index.
 
