@@ -27,8 +27,6 @@ declare module "node-libpd" {
     ticks?: number;
   }
 
-  type PdCallback = (...args: any[]) => void;
-
   /**
    * Description of a `portaudio` device.
    *
