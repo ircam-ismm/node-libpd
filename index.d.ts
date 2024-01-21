@@ -27,6 +27,48 @@ declare module "node-libpd" {
     ticks?: number;
   }
 
+  /**
+   * Description of a `portaudio` device.
+   *
+   * @interface PaDeviceDescription
+   * @member `structVersion` The portaudio device `struct` version.
+   * @member `index` The index of the device in the portaudio list.
+   * @member `name` The name of the device.
+   * @member `maxInputChannels` The maximum number of imput channels of the device.
+   * @member `maxOutputChannels` The maximum number of output channels of the device.
+   * @member `defaultLowInputLatency` The default low input latency of the device.
+   * @member `defaultLowOutputLatency` The default low output latency of the device.
+   * @member `defaultHighInputLatency` The default high input latency of the device.
+   * @member `defaultHighOutputLatency` The default high output latency of the device.
+   * @member `defaultSampleRate` The default sample rate of the device.
+   */
+  interface PaDeviceDescription {
+    structVersion: number;
+    index: number;
+    name: string;
+    maxInputChannels: number;
+    maxOutputChannels: number;
+    defaultLowInputLatency: number;
+    defaultLowOutputLatency: number;
+    defaultHighInputLatency: number;
+    defaultHighOutputLatency: number;
+    defaultSampleRate: number;
+  }
+
+  /**
+   * `pd` internal messages list.
+   *
+   * @example
+   * pd.subscribe(PdInternalMessages.Print, (msg: string) => {
+   *  console.log(`Pure Data printed '${msg}'`);
+   * });
+   *
+   * pd.unsubscribe(PdInternalMessages.Print);
+   */
+  enum PdInternalMessages {
+    Print = "print",
+  }
+
   type PdCallback = (...args: any[]) => void;
 
   /**
@@ -40,11 +82,12 @@ declare module "node-libpd" {
    * a long time to have the audio running.
    *
    * @param { PdInitConfig | undefined } options
+   * @param { boolean } computeAudio Optional: enable `pd` audio computation. Default is `true`.
    *
    * @returns { boolean } `true` if `pd` was ssuceesfully initialized, `false` otherwise.
    * See also {@link PdInitConfig}
    */
-  function init(options?: PdInitConfig): boolean;
+  function init(options?: PdInitConfig, computeAudio?: boolean): boolean;
 
   /**
    * Destroy the `pd` instance. You basically want to do that when your program
@@ -52,6 +95,70 @@ declare module "node-libpd" {
    * calling `destroy` migth throw a SegFault error.
    */
   function destroy(): void;
+
+  /**
+   * Enable `pd` audio computation.
+   *
+   * @param { boolean } compute Optional: tells `pd` to compute audio. Default is `true`.
+   */
+  function computeAudio(compute?: boolean): void;
+
+  /**
+   * Get the audio devices count.
+   *
+   * @returns { number } The number of audio devices.
+   */
+  function getDevicesCount(): number;
+
+  /**
+   * Get the audio devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function listDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the default input device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default input device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultInputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the default output device description.
+   *
+   * @returns { PaDeviceDescription | undefined } The default output device description or `undefined`.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDefaultOutputDevice(): PaDeviceDescription | undefined;
+
+  /**
+   * Get the audio input devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of audio input devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function getInputDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the audio output devices descriptions.
+   *
+   * @returns { Array<PaDeviceDescription> } An `array` of output input devices descriptions.
+   * See also {@link PaDeviceDescription}
+   */
+  function getOutputDevices(): Array<PaDeviceDescription>;
+
+  /**
+   * Get the device description for a specific index in the portaudio array.
+   * Though portaudio and javascript arrays should have the same index for the same object,
+   * you should better use the index of the `PaDeviceDescription` object.
+   *
+   * @returns { PaDeviceDescription | undefined } The device description or `undefined` if the index is out of range.
+   * See also {@link PaDeviceDescription}
+   */
+  function getDeviceAtIndex(index: number): PaDeviceDescription | undefined;
 
   /**
    * Open a `pd` patch instance. As the same patch can be opened several times,
@@ -87,7 +194,7 @@ declare module "node-libpd" {
   /**
    * Add a directory to the `pd` search paths, for loading libraries, etc.
    *
-   * @param { string } pathname
+   * @param { string } pathname The path to add.
    */
   function addToSearchPath(pathname: string): void;
 
@@ -186,6 +293,29 @@ declare module "node-libpd" {
    * @returns { number } The size of the array.
    */
   function arraySize(name: string): number;
+
+  /**
+   * Starts an instance of the `pd` GUI.
+   *
+   * @param { string } pathname The absolute path to the main folder that contains bin/, tcl/ etc.
+   * On macOS it is located in /Applications/Pd-{version}.app/Contents/Resources.
+   *
+   * @returns { boolean } `true` if the operation was successful, `false` otherwise.
+   */
+  function startGUI(pathname: string): boolean;
+
+  /**
+   * Update and handle any GUI message.
+   * You should call this function periodically in order to see the GUI.
+   *
+   * @see https://github.com/libpd/libpd/pull/132#issuecomment-305504516
+   */
+  function pollGUI(): void;
+
+  /**
+   * Stops `pd` GUI.
+   */
+  function stopGUI(): void;
 
   /**
    * Object representing a patch instance.

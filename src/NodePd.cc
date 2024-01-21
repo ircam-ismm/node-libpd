@@ -1,5 +1,7 @@
 #include "NodePd.h"
 
+
+
 namespace node_lib_pd {
 
 Napi::FunctionReference NodePd::constructor;
@@ -7,31 +9,48 @@ Napi::FunctionReference NodePd::constructor;
 Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
   Napi::HandleScope scope(env);
 
-  Napi::Function func = DefineClass(env, "NodePd", {
-    // readonly syntax uses: template<getter, setter=nullptr>(name)
-    InstanceAccessor<&NodePd::CurrentTime>("currentTime"),
+  Napi::Function func = DefineClass(
+      env, "NodePd",
+      {
+          // readonly syntax uses: template<getter, setter=nullptr>(name)
+          InstanceAccessor<&NodePd::CurrentTime>("currentTime"),
 
-    InstanceMethod("destroy", &NodePd::Destroy),
-    InstanceMethod("closePatch", &NodePd::ClosePatch),
-    InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),
-    InstanceMethod("clearSearchPath", &NodePd::ClearSearchPath),
-    InstanceMethod("send", &NodePd::Send),
-    InstanceMethod("readArray", &NodePd::ReadArray),
-    InstanceMethod("writeArray", &NodePd::WriteArray),
-    InstanceMethod("clearArray", &NodePd::ClearArray),
-    InstanceMethod("arraySize", &NodePd::ArraySize),
+          InstanceMethod("destroy", &NodePd::Destroy),
 
-    // monkey patched on the js side
-    InstanceMethod("_initialize", &NodePd::Initialize),
-    InstanceMethod("_openPatch", &NodePd::OpenPatch),
-    InstanceMethod("_subscribe", &NodePd::Subscribe),
-    InstanceMethod("_unsubscribe", &NodePd::Unsubscribe),
-  });
+          InstanceMethod("computeAudio", &NodePd::ComputeAudio),
 
-  // node: DEBUG seems to be defined when doing `node-gyp build --debug`
-  #ifdef DEBUG
-    std::cout << "[node-libpd] c++ static init" << std::endl;
-  #endif
+          InstanceMethod("getDevicesCount", &NodePd::GetDevicesCount),
+          InstanceMethod("listDevices", &NodePd::ListDevices),
+          InstanceMethod("getDefaultInputDevice", &NodePd::GetDefaultInputDevice),
+          InstanceMethod("getDefaultOutputDevice", &NodePd::GetDefaultOutputDevice),
+          InstanceMethod("getInputDevices", &NodePd::GetInputDevices),
+          InstanceMethod("getOutputDevices", &NodePd::GetOutputDevices),
+          InstanceMethod("getDeviceAtIndex", &NodePd::GetDeviceAtIndex),
+
+          InstanceMethod("closePatch", &NodePd::ClosePatch),
+          InstanceMethod("addToSearchPath", &NodePd::AddToSearchPath),
+          InstanceMethod("clearSearchPath", &NodePd::ClearSearchPath),
+          InstanceMethod("send", &NodePd::Send),
+          InstanceMethod("readArray", &NodePd::ReadArray),
+          InstanceMethod("writeArray", &NodePd::WriteArray),
+          InstanceMethod("clearArray", &NodePd::ClearArray),
+          InstanceMethod("arraySize", &NodePd::ArraySize),
+
+          InstanceMethod("startGUI", &NodePd::StartGUI),
+          InstanceMethod("pollGUI", &NodePd::PollGUI),
+          InstanceMethod("stopGUI", &NodePd::StopGUI),
+
+          // monkey patched on the js side
+          InstanceMethod("_initialize", &NodePd::Initialize),
+          InstanceMethod("_openPatch", &NodePd::OpenPatch),
+          InstanceMethod("_subscribe", &NodePd::Subscribe),
+          InstanceMethod("_unsubscribe", &NodePd::Unsubscribe),
+      });
+
+// node: DEBUG seems to be defined when doing `node-gyp build --debug`
+#ifdef DEBUG
+  std::cout << "[node-libpd] c++ static init" << std::endl;
+#endif
 
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
@@ -41,18 +60,16 @@ Napi::Object NodePd::Init(Napi::Env env, Napi::Object exports) {
   return exports;
 }
 
-NodePd::NodePd(const Napi::CallbackInfo& info)
-  : Napi::ObjectWrap<NodePd>(info)
-  , initialized_(false)
-{
+NodePd::NodePd(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<NodePd>(info), initialized_(false) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
-  #ifdef DEBUG
-    std::cout << "[node-libpd] c++ constructor" << std::endl;
-  #endif
+#ifdef DEBUG
+  std::cout << "[node-libpd] c++ constructor" << std::endl;
+#endif
 
-  this->audioConfig_ = (audio_config_t *) malloc(sizeof(audio_config_t));
+  this->audioConfig_ = (audio_config_t *)malloc(sizeof(audio_config_t));
   // default config
   this->audioConfig_->numInputChannels = this->DEFAULT_NUM_INPUT_CHANNELS;
   this->audioConfig_->numOutputChannels = this->DEFAULT_NUM_OUTPUT_CHANNELS;
@@ -68,11 +85,12 @@ NodePd::NodePd(const Napi::CallbackInfo& info)
 }
 
 NodePd::~NodePd() {
-  #ifdef DEBUG
-    std::cout << "[node-libpd] destructor called" << std::endl;
-  #endif
+#ifdef DEBUG
+  std::cout << "[node-libpd] destructor called" << std::endl;
+#endif
 
-  // this close the portaudio stream and therefore terminates the background process
+  // this close the portaudio stream and therefore terminates the background
+  // process
   delete this->paWrapper_;
   delete this->pdWrapper_;
   delete this->pdReceiver_;
@@ -93,15 +111,16 @@ NodePd::~NodePd() {
  * this method is hidden behind a js proxy that passes the message callback
  *
  * @param {Object} params - override default params
- * @param {int} [param.numInputChannels=0] - number of input channels (not implemented)
+ * @param {int} [param.numInputChannels=0] - number of input channels (not
+ * implemented)
  * @param {int} [param.numOutputChannels=2] - number of output channels
  * @param {int} [param.sampleRate=44100] - sample rate
  * @param {int} [param.ticks=1] - ticks
  */
-Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::Initialize(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsFunction()) {
+  if (info.Length() != 3 || !info[0].IsObject() || !info[1].IsBoolean() || !info[2].IsFunction()) {
     Napi::Error::New(env, "Invalid Arguments").ThrowAsJavaScriptException();
   }
 
@@ -114,11 +133,13 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
     Napi::Object obj = info[0].As<Napi::Object>();
 
     if (obj.Has("numInputChannels")) {
-      numInputChannels = obj.Get("numInputChannels").As<Napi::Number>().Int32Value();
+      numInputChannels =
+          obj.Get("numInputChannels").As<Napi::Number>().Int32Value();
     }
 
     if (obj.Has("numOutputChannels")) {
-      numOutputChannels = obj.Get("numOutputChannels").As<Napi::Number>().Int32Value();
+      numOutputChannels =
+          obj.Get("numOutputChannels").As<Napi::Number>().Int32Value();
     }
 
     if (obj.Has("sampleRate")) {
@@ -135,45 +156,47 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
     this->audioConfig_->numOutputChannels = numOutputChannels;
     this->audioConfig_->sampleRate = sampleRate;
     this->audioConfig_->ticks = ticks; // number of blocks processed by pd in
-    this->audioConfig_->blockSize = blockSize; // size of the pd blocks (e.g. 64)
+    this->audioConfig_->blockSize =
+        blockSize; // size of the pd blocks (e.g. 64)
     this->audioConfig_->framesPerBuffer = blockSize * ticks;
-    this->audioConfig_->bufferDuration = (double) blockSize * (double) ticks / (double) sampleRate;
+    this->audioConfig_->bufferDuration =
+        (double)blockSize * (double)ticks / (double)sampleRate;
 
-      // init lib-pd
-    const bool pdInitialized = this->pdWrapper_->init(this->audioConfig_);
+    const bool compute_audio = info[1].As<Napi::Boolean>().Value();
+
+    // init lib-pd
+    const bool pdInitialized = this->pdWrapper_->init(this->audioConfig_, compute_audio);
     this->pdWrapper_->setReceiver(this->pdReceiver_);
 
     // // init portaudio
     const bool paInitialized = this->paWrapper_->init(
-      this->audioConfig_,
-      this->pdWrapper_->getLibPdInstance()
-    );
+        this->audioConfig_, this->pdWrapper_->getLibPdInstance());
 
-    Napi::Function callback = info[1].As<Napi::Function>();
+    Napi::Function callback = info[2].As<Napi::Function>();
 
-    this->backgroundProcess_ = new BackgroundProcess(
-      callback,
-      this->audioConfig_,
-      this->msgQueue_,
-      this->paWrapper_,
-      this->pdWrapper_
-    );
+    this->backgroundProcess_ =
+        new BackgroundProcess(callback, this->audioConfig_, this->msgQueue_,
+                              this->paWrapper_, this->pdWrapper_);
 
     this->backgroundProcess_->Queue();
 
     int millis = 0; // for debug
     // block process while time is not running
-    // @note: maybe move to Promise API, but probably not really important here...
-    while ((double) this->paWrapper_->currentTime <= 0.0f) {
+    // @note: maybe move to Promise API, but probably not really important
+    // here...
+    while ((double)this->paWrapper_->currentTime <= 0.0f) {
       millis += 1; // for debug
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
-    #ifdef DEBUG
-      std::cout << "[node-libpd] > pd initialized: " << pdInitialized << std::endl;
-      std::cout << "[node-libpd] > portaudio initialized: " << paInitialized << std::endl;
-      std::cout << "[node-libpd] audio started in: " << millis << "ms" << std::endl;
-    #endif
+#ifdef DEBUG
+    std::cout << "[node-libpd] > pd initialized: " << pdInitialized
+              << std::endl;
+    std::cout << "[node-libpd] > portaudio initialized: " << paInitialized
+              << std::endl;
+    std::cout << "[node-libpd] audio started in: " << millis << "ms"
+              << std::endl;
+#endif
 
     this->initialized_ = true;
     return Napi::Boolean::New(info.Env(), this->initialized_);
@@ -186,13 +209,36 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo& info) {
  * clear Pd instance.
  * need to stop the background process cleanly
  */
-Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
-  #ifdef DEBUG
-    std::cout << "[node-libpd] destroy node-libpd instance" << std::endl;
-  #endif
+Napi::Value NodePd::Destroy(const Napi::CallbackInfo &info) {
+#ifdef DEBUG
+  std::cout << "[node-libpd] destroy node-libpd instance" << std::endl;
+#endif
 
   // not sure c++ guys would like that...
   delete this;
+
+  return info.Env().Undefined();
+}
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// DYNAMIC CONFIGURATION
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+/**
+ * Set PD to compute audio or not.
+ */
+Napi::Value NodePd::ComputeAudio(const Napi::CallbackInfo &info) {
+  bool compute_audio = true;
+
+  if (info.Length() >= 1 && info[0].IsBoolean()) {
+    compute_audio = info[0].As<Napi::Boolean>().Value();
+  }
+
+  this->pdWrapper_->computeAudio(compute_audio);
 
   return info.Env().Undefined();
 }
@@ -216,6 +262,188 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
 //   // nodePd->paWrapper_->clear(); // clear portaudio
 // }
 
+/**
+ * Get audio devices count.
+ */
+Napi::Value NodePd::GetDevicesCount(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDevicesCount before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+  return Napi::Number::New(env, numDevices);
+}
+/**
+ * List audio devices.
+ */
+Napi::Value NodePd::ListDevices(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't listDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+
+  const PaDeviceInfo *deviceInfo;
+  Napi::Array devices = Napi::Array::New(env, numDevices);
+
+  for (int i = 0; i < numDevices; i++) {
+    deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
+
+    Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
+    devices[i] = device;
+  }
+
+  return devices;
+}
+
+Napi::Value NodePd::GetDefaultInputDevice(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDefaultInputDevice before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  PaDeviceIndex index = this->paWrapper_->getDefaultInputDevice();
+
+  if (index == paNoDevice) {
+    return env.Undefined();
+  }
+
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+  return this->PaDeviceToObject_(env, deviceInfo, index);
+}
+
+Napi::Value NodePd::GetDefaultOutputDevice(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDefaultOutputDevice before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  PaDeviceIndex index = this->paWrapper_->getDefaultOutputDevice();
+  if (index == paNoDevice) {
+    return env.Undefined();
+  }
+
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+  return this->PaDeviceToObject_(env, deviceInfo, index);
+}
+
+Napi::Value NodePd::GetInputDevices(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getInputDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+
+  const PaDeviceInfo *deviceInfo;
+  Napi::Array devices = Napi::Array::New(env);
+
+  int next = 0;
+  for (int i = 0; i < numDevices; i++) {
+    deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
+
+    if (deviceInfo->maxInputChannels > 0) {
+      Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
+      devices[next] = device;
+      next++;
+    }
+  }
+
+  return devices;
+}
+
+Napi::Value NodePd::GetOutputDevices(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getOutputDevices before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  int numDevices = this->paWrapper_->getDeviceCount();
+
+  const PaDeviceInfo *deviceInfo;
+  Napi::Array devices = Napi::Array::New(env);
+
+  int next = 0;
+  for (int i = 0; i < numDevices; i++) {
+    deviceInfo = this->paWrapper_->getDeviceAtIndex(i);
+
+    if (deviceInfo->maxOutputChannels > 0) {
+      Napi::Object device = this->PaDeviceToObject_(env, deviceInfo, i);
+      devices[next] = device;
+      next++;
+    }
+  }
+
+  return devices;
+}
+
+Napi::Value NodePd::GetDeviceAtIndex(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!this->initialized_) {
+    Napi::Error::New(env, "Can't getDeviceAtIndex before init")
+        .ThrowAsJavaScriptException();
+  }
+
+  if (info.Length() == 0 || !info[0].IsNumber()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.getDeviceAtIndex(index)")
+        .ThrowAsJavaScriptException();
+  }
+
+  int index = info[0].As<Napi::Number>().Int32Value();
+  const PaDeviceInfo *deviceInfo = this->paWrapper_->getDeviceAtIndex(index);
+
+  if (deviceInfo != NULL) {
+    return this->PaDeviceToObject_(env, deviceInfo, index);
+  }
+  
+  return env.Undefined();
+}
+
+/**
+ * Convert PaDeviceInfo to object.
+ */
+Napi::Object NodePd::PaDeviceToObject_(Napi::Env env, PaDeviceInfo const * deviceInfo, int index) {
+  Napi::Object device = Napi::Object::New(env);
+
+  device.Set("structVersion", Napi::Number::New(env, deviceInfo->structVersion));
+  device.Set("index", Napi::Number::New(env, index));
+  device.Set("name", Napi::String::New(env, deviceInfo->name));
+  device.Set("maxInputChannels",
+              Napi::Number::New(env, deviceInfo->maxInputChannels));
+  device.Set("maxOutputChannels",
+              Napi::Number::New(env, deviceInfo->maxOutputChannels));
+  device.Set(
+      "defaultLowInputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultLowInputLatency));
+  device.Set(
+      "defaultLowOutputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultLowOutputLatency));
+  device.Set(
+      "defaultHighInputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultHighInputLatency));
+  device.Set(
+      "defaultHighOutputLatency",
+      Napi::Number::New(env, (double)deviceInfo->defaultHighOutputLatency));
+  device.Set("defaultSampleRate",
+              Napi::Number::New(env, (double)deviceInfo->defaultSampleRate));
+
+  return device;
+}
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
@@ -225,7 +453,6 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-
 /**
  * open a pd patch
  *
@@ -234,15 +461,17 @@ Napi::Value NodePd::Destroy(const Napi::CallbackInfo& info) {
  *
  * @return {Object} - object containing informations about the patch
  */
-Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't openPatch before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't openPatch before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString() || !info[1].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.openPatch(filename, path)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.openPatch(filename, path)")
+        .ThrowAsJavaScriptException();
   } else {
     std::string filename = info[0].As<Napi::String>().Utf8Value();
     std::string path = info[1].As<Napi::String>().Utf8Value();
@@ -267,20 +496,24 @@ Napi::Value NodePd::OpenPatch(const Napi::CallbackInfo& info) {
  * Close the given `NodePdPath` instance
  * @param {Object} patch - A patch object as returned by open patch
  */
-Napi::Value NodePd::ClosePatch(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::ClosePatch(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't closePatch before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't closePatch before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsObject()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.closePatch(patch)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.closePatch(patch)")
+        .ThrowAsJavaScriptException();
   } else {
     Napi::Object patch = info[0].As<Napi::Object>();
 
-    if (!patch.Has("$0") || !patch.Has("filename") || !patch.Has("path") || !patch.Has("isValid")) {
-      Napi::Error::New(env, "Invalid Arguments: pd.closePatch(patch)").ThrowAsJavaScriptException();
+    if (!patch.Has("$0") || !patch.Has("filename") || !patch.Has("path") ||
+        !patch.Has("isValid")) {
+      Napi::Error::New(env, "Invalid Arguments: pd.closePatch(patch)")
+          .ThrowAsJavaScriptException();
     }
 
     int dollarZero = patch.Get("$0").As<Napi::Number>().Int32Value();
@@ -295,11 +528,12 @@ Napi::Value NodePd::ClosePatch(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-Napi::Value NodePd::AddToSearchPath(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::AddToSearchPath(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.addToSearchPath(pathname)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.addToSearchPath(pathname)")
+        .ThrowAsJavaScriptException();
   }
 
   std::string pathname = info[0].As<Napi::String>().Utf8Value();
@@ -308,18 +542,19 @@ Napi::Value NodePd::AddToSearchPath(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-Napi::Value NodePd::ClearSearchPath(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::ClearSearchPath(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
   this->pdWrapper_->clearSearchPath();
 
   return env.Undefined();
 }
 
-Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't get currentTime before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't get currentTime before init")
+        .ThrowAsJavaScriptException();
   }
 
   double currentTime = this->paWrapper_->currentTime;
@@ -335,22 +570,23 @@ Napi::Value NodePd::CurrentTime(const Napi::CallbackInfo& info) {
 // --------------------------------------------------------------------------
 
 /**
- * Send a message to pd. As pd only seems to only know 3 types (Float, Symbol, and bang),
- * we follow this convertion:
- *  Number -> Float
- *  String -> Symbol
+ * Send a message to pd. As pd only seems to only know 3 types (Float, Symbol,
+ * and bang), we follow this convertion: Number -> Float String -> Symbol
  *  * -> bang
  *  Array -> list
  */
-Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::Send(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't send before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't send before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.send(channel, value[, scheduledTime])").ThrowAsJavaScriptException();
+    Napi::Error::New(
+        env, "Invalid Arguments: pd.send(channel, value[, scheduledTime])")
+        .ThrowAsJavaScriptException();
   }
 
   std::string channel = info[0].As<Napi::String>().Utf8Value();
@@ -366,12 +602,12 @@ Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
     std::string symbol = info[1].As<Napi::String>().Utf8Value();
     pd_scheduled_msg_t msg(channel, time, symbol);
     this->backgroundProcess_->addScheduledMessage(msg);
-  // number
+    // number
   } else if (info[1].IsNumber()) {
     const float num = info[1].As<Napi::Number>().FloatValue();
     pd_scheduled_msg_t msg(channel, time, num);
     this->backgroundProcess_->addScheduledMessage(msg);
-  // list
+    // list
   } else if (info[1].IsArray()) {
     Napi::Array arr = info[1].As<Napi::Array>();
     const int len = arr.Length();
@@ -410,15 +646,17 @@ Napi::Value NodePd::Send(const Napi::CallbackInfo& info) {
 }
 
 // these 2 method are hidden behind a js event emitter API
-Napi::Value NodePd::Subscribe(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::Subscribe(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't subscribe before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't subscribe before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)")
+        .ThrowAsJavaScriptException();
   } else {
     std::string channel = info[0].As<Napi::String>().Utf8Value();
     this->pdWrapper_->subscribe(channel);
@@ -427,15 +665,17 @@ Napi::Value NodePd::Subscribe(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't unsubscribe before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't unsubscribe before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.subscribe(channel)")
+        .ThrowAsJavaScriptException();
   } else {
     std::string channel = info[0].As<Napi::String>().Utf8Value();
     this->pdWrapper_->unsubscribe(channel);
@@ -458,21 +698,25 @@ Napi::Value NodePd::Unsubscribe(const Napi::CallbackInfo& info) {
  * @param {Number} [writeLen=data.length]
  * @param {Number} [offset=0]
  */
-Napi::Value NodePd::WriteArray(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::WriteArray(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't writeArray before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't writeArray before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString() || !info[1].IsTypedArray()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.writeArray(name, data, len=data.length, offset=0)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.writeArray(name, data, "
+                          "len=data.length, offset=0)")
+        .ThrowAsJavaScriptException();
   }
 
   std::string name = info[0].As<Napi::String>().Utf8Value();
-  // cf. https://github.com/nodejs/node-addon-examples/blob/master/array_buffer_to_native/node-addon-api/array_buffer_to_native.cc
+  // cf.
+  // https://github.com/nodejs/node-addon-examples/blob/master/array_buffer_to_native/node-addon-api/array_buffer_to_native.cc
   Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
-  const float* ptr = reinterpret_cast<float*>(buf.Data());
+  const float *ptr = reinterpret_cast<float *>(buf.Data());
   const size_t len = buf.ByteLength() / sizeof(float);
 
   std::vector<float> source(ptr, ptr + len);
@@ -498,21 +742,24 @@ Napi::Value NodePd::WriteArray(const Napi::CallbackInfo& info) {
  * @param {Number} [readLen=destBuffer.length]
  * @param {Number} [offset=0]
  */
-Napi::Value NodePd::ReadArray(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::ReadArray(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't readArray before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't readArray before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString() || !info[1].IsTypedArray()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.readArray(name, len=1, offset=0)").ThrowAsJavaScriptException();
+    Napi::Error::New(env,
+                     "Invalid Arguments: pd.readArray(name, len=1, offset=0)")
+        .ThrowAsJavaScriptException();
   }
 
   std::string name = info[0].As<Napi::String>().Utf8Value();
 
   Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
-  const float* ptr = reinterpret_cast<float*>(buf.Data());
+  const float *ptr = reinterpret_cast<float *>(buf.Data());
   const size_t len = buf.ByteLength() / sizeof(float);
   std::vector<float> dest(ptr, ptr + len);
 
@@ -539,16 +786,17 @@ Napi::Value NodePd::ReadArray(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, result);
 }
 
-
-Napi::Value NodePd::ArraySize(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::ArraySize(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't arraySize before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't arraySize before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.arraySize(name)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.arraySize(name)")
+        .ThrowAsJavaScriptException();
   }
 
   std::string name = info[0].As<Napi::String>().Utf8Value();
@@ -557,15 +805,17 @@ Napi::Value NodePd::ArraySize(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, size);
 }
 
-Napi::Value NodePd::ClearArray(const Napi::CallbackInfo& info) {
+Napi::Value NodePd::ClearArray(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!this->initialized_) {
-    Napi::Error::New(env, "Can't clearArray before init").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Can't clearArray before init")
+        .ThrowAsJavaScriptException();
   }
 
   if (!info[0].IsString()) {
-    Napi::Error::New(env, "Invalid Arguments: pd.clearArray(name, value=0)").ThrowAsJavaScriptException();
+    Napi::Error::New(env, "Invalid Arguments: pd.clearArray(name, value=0)")
+        .ThrowAsJavaScriptException();
   }
 
   std::string name = info[0].As<Napi::String>().Utf8Value();
@@ -580,5 +830,42 @@ Napi::Value NodePd::ClearArray(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-} // namespace
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+//
+// GUI
+//
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
+Napi::Value NodePd::StartGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (!info[0].IsString()) {
+    Napi::Error::New(env, "Invalid Arguments: pd.startGUI(path)")
+        .ThrowAsJavaScriptException();
+  }
+
+  std::string path = info[0].As<Napi::String>().Utf8Value();
+  int result = this->pdWrapper_->startGUI(path);
+
+  return Napi::Boolean::New(env, result == 0 ? true : false);
+}
+
+Napi::Value NodePd::PollGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  this->pdWrapper_->pollGUI();
+
+  return env.Undefined();
+}
+
+Napi::Value NodePd::StopGUI(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  this->pdWrapper_->stopGUI();
+
+  return env.Undefined();
+}
+
+} // namespace node_lib_pd

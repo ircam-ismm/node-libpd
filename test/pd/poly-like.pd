@@ -6,7 +6,7 @@
 #X obj 104 78 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 17 110 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
--262144 -1 -1 0 256;
+-262144 -1 -1 400 256;
 #X obj 17 209 *~ 0.3;
 #X msg 104 109 1 20 \, 0.5 20 20 \, 0 400 50;
 #X obj 17 9 receive \$0-freq;
