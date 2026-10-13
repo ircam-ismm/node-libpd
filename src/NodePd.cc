@@ -150,6 +150,11 @@ Napi::Value NodePd::Initialize(const Napi::CallbackInfo &info) {
       ticks = obj.Get("ticks").As<Napi::Number>().Int32Value();
     }
 
+    if (ticks < 1 || ticks > 1024) {
+      Napi::RangeError::New(env, "ticks must be between 1 and 1024").ThrowAsJavaScriptException();
+      return env.Null();
+    }
+
     const int blockSize = this->pdWrapper_->blockSize();
 
     this->audioConfig_->numInputChannels = numInputChannels;
